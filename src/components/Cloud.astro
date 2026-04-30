@@ -1,0 +1,50 @@
+---
+---
+
+<section id="cloud" class="mx-auto max-w-6xl px-6 py-20">
+  <div class="rounded-2xl border border-[var(--color-border)] bg-gradient-to-br from-[var(--color-surface-2)] to-[var(--color-surface)] p-10 md:p-14 text-center overflow-hidden relative">
+    <div class="absolute inset-0 -z-10 opacity-30 bg-[radial-gradient(600px_300px_at_50%_-10%,oklch(0.50_0.20_280),transparent_60%)]"></div>
+
+    <p class="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-muted)]">
+      <span class="inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-accent-2)] animate-pulse"></span>
+      Coming soon
+    </p>
+
+    <h2 class="mt-6 text-3xl md:text-5xl font-semibold tracking-tight">
+      OneBrain Cloud
+    </h2>
+    <p class="mt-4 max-w-xl mx-auto text-[var(--color-muted)]">
+      Same OneBrain, hosted. Vault sync across devices, BYOK or Claude Code subscription, mobile capture, team workspaces.
+    </p>
+
+    <div class="mt-8 grid sm:grid-cols-3 gap-3 max-w-3xl mx-auto text-left">
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 p-5">
+        <p class="font-medium">Free</p>
+        <p class="mt-1 text-sm text-[var(--color-muted)]">Local vault, all OSS skills, BYOK.</p>
+      </div>
+      <div class="rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-surface)]/80 p-5">
+        <p class="font-medium">Pro</p>
+        <p class="mt-1 text-sm text-[var(--color-muted)]">Vault sync, mobile, hosted agent.</p>
+      </div>
+      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 p-5">
+        <p class="font-medium">Team</p>
+        <p class="mt-1 text-sm text-[var(--color-muted)]">Shared knowledge, roles, audit log.</p>
+      </div>
+    </div>
+
+    <form class="mt-10 flex flex-col sm:flex-row max-w-md mx-auto gap-2" onsubmit="event.preventDefault(); alert('Waitlist signup coming soon — follow @onebrain_ai for updates.');">
+      <input
+        type="email"
+        required
+        placeholder="you@domain.com"
+        class="flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-accent)]"
+      />
+      <button
+        type="submit"
+        class="px-5 py-3 rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] text-[var(--color-bg)] font-medium hover:opacity-90 transition"
+      >
+        Join waitlist
+      </button>
+    </form>
+  </div>
+</section>

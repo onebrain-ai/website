@@ -1,0 +1,30 @@
+---
+const layers = [
+  { name: "Obsidian", role: "Markdown editor & vault" },
+  { name: "Claude Code", role: "Agent runtime" },
+  { name: "OneBrain plugin", role: "Skills, memory, hooks" },
+  { name: "@onebrain-ai/cli", role: "Indexing, sync, sessions" },
+  { name: "qmd", role: "Local semantic search" },
+];
+---
+
+<section class="mx-auto max-w-6xl px-6 py-20">
+  <div class="text-center max-w-2xl mx-auto">
+    <p class="text-sm uppercase tracking-widest text-[var(--color-accent-2)]">Stack</p>
+    <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
+      Standing on open shoulders.
+    </h2>
+    <p class="mt-4 text-[var(--color-muted)]">
+      OneBrain composes tools you can swap, not a monolith you can't.
+    </p>
+  </div>
+
+  <div class="mt-12 mx-auto max-w-3xl rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 divide-y divide-[var(--color-border)]">
+    {layers.map((l) => (
+      <div class="flex items-center justify-between px-6 py-4">
+        <span class="font-medium tracking-tight">{l.name}</span>
+        <span class="text-sm text-[var(--color-muted)]">{l.role}</span>
+      </div>
+    ))}
+  </div>
+</section>

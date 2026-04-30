@@ -1,0 +1,18 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[var(--color-border)] mt-12">
+  <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[var(--color-muted)]">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-6 h-6 rounded-md bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-2)] grid place-items-center text-xs">🧠</span>
+      <span>OneBrain · onebrain.run</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <a href="https://github.com/onebrain-ai/onebrain" class="hover:text-[var(--color-text)] transition">GitHub</a>
+      <a href="https://github.com/onebrain-ai/onebrain/blob/main/CHANGELOG.md" class="hover:text-[var(--color-text)] transition">Changelog</a>
+      <a href="mailto:hello@onebrain.run" class="hover:text-[var(--color-text)] transition">Contact</a>
+    </div>
+    <p>© {year} OneBrain · MIT</p>
+  </div>
+</footer>

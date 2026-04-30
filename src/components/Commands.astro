@@ -1,0 +1,42 @@
+---
+const commands = [
+  { cmd: "/braindump", desc: "Capture raw thoughts; the agent splits threads and files them." },
+  { cmd: "/capture", desc: "Quick titled note with auto-links to related ideas." },
+  { cmd: "/bookmark", desc: "Save a URL with AI-generated name, description, and category." },
+  { cmd: "/research", desc: "Web research synthesized into a vault note with citations." },
+  { cmd: "/summarize", desc: "URL → deep summary note. Checks bookmarks for cleanup." },
+  { cmd: "/consolidate", desc: "Process inbox into Projects / Areas / Knowledge with one pass." },
+  { cmd: "/connect", desc: "Find unlinked notes that should be connected, propose wikilinks." },
+  { cmd: "/distill", desc: "Aggregate sessions on a topic into a structured digest." },
+  { cmd: "/weekly", desc: "Weekly reflection over what you captured, decided, and shipped." },
+  { cmd: "/daily", desc: "Daily briefing: tasks due + open threads from last session." },
+  { cmd: "/learn", desc: "Teach the agent a fact or behavioral preference, persist to memory." },
+  { cmd: "/doctor", desc: "Vault health check: broken links, orphans, stale memory, plugin config." },
+];
+---
+
+<section id="commands" class="mx-auto max-w-6xl px-6 py-20">
+  <div class="text-center max-w-2xl mx-auto">
+    <p class="text-sm uppercase tracking-widest text-[var(--color-accent-2)]">Commands</p>
+    <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
+      Slash commands for every workflow.
+    </h2>
+    <p class="mt-4 text-[var(--color-muted)]">
+      A growing library of skills — each one is a markdown file you can read, fork, or extend.
+    </p>
+  </div>
+
+  <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    {commands.map((c) => (
+      <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]/40 p-4 hover:border-[var(--color-accent)]/40 transition">
+        <code class="font-mono text-sm text-[var(--color-accent-2)]">{c.cmd}</code>
+        <p class="mt-1.5 text-sm text-[var(--color-muted)]">{c.desc}</p>
+      </div>
+    ))}
+  </div>
+
+  <p class="mt-8 text-center text-sm text-[var(--color-muted)]">
+    20+ commands and growing — see the
+    <a href="https://github.com/onebrain-ai/onebrain" class="underline decoration-dotted hover:text-[var(--color-text)]">full reference</a>.
+  </p>
+</section>
