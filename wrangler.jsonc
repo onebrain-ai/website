@@ -14,7 +14,7 @@
 		{
 			"binding": "WAITLIST_DB",
 			"database_name": "onebrain-waitlist",
-			"database_id": "PASTE_DATABASE_ID_HERE",
+			"database_id": "96446beb-9407-4da8-9770-82946f85ebbd",
 			"migrations_dir": "migrations"
 		}
 	]

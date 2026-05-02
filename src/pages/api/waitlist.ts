@@ -1,13 +1,11 @@
 import type { APIRoute } from 'astro';
+// Astro v6 + @astrojs/cloudflare exposes env via cloudflare:workers (was Astro.locals.runtime.env).
+import { env } from 'cloudflare:workers';
 
 // Run as Cloudflare Worker, not prerendered.
 export const prerender = false;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-interface Env {
-  WAITLIST_DB?: D1Database;
-}
 
 interface D1Database {
   prepare(sql: string): D1PreparedStatement;
@@ -34,7 +32,7 @@ async function hashIp(ip: string): Promise<string> {
     .join('');
 }
 
-export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   let body: { email?: string };
   try {
     body = await request.json();
@@ -47,8 +45,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     return json({ ok: false, error: 'invalid_email' }, 400);
   }
 
-  const env = (locals as { runtime?: { env?: Env } }).runtime?.env;
-  const db = env?.WAITLIST_DB;
+  const db = (env as { WAITLIST_DB?: D1Database }).WAITLIST_DB;
   if (!db) {
     // Graceful fallback for local dev without D1 binding configured yet.
     console.warn('[waitlist] WAITLIST_DB binding not found — email received but not stored:', email);
