@@ -46,12 +46,8 @@
           <div class="nebula-corner nebula-corner-bl"></div>
           <div class="nebula-corner nebula-corner-br"></div>
           <canvas id="nebula-graph" aria-hidden="true"></canvas>
-          <div class="nebula-core">
-            <div class="relative w-20 h-20">
-              <div class="absolute inset-0 bg-[var(--color-accent-2)]/30 blur-xl"></div>
-              <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center text-5xl">🧠</div>
-            </div>
-            <span class="nebula-label">OneBrain</span>
+          <div class="nebula-core" aria-hidden="true">
+            <div class="nebula-breath"></div>
           </div>
           <div class="nebula-readout">
             <span>NODES <strong id="nebula-nodes">000</strong></span>
@@ -283,19 +279,29 @@
     inset: 0;
     z-index: 2;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     pointer-events: none;
   }
-  .nebula-label {
-    margin-top: 16px;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 1rem;
-    letter-spacing: 0.02em;
-    color: #fff;
-    font-weight: 700;
+  /* Breathing orb — slow inhale/exhale that suggests a living core
+     pulse without any logo or label competing with the network graph */
+  .nebula-breath {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(0, 243, 255, 0.55) 0%,
+      rgba(188, 19, 254, 0.22) 45%,
+      transparent 75%);
+    filter: blur(32px);
+    animation: nebula-breathe 5s ease-in-out infinite;
+  }
+  @keyframes nebula-breathe {
+    0%, 100% { transform: scale(0.85); opacity: 0.6; }
+    50%      { transform: scale(1.25); opacity: 1;   }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nebula-breath { animation: none; opacity: 0.7; }
   }
   .nebula-readout {
     position: absolute;
