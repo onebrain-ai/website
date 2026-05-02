@@ -1,50 +1,258 @@
 ---
+const tiers = [
+  { name: 'CORE_OS',  desc: 'Local vault · OSS skills · BYOK',           status: 'AVAILABLE_NOW' },
+  { name: 'PRO_NODE', desc: 'Sync · mobile · hosted runtime',            status: 'RESERVED' },
+  { name: 'NET_MESH', desc: 'Shared intelligence · team mesh',           status: 'RESERVED' },
+];
 ---
 
-<section id="cloud" class="mx-auto max-w-6xl px-6 py-20">
-  <div class="rounded-2xl border border-[var(--color-border)] bg-gradient-to-br from-[var(--color-surface-2)] to-[var(--color-surface)] p-10 md:p-14 text-center overflow-hidden relative">
-    <div class="absolute inset-0 -z-10 opacity-30 bg-[radial-gradient(600px_300px_at_50%_-10%,oklch(0.50_0.20_280),transparent_60%)]"></div>
+<section id="cloud" class="cyber-section reveal" style="--section-accent: #38bdf8;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
 
-    <p class="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-muted)]">
-      <span class="inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-accent-2)] animate-pulse"></span>
-      Coming soon
-    </p>
+  <div class="cyber-section-shell">
+    <div class="grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
 
-    <h2 class="mt-6 text-3xl md:text-5xl font-semibold tracking-tight">
-      OneBrain Cloud
-    </h2>
-    <p class="mt-4 max-w-xl mx-auto text-[var(--color-muted)]">
-      Same OneBrain, hosted. Vault sync across devices, BYOK or Claude Code subscription, mobile capture, team workspaces.
-    </p>
+      <!-- LEFT: heading + tiers -->
+      <div>
+        <header class="cyber-section-head">
+          <div class="cyber-pill">
+            <span class="cyber-pill-dot"></span>
+            <span>NETWORK_EXPANSION</span>
+          </div>
+          <h2 class="cyber-h2">
+            Extend<br/>
+            <span class="cyber-h2-stroke" data-text="Everywhere.">Everywhere.</span>
+          </h2>
+          <p class="cyber-sub">
+            Multi-device sync and hosted agent runtimes. Your unified intelligence travels with you.
+          </p>
+        </header>
 
-    <div class="mt-8 grid sm:grid-cols-3 gap-3 max-w-3xl mx-auto text-left">
-      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 p-5">
-        <p class="font-medium">Free</p>
-        <p class="mt-1 text-sm text-[var(--color-muted)]">Local vault, all OSS skills, BYOK.</p>
+        <div class="tiers">
+          {tiers.map((t, i) => (
+            <div class="cyber-card tier-card">
+              <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="cyber-card-title tier-name">{t.name}</h3>
+              <p class="cyber-card-desc">{t.desc}</p>
+              <span class="tier-status">[ {t.status} ]</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div class="rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-surface)]/80 p-5">
-        <p class="font-medium">Pro</p>
-        <p class="mt-1 text-sm text-[var(--color-muted)]">Vault sync, mobile, hosted agent.</p>
+
+      <!-- RIGHT: signup console -->
+      <div class="waitlist-shell">
+        <div class="waitlist-frame waitlist-frame-tl"></div>
+        <div class="waitlist-frame waitlist-frame-tr"></div>
+        <div class="waitlist-frame waitlist-frame-bl"></div>
+        <div class="waitlist-frame waitlist-frame-br"></div>
+
+        <div class="waitlist-head">
+          <span class="waitlist-rec-dot"></span>
+          <span>WAITLIST :: ACCEPTING_PAIRINGS</span>
+        </div>
+
+        <form id="waitlist-form" class="waitlist-form">
+          <label class="waitlist-label">
+            <span>NEURAL_ID // EMAIL</span>
+            <input
+              type="email"
+              required
+              placeholder="operator@onebrain.run"
+              class="waitlist-input"
+              autocomplete="email"
+            />
+          </label>
+
+          <button type="submit" class="waitlist-btn">
+            <span>REQUEST_ACCESS</span>
+            <span class="waitlist-btn-arrow">→</span>
+          </button>
+        </form>
+
+        <div
+          id="waitlist-banner"
+          role="status"
+          aria-live="polite"
+          class="waitlist-banner"
+        >
+          <span class="waitlist-banner-arrow">→</span>
+          Waitlist coming soon. Follow
+          <a href="https://x.com/onebrain_run" target="_blank" rel="noopener noreferrer" class="waitlist-link">@onebrain_run</a>
+          for the launch ping.
+        </div>
+
+        <p class="waitlist-foot">
+          // join the network · early operators get priority pairing
+        </p>
       </div>
-      <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 p-5">
-        <p class="font-medium">Team</p>
-        <p class="mt-1 text-sm text-[var(--color-muted)]">Shared knowledge, roles, audit log.</p>
-      </div>
+
     </div>
-
-    <form class="mt-10 flex flex-col sm:flex-row max-w-md mx-auto gap-2" onsubmit="event.preventDefault(); alert('Waitlist signup coming soon — follow @onebrain_ai for updates.');">
-      <input
-        type="email"
-        required
-        placeholder="you@domain.com"
-        class="flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-accent)]"
-      />
-      <button
-        type="submit"
-        class="px-5 py-3 rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] text-[var(--color-bg)] font-medium hover:opacity-90 transition"
-      >
-        Join waitlist
-      </button>
-    </form>
   </div>
 </section>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById('waitlist-form');
+    const banner = document.getElementById('waitlist-banner');
+    if (!form || !banner) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      banner.classList.add('show');
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  })();
+</script>
+
+<style>
+  .tiers {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .tier-card {
+    padding: 1rem 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 14px;
+    align-items: baseline;
+  }
+  .tier-card .cyber-card-desc { grid-column: 1 / -1; margin-top: 0; }
+  .tier-name { letter-spacing: 0.06em; font-size: 0.95rem; }
+  .tier-status {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--section-accent);
+    justify-self: end;
+  }
+
+  /* Waitlist console */
+  .waitlist-shell {
+    position: relative;
+    padding: 2rem 2rem 1.6rem;
+    background: rgba(8, 8, 14, 0.55);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    backdrop-filter: blur(20px);
+  }
+  .waitlist-frame {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #00f3ff;
+  }
+  .waitlist-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
+  .waitlist-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
+  .waitlist-frame-bl { bottom: -3px; left: -3px;    border-right: 0; border-top: 0; }
+  .waitlist-frame-br { bottom: -3px; right: -3px;   border-left: 0;  border-top: 0; }
+
+  .waitlist-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #38bdf8;
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+  .waitlist-rec-dot {
+    width: 6px;
+    height: 6px;
+    background: #38bdf8;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #38bdf8;
+    animation: cyber-pulse 1.5s ease-in-out infinite;
+  }
+
+  .waitlist-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .waitlist-label {
+    display: block;
+    font-family: var(--font-mono);
+  }
+  .waitlist-label > span {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .waitlist-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: #fff;
+    letter-spacing: 0.02em;
+    transition: border-color 0.25s ease;
+  }
+  .waitlist-input:focus {
+    outline: none;
+    border-color: #38bdf8;
+  }
+  .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.22); }
+
+  .waitlist-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 24px;
+    background: #38bdf8;
+    color: #050507;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    border: 1px solid #38bdf8;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+  }
+  .waitlist-btn:hover {
+    background: #fff;
+    color: #38bdf8;
+    box-shadow: 0 0 50px rgba(56, 189, 248, 0.55);
+  }
+  .waitlist-btn-arrow { transition: transform 0.3s ease; }
+  .waitlist-btn:hover .waitlist-btn-arrow { transform: translateX(4px); }
+
+  .waitlist-banner {
+    display: none;
+    margin-top: 1rem;
+    padding: 12px 16px;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    background: rgba(56, 189, 248, 0.06);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.6;
+    color: #7dd3fc;
+    letter-spacing: 0.04em;
+  }
+  .waitlist-banner.show { display: block; }
+  .waitlist-banner-arrow { color: #38bdf8; margin-right: 6px; }
+  .waitlist-link { color: #fff; text-decoration: underline; }
+  .waitlist-link:hover { color: #38bdf8; }
+
+  .waitlist-foot {
+    margin-top: 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: lowercase;
+    font-style: italic;
+  }
+</style>

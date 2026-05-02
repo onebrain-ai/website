@@ -1,47 +1,978 @@
 ---
 ---
 
-<section class="relative overflow-hidden">
-  <div class="mx-auto max-w-6xl px-6 pt-24 pb-20 text-center">
-    <p class="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/60 px-3 py-1 text-xs text-[var(--color-muted)]">
-      <span class="inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
-      v2.2.2 — open source, MIT licensed
-    </p>
+<section class="hero" id="top">
+  <!-- BACKGROUND LAYERS -->
+  <div class="hero-grid" aria-hidden="true"></div>
+  <canvas id="hero-particles" aria-hidden="true"></canvas>
+  <div class="hero-orb hero-orb-magenta" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb-cyan" aria-hidden="true"></div>
+  <div class="hero-scanlines" aria-hidden="true"></div>
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="hero-vignette" aria-hidden="true"></div>
 
-    <h1 class="mt-6 text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05]">
-      Your second brain,
-      <span class="block bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] bg-clip-text text-transparent">
-        powered by Claude Code.
-      </span>
-    </h1>
-
-    <p class="mt-6 mx-auto max-w-2xl text-lg text-[var(--color-muted)]">
-      OneBrain is a personal AI operating system that lives inside your Obsidian vault.
-      Capture thoughts, synthesize knowledge, and let an agent work alongside you — all in plain markdown.
-    </p>
-
-    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <a
-        href="https://github.com/onebrain-ai/onebrain#install"
-        class="px-5 py-3 rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] text-[var(--color-bg)] font-medium hover:opacity-90 transition"
-      >
-        Get started — free
-      </a>
-      <a
-        href="#cloud"
-        class="px-5 py-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface)] transition"
-      >
-        Join Cloud waitlist
-      </a>
-    </div>
-
-    <div class="mt-10 inline-flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 font-mono text-sm">
-      <span class="text-[var(--color-muted)]">$</span>
-      <span>npm install -g <span class="text-[var(--color-accent-2)]">@onebrain-ai/cli</span></span>
-    </div>
-
-    <p class="mt-4 text-xs text-[var(--color-muted)]">
-      Run OneBrain on cloud with <span class="text-[var(--color-text)]">onebrain.run</span> — coming soon.
-    </p>
+  <!-- HUD CORNERS -->
+  <div class="hud hud-tl">
+    <div>SYS//ONEBRAIN.OS</div>
+    <div class="hud-dim">NODE 0x4F2A · v2.2.1</div>
   </div>
+  <div class="hud hud-tr">
+    <div>NETWORK :: <span class="hud-on">ONLINE</span></div>
+    <div class="hud-dim">LAT <span id="hud-lat">12</span>ms · TX <span id="hud-tx">873</span></div>
+  </div>
+  <div class="hud hud-bl">
+    <div>UPTIME <span id="hud-uptime">00:00:00</span></div>
+    <div class="hud-dim">REGION ASIA-SE-1</div>
+  </div>
+  <div class="hud hud-br">
+    <div class="hud-pulse">SCROLL ↓ TO_INITIALIZE</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="hero-shell">
+    <div class="hero-grid-content">
+
+      <!-- LEFT: HEADLINE + CTAS -->
+      <div class="hero-left">
+        <div class="hero-pill reveal">
+          <span class="hero-pill-dot"></span>
+          <span>OPERATOR_CONSOLE :: BOOTED</span>
+          <span class="hero-pill-meta">// 02-MAY-2026</span>
+        </div>
+
+        <h1 class="hero-h1 reveal" style="transition-delay: 100ms;">
+          <span class="hero-word" data-scramble="UNIFIED">UNIFIED</span>
+          <span class="hero-word hero-word-stroke stroke-text" data-text="INTELLIGENCE">INTELLIGENCE</span>
+        </h1>
+
+        <p class="hero-sub reveal" style="transition-delay: 250ms;">
+          Not another second brain. A living intelligence layer where you teach the agent and the agent extends you — both evolving inside your Obsidian vault.
+        </p>
+
+        <div class="cmd-box reveal" style="transition-delay: 400ms;">
+          <span class="cmd-prompt">$</span>
+          <code class="cmd-text" id="cmd-text">npm install -g @onebrain-ai/cli</code>
+          <button class="cmd-copy" id="cmd-copy" type="button" aria-label="Copy install command">
+            <svg class="cmd-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="1"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <svg class="cmd-copy-check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span class="cmd-copy-label">COPY</span>
+          </button>
+        </div>
+
+        <div class="cta-row reveal" style="transition-delay: 550ms;">
+          <a href="https://github.com/onebrain-ai/onebrain#installation" class="btn-cyber btn-cyber-primary">
+            <span>INITIALIZE_</span>
+            <span class="btn-cyber-arrow">→</span>
+          </a>
+          <a href="https://github.com/onebrain-ai/onebrain" target="_blank" rel="noopener noreferrer" class="btn-cyber btn-cyber-ghost">
+            <span>VIEW_SOURCE</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M7 17L17 7M9 7h8v8"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: OPERATOR CONSOLE -->
+      <div class="hero-right reveal" style="transition-delay: 350ms;">
+        <div class="op-console">
+          <div class="op-frame-tl"></div>
+          <div class="op-frame-tr"></div>
+          <div class="op-frame-bl"></div>
+          <div class="op-frame-br"></div>
+
+          <div class="op-chrome">
+            <div class="op-dots">
+              <span class="op-dot op-dot-r"></span>
+              <span class="op-dot op-dot-y"></span>
+              <span class="op-dot op-dot-g"></span>
+            </div>
+            <div class="op-title">~/onebrain :: agent_loop_active</div>
+            <div class="op-rec"><span class="op-rec-dot"></span>REC</div>
+          </div>
+
+          <div class="op-body" id="op-body" aria-hidden="true"></div>
+
+          <div class="op-status">
+            <div class="op-stat"><span>MEM</span><strong>warm</strong></div>
+            <div class="op-stat"><span>INBOX</span><strong>7</strong></div>
+            <div class="op-stat"><span>TASKS</span><strong>2 due</strong></div>
+            <div class="op-stat"><span>VAULT</span><strong>369 docs</strong></div>
+          </div>
+        </div>
+
+        <div class="op-caption">
+          <span>// LIVE_FEED</span>
+          <span class="op-caption-dim">agent telemetry · sync 4s</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script is:inline>
+    (function () {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // 1. Particle field
+      (function () {
+        const canvas = document.getElementById('hero-particles');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w, h, dpr, particles = [];
+        function init() {
+          dpr = window.devicePixelRatio || 1;
+          w = canvas.parentElement.clientWidth;
+          h = canvas.parentElement.clientHeight;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.scale(dpr, dpr);
+          canvas.style.width = w + 'px';
+          canvas.style.height = h + 'px';
+          const count = Math.min(140, Math.floor((w * h) / 11000));
+          particles = [];
+          for (let i = 0; i < count; i++) {
+            const roll = Math.random();
+            particles.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.18,
+              vy: (Math.random() - 0.5) * 0.18,
+              r: Math.random() * 1.3 + 0.3,
+              c: roll > 0.88 ? '#ff2d92' : roll > 0.55 ? '#00f3ff' : '#ffffff',
+              a: Math.random() * 0.45 + 0.12,
+            });
+          }
+        }
+        function draw() {
+          ctx.clearRect(0, 0, w, h);
+          for (const p of particles) {
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > w) p.vx *= -1;
+            if (p.y < 0 || p.y > h) p.vy *= -1;
+            ctx.globalAlpha = p.a;
+            ctx.fillStyle = p.c;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          if (!reduced) requestAnimationFrame(draw);
+        }
+        window.addEventListener('resize', init);
+        init();
+        draw();
+      })();
+
+      // 2. Headline motion — UNIFIED periodic re-scramble + INTELLIGENCE neon glitch.
+      // Two effects on different cadences so the eye never sees a fixed beat.
+      (function () {
+        const CHARS = '!<>-_/[]{}=+*^?#01ABCDEFXZ';
+        function scramble(el, target, duration) {
+          let frame = 0;
+          const total = Math.round(duration / 16);
+          const reveal = target.split('').map((_, i) => Math.floor(total * 0.35) + i * 2);
+          function step() {
+            let out = '';
+            for (let i = 0; i < target.length; i++) {
+              if (target[i] === ' ') { out += ' '; continue; }
+              if (frame >= reveal[i]) out += target[i];
+              else out += CHARS[Math.floor(Math.random() * CHARS.length)];
+            }
+            el.textContent = out;
+            frame++;
+            if (frame < total + target.length) requestAnimationFrame(step);
+            else el.textContent = target;
+          }
+          step();
+        }
+        if (reduced) return;
+
+        // UNIFIED — initial scramble + rare loop (every 12-20s).
+        document.querySelectorAll('[data-scramble]').forEach((el) => {
+          const t = el.dataset.scramble;
+          setTimeout(() => scramble(el, t, 1100), 280);
+          function loop() {
+            scramble(el, t, 600);
+            setTimeout(loop, 12000 + Math.random() * 8000);
+          }
+          setTimeout(loop, 12000 + Math.random() * 6000);
+        });
+
+        // INTELLIGENCE — neon glitch every 5-9s, ~300ms each fire.
+        const stroke = document.querySelector('.hero-word-stroke');
+        if (stroke) {
+          function fire() {
+            stroke.classList.add('glitch');
+            setTimeout(() => stroke.classList.remove('glitch'), 320);
+            setTimeout(fire, 5000 + Math.random() * 4000);
+          }
+          setTimeout(fire, 2500);
+        }
+      })();
+
+      // 3. Operator console — demo OneBrain skills in action.
+      // Each scenario shows a real user → AI interaction so visitors instantly grok the product.
+      (function () {
+        const body = document.getElementById('op-body');
+        if (!body) return;
+
+        const scenarios = [
+          {
+            prompt: '$', cmd: '/braindump',
+            arg: '"cyberpunk redesign — magenta accent, big visual..."',
+            results: [
+              'captured 6 thoughts · extracted 3 tasks',
+              'linked → [[Website Redesign]] [[Design Refs]]',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/bookmark',
+            arg: 'https://anthropic.com/news/claude-4-7',
+            results: [
+              'named "Claude 4.7 release notes"',
+              'category: ai-tools · saved → Bookmarks.md',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/capture',
+            arg: '"MCP servers ship docs via skills"',
+            results: [
+              '→ 03-knowledge/ai/MCP Skills Pattern.md',
+              'tagged #mcp #skills · linked [[Plugin Dev]]',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/summarize',
+            arg: 'https://blog.langchain.dev/agents-2026',
+            results: [
+              '1,840 words · 4 sections distilled',
+              '→ 04-resources/articles/agents-2026.md',
+            ],
+          },
+          {
+            prompt: 'cron »', cmd: '/daily',
+            arg: 'auto-fire 09:00',
+            results: [
+              '3 tasks due today · 1 overdue',
+              'briefing → telegram channel',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/connect',
+            arg: '"Operator Console"',
+            results: [
+              '7 candidates · 4 strong matches',
+              'added 3 wikilinks → [[OneBrain UI]]',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/distill',
+            arg: '"memory layers"',
+            results: [
+              'aggregated 12 notes from 8 sessions',
+              '→ 03-knowledge/ai/Memory Layers.md',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/doctor',
+            arg: '',
+            results: [
+              'scanned 369 docs · 0 broken links',
+              '2 orphans · 4 stale memory files',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/learn',
+            arg: '"prefer terse responses, no trailing summary"',
+            results: [
+              'saved → memory/feedback_terse.md',
+              'MEMORY-INDEX updated · 36 → 37 entries',
+            ],
+          },
+          {
+            prompt: 'hook »', cmd: 'end-of-session',
+            arg: 'detected',
+            results: [
+              'spawning /wrapup background agent',
+              'session_2843 → 07-logs/2026/05/',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/research',
+            arg: '"agent memory layering 2026"',
+            results: [
+              '6 sources · 14 references collated',
+              '→ 04-resources/research/memory-layers.md',
+            ],
+          },
+          {
+            prompt: '$', cmd: '/reading-notes',
+            arg: '"Designing Data-Intensive Applications"',
+            results: [
+              '4 chapters · 18 progressive notes',
+              '→ 04-resources/books/ddia.md',
+            ],
+          },
+        ];
+
+        function span(cls, value) {
+          const el = document.createElement('span');
+          el.className = cls;
+          el.textContent = value;
+          return el;
+        }
+        function renderResult(parent, str) {
+          // Split on → and [[...]] so we can color them — no innerHTML.
+          const parts = str.split(/(→|\[\[[^\]]+\]\])/g);
+          for (const p of parts) {
+            if (!p) continue;
+            if (p === '→') parent.appendChild(span('op-arrow', '→'));
+            else if (p.startsWith('[[')) parent.appendChild(span('op-link', p));
+            else parent.appendChild(document.createTextNode(p));
+          }
+        }
+
+        // Live time cursor — scenarios appear with monotonically increasing timestamps.
+        let timeCursor = Date.now() - 90000;
+        function nextTime() {
+          timeCursor += 1500 + Math.random() * 6000;
+          const d = new Date(timeCursor);
+          return String(d.getHours()).padStart(2, '0') + ':' +
+                 String(d.getMinutes()).padStart(2, '0') + ':' +
+                 String(d.getSeconds()).padStart(2, '0');
+        }
+
+        // Shuffled order so each visit shows a different sequence.
+        function shuffle(arr) {
+          const a = arr.slice();
+          for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+          return a;
+        }
+        let order = shuffle(scenarios.map((_, i) => i));
+        let oi = 0;
+
+        function pushScenario() {
+          if (oi >= order.length) { order = shuffle(order); oi = 0; }
+          const s = scenarios[order[oi++]];
+
+          const cmdLine = document.createElement('div');
+          cmdLine.className = 'op-line';
+          cmdLine.appendChild(span('op-time', '[' + nextTime() + ']'));
+          cmdLine.appendChild(document.createTextNode(' '));
+          cmdLine.appendChild(span(s.prompt === '$' ? 'op-prompt' : 'op-trigger', s.prompt));
+          cmdLine.appendChild(document.createTextNode(' '));
+          cmdLine.appendChild(span('op-cmd', s.cmd));
+          if (s.arg) {
+            cmdLine.appendChild(document.createTextNode(' '));
+            cmdLine.appendChild(span('op-arg', s.arg));
+          }
+          body.appendChild(cmdLine);
+
+          for (let i = 0; i < s.results.length; i++) {
+            const rLine = document.createElement('div');
+            rLine.className = 'op-line op-line-result';
+            if (i === s.results.length - 1) rLine.classList.add('op-line-end');
+            rLine.appendChild(span('op-ok', '✓'));
+            rLine.appendChild(document.createTextNode(' '));
+            renderResult(rLine, s.results[i]);
+            body.appendChild(rLine);
+          }
+
+          while (body.children.length > 24) body.removeChild(body.firstChild);
+          body.scrollTop = body.scrollHeight;
+        }
+
+        for (let i = 0; i < 4; i++) pushScenario();
+        if (!reduced) setInterval(pushScenario, 2800);
+      })();
+
+      // 4. Clipboard copy
+      (function () {
+        const btn = document.getElementById('cmd-copy');
+        const text = document.getElementById('cmd-text');
+        if (!btn || !text) return;
+        const label = btn.querySelector('.cmd-copy-label');
+        btn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(text.textContent.trim());
+            btn.classList.add('copied');
+            label.textContent = 'COPIED';
+          } catch (e) {
+            label.textContent = 'ERR';
+          }
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            label.textContent = 'COPY';
+          }, 1800);
+        });
+      })();
+
+      // 5. Live HUD telemetry
+      (function () {
+        const uptime = document.getElementById('hud-uptime');
+        const lat = document.getElementById('hud-lat');
+        const tx = document.getElementById('hud-tx');
+        const start = Date.now();
+        function tick() {
+          if (uptime) {
+            const s = Math.floor((Date.now() - start) / 1000);
+            const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+            const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+            const ss = String(s % 60).padStart(2, '0');
+            uptime.textContent = hh + ':' + mm + ':' + ss;
+          }
+        }
+        function jitter() {
+          if (lat) lat.textContent = 9 + Math.floor(Math.random() * 9);
+          if (tx) tx.textContent = 820 + Math.floor(Math.random() * 140);
+        }
+        setInterval(tick, 1000); tick();
+        setInterval(jitter, 1700); jitter();
+      })();
+    })();
+  </script>
 </section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 0%, #0a0a14 0%, #050507 60%, #020204 100%);
+    isolation: isolate;
+  }
+
+  /* ── BACKGROUND LAYERS ────────────────────── */
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+            mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+    z-index: 1;
+  }
+
+  #hero-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(180px);
+    z-index: 0;
+  }
+  .hero-orb-magenta {
+    right: -15%;
+    top: 25%;
+    width: 65vw;
+    height: 65vw;
+    background: rgba(255, 45, 146, 0.08);
+  }
+  .hero-orb-cyan {
+    left: -18%;
+    bottom: 15%;
+    width: 45vw;
+    height: 45vw;
+    background: rgba(0, 243, 255, 0.06);
+  }
+
+  .hero-scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 2px,
+      rgba(255, 255, 255, 0.022) 2px,
+      rgba(255, 255, 255, 0.022) 3px
+    );
+    mix-blend-mode: overlay;
+    opacity: 0.5;
+  }
+
+  .hero-grain {
+    position: absolute;
+    inset: -10%;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 200px 200px;
+    animation: heroGrain 0.6s steps(4) infinite;
+  }
+  @keyframes heroGrain {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(-3%, 2%); }
+    50%  { transform: translate(2%, -1%); }
+    75%  { transform: translate(-1%, -2%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+  }
+
+  /* ── HUD CORNERS ──────────────────────────── */
+
+  .hud {
+    position: absolute;
+    z-index: 8;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+  .hud-tl { top: 80px; left: 32px; }
+  .hud-tr { top: 80px; right: 32px; text-align: right; }
+  .hud-bl { bottom: 32px; left: 32px; }
+  .hud-br { bottom: 32px; right: 32px; text-align: right; }
+  .hud-dim { color: rgba(255, 255, 255, 0.32); }
+  .hud-on { color: #00f3ff; }
+  .hud-pulse { animation: heroPulse 2.4s ease-in-out infinite; }
+  @keyframes heroPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+  }
+
+  /* ── CONTENT SHELL ────────────────────────── */
+
+  .hero-shell {
+    position: relative;
+    z-index: 10;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 9rem 2rem 5rem;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-grid-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    width: 100%;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .hero-shell { padding: 8rem 4rem 5rem; }
+    .hero-grid-content {
+      grid-template-columns: 1.25fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  /* ── LEFT COLUMN ──────────────────────────── */
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    background: rgba(255, 45, 146, 0.04);
+    border: 1px solid rgba(255, 45, 146, 0.3);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #ff2d92;
+    align-self: flex-start;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .hero-pill::before,
+  .hero-pill::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #ff2d92;
+  }
+  .hero-pill::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+  .hero-pill::after  { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+  .hero-pill-dot {
+    width: 6px;
+    height: 6px;
+    background: #ff2d92;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ff2d92;
+    animation: heroPulse 1.5s ease-in-out infinite;
+  }
+  .hero-pill-meta { color: rgba(255, 255, 255, 0.3); }
+
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: clamp(3.2rem, 8.5vw, 8.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+    color: #fff;
+  }
+  .hero-word { display: block; }
+  .hero-word-stroke {
+    color: transparent;
+    -webkit-text-stroke: 2px #ff2d92;
+    text-shadow: 0 0 60px rgba(255, 45, 146, 0.45);
+    position: relative;
+  }
+  .hero-word-stroke::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-stroke: 0;
+    background: linear-gradient(180deg, transparent 65%, rgba(0, 243, 255, 0.18) 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    pointer-events: none;
+  }
+
+  /* Neon glitch — fires occasionally on .glitch toggle.
+     RGB-split via layered text-shadows + small translate shake.
+     ::after gradient inherits the parent transform so layers stay registered. */
+  .hero-word-stroke.glitch {
+    animation: heroGlitch 0.3s steps(5, end);
+  }
+  @keyframes heroGlitch {
+    0% {
+      text-shadow: 0 0 60px rgba(255, 45, 146, 0.45);
+      transform: translate(0, 0);
+    }
+    20% {
+      text-shadow:
+        3px 0 #00f3ff,
+        -3px 0 #ff2d92,
+        0 0 80px rgba(255, 45, 146, 0.65);
+      transform: translate(2px, -1px);
+    }
+    40% {
+      text-shadow:
+        -2px 0 #00f3ff,
+        2px 0 #ff2d92,
+        0 0 80px rgba(255, 45, 146, 0.65);
+      transform: translate(-2px, 1px);
+    }
+    60% {
+      text-shadow:
+        2px 1px #00f3ff,
+        -2px -1px #ff2d92,
+        0 0 70px rgba(255, 45, 146, 0.55);
+      transform: translate(1px, 0);
+    }
+    80% {
+      text-shadow:
+        -1px 0 #00f3ff,
+        1px 0 #ff2d92,
+        0 0 65px rgba(255, 45, 146, 0.5);
+      transform: translate(0, 0);
+    }
+    100% {
+      text-shadow: 0 0 60px rgba(255, 45, 146, 0.45);
+      transform: translate(0, 0);
+    }
+  }
+
+  .hero-sub {
+    margin-top: 32px;
+    max-width: 540px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  /* ── COMMAND BOX ──────────────────────────── */
+
+  .cmd-box {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 14px 14px 22px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 520px;
+    position: relative;
+    font-family: var(--font-mono);
+    transition: border-color 0.25s ease;
+    backdrop-filter: blur(8px);
+  }
+  .cmd-box::before {
+    content: '';
+    position: absolute;
+    top: -1px; bottom: -1px; left: -1px;
+    width: 3px;
+    background: linear-gradient(180deg, #ff2d92, #00f3ff);
+  }
+  .cmd-box:hover { border-color: rgba(0, 243, 255, 0.4); }
+  .cmd-prompt { color: #ff2d92; font-size: 14px; font-weight: 700; }
+  .cmd-text {
+    flex: 1;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.02em;
+    user-select: all;
+    background: none;
+  }
+  .cmd-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.65);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cmd-copy:hover {
+    color: #00f3ff;
+    border-color: #00f3ff;
+    background: rgba(0, 243, 255, 0.05);
+  }
+  .cmd-copy-check { display: none; }
+  .cmd-copy.copied {
+    color: #00f3ff;
+    border-color: #00f3ff;
+    background: rgba(0, 243, 255, 0.08);
+  }
+  .cmd-copy.copied .cmd-copy-icon { display: none; }
+  .cmd-copy.copied .cmd-copy-check { display: block; }
+
+  /* ── CTAs ─────────────────────────────────── */
+
+  .cta-row {
+    display: flex;
+    gap: 18px;
+    margin-top: 44px;
+    flex-wrap: wrap;
+  }
+
+  .btn-cyber {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 30px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    border: 1px solid;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+    clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
+    cursor: pointer;
+  }
+  .btn-cyber-primary {
+    background: #ff2d92;
+    color: #050507;
+    border-color: #ff2d92;
+    box-shadow: 0 0 40px rgba(255, 45, 146, 0.35);
+  }
+  .btn-cyber-primary:hover {
+    background: #fff;
+    color: #ff2d92;
+    box-shadow: 0 0 70px rgba(255, 45, 146, 0.6);
+  }
+  .btn-cyber-ghost {
+    background: rgba(255, 255, 255, 0.02);
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+  .btn-cyber-ghost:hover {
+    border-color: #00f3ff;
+    color: #00f3ff;
+    background: rgba(0, 243, 255, 0.05);
+  }
+  .btn-cyber-arrow { transition: transform 0.3s ease; }
+  .btn-cyber:hover .btn-cyber-arrow { transform: translateX(5px); }
+
+  /* ── OPERATOR CONSOLE (RIGHT) ─────────────── */
+
+  .hero-right { position: relative; }
+
+  .op-console {
+    position: relative;
+    background: rgba(8, 8, 14, 0.88);
+    border: 1px solid rgba(255, 45, 146, 0.22);
+    backdrop-filter: blur(20px);
+    font-family: var(--font-mono);
+    box-shadow:
+      0 0 60px rgba(255, 45, 146, 0.1),
+      0 30px 60px -20px rgba(0, 0, 0, 0.7),
+      inset 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  .op-frame-tl, .op-frame-tr, .op-frame-bl, .op-frame-br {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #00f3ff;
+    z-index: 2;
+  }
+  .op-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
+  .op-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
+  .op-frame-bl { bottom: -3px; left: -3px;    border-right: 0; border-top: 0; }
+  .op-frame-br { bottom: -3px; right: -3px;   border-left: 0;  border-top: 0; }
+
+  .op-chrome {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .op-dots { display: flex; gap: 6px; }
+  .op-dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.7; }
+  .op-dot-r { background: #ff5f57; }
+  .op-dot-y { background: #ffbd2e; }
+  .op-dot-g { background: #28c93f; }
+  .op-title {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .op-rec {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: #ff2d92;
+  }
+  .op-rec-dot {
+    width: 6px;
+    height: 6px;
+    background: #ff2d92;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ff2d92;
+    animation: heroPulse 1.2s ease-in-out infinite;
+  }
+
+  .op-body {
+    height: 320px;
+    overflow: hidden;
+    padding: 18px 20px;
+    font-size: 11.5px;
+    line-height: 1.85;
+    color: rgba(255, 255, 255, 0.78);
+    position: relative;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 100%);
+  }
+  .op-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: opLineIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes opLineIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .op-time { color: rgba(255, 255, 255, 0.3); }
+  .op-prompt { color: #ff2d92; font-weight: 700; }
+  .op-trigger { color: #ffb000; font-weight: 700; letter-spacing: 0.04em; }
+  .op-cmd { color: #00f3ff; font-weight: 700; }
+  .op-arg { color: rgba(255, 255, 255, 0.82); margin-left: 6px; font-style: italic; }
+  .op-arrow { color: #ff2d92; margin: 0 4px; font-weight: 700; }
+  .op-link { color: #00f3ff; }
+  .op-ok { color: #28c93f; margin-right: 8px; }
+  .op-line-result { padding-left: 22px; color: rgba(255, 255, 255, 0.62); }
+  .op-line-end { margin-bottom: 10px; }
+
+  .op-status {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .op-stat {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .op-stat:last-child { border-right: 0; }
+  .op-stat span {
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+  }
+  .op-stat strong {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .op-caption {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #00f3ff;
+  }
+  .op-caption-dim { color: rgba(255, 255, 255, 0.3); }
+
+  /* ── RESPONSIVE ───────────────────────────── */
+
+  @media (max-width: 1023px) {
+    .hud { display: none; }
+    .hero-h1 { font-size: clamp(2.8rem, 12vw, 4.8rem); }
+    .op-body { height: 240px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-grain,
+    .hero-pill-dot,
+    .op-rec-dot,
+    .hud-pulse,
+    .op-line,
+    .hero-word-stroke.glitch { animation: none; }
+  }
+</style>

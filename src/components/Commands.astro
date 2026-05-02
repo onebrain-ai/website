@@ -1,42 +1,266 @@
 ---
 const commands = [
-  { cmd: "/braindump", desc: "Capture raw thoughts; the agent splits threads and files them." },
-  { cmd: "/capture", desc: "Quick titled note with auto-links to related ideas." },
-  { cmd: "/bookmark", desc: "Save a URL with AI-generated name, description, and category." },
-  { cmd: "/research", desc: "Web research synthesized into a vault note with citations." },
-  { cmd: "/summarize", desc: "URL → deep summary note. Checks bookmarks for cleanup." },
-  { cmd: "/consolidate", desc: "Process inbox into Projects / Areas / Knowledge with one pass." },
-  { cmd: "/connect", desc: "Find unlinked notes that should be connected, propose wikilinks." },
-  { cmd: "/distill", desc: "Aggregate sessions on a topic into a structured digest." },
-  { cmd: "/weekly", desc: "Weekly reflection over what you captured, decided, and shipped." },
-  { cmd: "/daily", desc: "Daily briefing: tasks due + open threads from last session." },
-  { cmd: "/learn", desc: "Teach the agent a fact or behavioral preference, persist to memory." },
-  { cmd: "/doctor", desc: "Vault health check: broken links, orphans, stale memory, plugin config." },
+  { cmd: '/braindump',     desc: 'Capture raw thoughts; agent splits threads and files them.',
+    usecase: "You just finished a meeting and have 10 random notes. Use /braindump to feed them all at once; OneBrain will extract tasks and file them into separate project notes automatically." },
+  { cmd: '/capture',       desc: 'Quick titled note with auto-linking to related ideas.',
+    usecase: 'Reading an interesting article? Use /capture to save a thought about it. OneBrain will automatically link it to your existing research notes on the same topic.' },
+  { cmd: '/bookmark',      desc: 'Save a URL with AI-generated name, description, and category.',
+    usecase: 'Found a library on GitHub. /bookmark it to keep your resources organized without manually filling in metadata.' },
+  { cmd: '/research',      desc: 'Web research synthesized into a vault note with citations.',
+    usecase: "Need to understand 'Large World Models'? Run /research. The agent fetches the latest papers and blog posts, then writes a comprehensive report in your vault." },
+  { cmd: '/summarize',     desc: 'URL → deep summary note. Checks bookmarks for cleanup.',
+    usecase: "A long whitepaper you don't have time to read. /summarize it to get the core insights and actionable takeaways instantly." },
+  { cmd: '/consolidate',   desc: 'Process inbox into Projects / Areas / Knowledge with one pass.',
+    usecase: 'Your inbox is full after a week of work. /consolidate reviews every note and moves them to the correct PARA folders.' },
+  { cmd: '/connect',       desc: 'Find unlinked notes that should be connected; propose wikilinks.',
+    usecase: "Building a knowledge base? /connect reveals 'hidden' relationships between notes you wrote months apart, creating a dense neural web." },
+  { cmd: '/distill',       desc: 'Aggregate sessions on a topic into a structured digest.',
+    usecase: "After 5 days of research on a project, /distill synthesizes all session logs into a single 'Source of Truth' knowledge note." },
+  { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
+    usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
+  { cmd: '/daily',         desc: 'Daily briefing: tasks due + open threads from last session.',
+    usecase: "Start your morning with /daily. The agent reminds you what you left unfinished yesterday and highlights today's high-priority tasks." },
+  { cmd: '/learn',         desc: 'Teach the agent a fact or preference; persists to memory.',
+    usecase: "Tell the agent: '/learn I prefer my research reports in bullet points.' It will follow this for all future /research tasks." },
+  { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
+    usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair your entire knowledge system.' },
 ];
 ---
 
-<section id="commands" class="mx-auto max-w-6xl px-6 py-20">
-  <div class="text-center max-w-2xl mx-auto">
-    <p class="text-sm uppercase tracking-widest text-[var(--color-accent-2)]">Commands</p>
-    <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
-      Slash commands for every workflow.
-    </h2>
-    <p class="mt-4 text-[var(--color-muted)]">
-      A growing library of skills — each one is a markdown file you can read, fork, or extend.
-    </p>
-  </div>
+<section id="commands" class="cyber-section reveal" style="--section-accent: #a855f7;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
 
-  <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-    {commands.map((c) => (
-      <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]/40 p-4 hover:border-[var(--color-accent)]/40 transition">
-        <code class="font-mono text-sm text-[var(--color-accent-2)]">{c.cmd}</code>
-        <p class="mt-1.5 text-sm text-[var(--color-muted)]">{c.desc}</p>
+  <div class="cyber-section-shell">
+    <header class="cyber-section-head">
+      <div class="cyber-pill">
+        <span class="cyber-pill-dot"></span>
+        <span>SLASH_COMMANDS_API</span>
       </div>
-    ))}
+      <h2 class="cyber-h2">
+        Skills<br/>
+        <span class="cyber-h2-stroke" data-text="That Think.">That Think.</span>
+      </h2>
+    </header>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+      {commands.map((c) => (
+        <button
+          type="button"
+          class="cyber-card cmd-card skill-trigger"
+          data-cmd={c.cmd}
+          data-desc={c.desc}
+          data-usecase={c.usecase}
+        >
+          <div class="cmd-row">
+            <span class="cmd-prompt">»</span>
+            <code class="cmd-name">{c.cmd}</code>
+          </div>
+          <p class="cyber-card-desc cmd-desc">{c.desc}</p>
+        </button>
+      ))}
+    </div>
   </div>
 
-  <p class="mt-8 text-center text-sm text-[var(--color-muted)]">
-    20+ commands and growing — see the
-    <a href="https://github.com/onebrain-ai/onebrain" class="underline decoration-dotted hover:text-[var(--color-text)]">full reference</a>.
-  </p>
+  <!-- Skill detail modal -->
+  <div id="skill-modal" class="skill-modal" aria-hidden="true">
+    <div class="skill-modal-overlay" id="modal-overlay"></div>
+    <div class="skill-modal-card" id="modal-content">
+      <div class="skill-modal-frame skill-modal-frame-tl"></div>
+      <div class="skill-modal-frame skill-modal-frame-tr"></div>
+      <div class="skill-modal-frame skill-modal-frame-bl"></div>
+      <div class="skill-modal-frame skill-modal-frame-br"></div>
+
+      <div class="skill-modal-head">
+        <div>
+          <span class="skill-modal-eyebrow">SKILL_DETAIL</span>
+          <h3 id="modal-cmd" class="skill-modal-cmd"></h3>
+        </div>
+        <button id="close-modal" type="button" class="skill-modal-close" aria-label="Close">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="skill-modal-section">
+        <span class="skill-modal-eyebrow">ABSTRACT</span>
+        <p id="modal-desc"></p>
+      </div>
+
+      <div class="skill-modal-usecase">
+        <span class="skill-modal-eyebrow">USE_CASE</span>
+        <p id="modal-usecase"></p>
+      </div>
+    </div>
+  </div>
 </section>
+
+<script is:inline>
+  (function () {
+    const modal = document.getElementById('skill-modal');
+    const card = document.getElementById('modal-content');
+    const triggers = document.querySelectorAll('.skill-trigger');
+    const closeBtn = document.getElementById('close-modal');
+    const overlay = document.getElementById('modal-overlay');
+    const mCmd = document.getElementById('modal-cmd');
+    const mDesc = document.getElementById('modal-desc');
+    const mUsecase = document.getElementById('modal-usecase');
+    function open(t) {
+      mCmd.textContent = t.getAttribute('data-cmd');
+      mDesc.textContent = t.getAttribute('data-desc');
+      mUsecase.textContent = t.getAttribute('data-usecase');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    triggers.forEach((t) => t.addEventListener('click', () => open(t)));
+    [closeBtn, overlay].forEach((el) => el && el.addEventListener('click', close));
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
+</script>
+
+<style>
+  .cmd-card {
+    padding: 1.1rem 1.2rem 1.2rem;
+    text-align: left;
+    cursor: pointer;
+    background: rgba(8, 8, 14, 0.5);
+    color: inherit;
+    width: 100%;
+  }
+  .cmd-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cmd-prompt {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--section-accent);
+    opacity: 0.7;
+  }
+  .cmd-name {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--section-accent);
+    letter-spacing: 0.02em;
+  }
+  .cmd-desc {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  /* ── Skill Modal ───────────────────────── */
+  .skill-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .skill-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .skill-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 2, 4, 0.78);
+    backdrop-filter: blur(10px);
+  }
+  .skill-modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 1.5rem;
+    padding: 2rem 2rem 2.2rem;
+    background: rgba(8, 8, 14, 0.92);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 80px rgba(168, 85, 247, 0.15), 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+    transform: scale(0.96);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .skill-modal.open .skill-modal-card { transform: scale(1); }
+
+  .skill-modal-frame {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #00f3ff;
+  }
+  .skill-modal-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
+  .skill-modal-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
+  .skill-modal-frame-bl { bottom: -3px; left: -3px;    border-right: 0; border-top: 0; }
+  .skill-modal-frame-br { bottom: -3px; right: -3px;   border-left: 0;  border-top: 0; }
+
+  .skill-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .skill-modal-eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #a855f7;
+    margin-bottom: 8px;
+  }
+  .skill-modal-cmd {
+    font-family: var(--font-mono);
+    font-style: italic;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+  .skill-modal-close {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .skill-modal-close:hover { color: #00f3ff; border-color: #00f3ff; }
+
+  .skill-modal-section {
+    margin-top: 1.4rem;
+  }
+  .skill-modal-section p {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.65;
+    margin: 0;
+  }
+  .skill-modal-usecase {
+    margin-top: 1.4rem;
+    padding: 1.1rem 1.2rem;
+    border-left: 2px solid #a855f7;
+    background: rgba(168, 85, 247, 0.05);
+  }
+  .skill-modal-usecase p {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.7;
+    font-style: italic;
+    margin: 0;
+  }
+</style>

@@ -1,56 +1,54 @@
 ---
 const features = [
-  {
-    icon: "🧠",
-    title: "Persistent memory",
-    body: "Three-layer memory: identity, lazy-loaded topic files, and session logs. The agent remembers what matters.",
-  },
-  {
-    icon: "📥",
-    title: "Frictionless capture",
-    body: "Braindump, capture, bookmark — pick whichever matches your thought. The agent classifies and links automatically.",
-  },
-  {
-    icon: "🔍",
-    title: "Local semantic search",
-    body: "qmd indexes your vault for hybrid keyword + vector search. Recall a half-remembered idea in seconds.",
-  },
-  {
-    icon: "🔗",
-    title: "Auto-linking",
-    body: "Every new note gets up to 3 wikilinks under a Related section, surfaced from your existing knowledge.",
-  },
-  {
-    icon: "⚡",
-    title: "Skills, not chat",
-    body: "20+ slash commands wrap deep workflows: /research, /distill, /weekly, /consolidate, /doctor. Type, don't prompt.",
-  },
-  {
-    icon: "📂",
-    title: "PARA out of the box",
-    body: "Projects, Areas, Resources, Knowledge, Archive, Logs — opinionated structure with sane defaults you can override.",
-  },
+  { icon: '◉', t: 'Persistent Memory',     d: 'Three layers — who you are, what you taught, what we decided. Across every session.', c: 'MEM_LAYER' },
+  { icon: '↘', t: 'Frictionless Capture',  d: 'Braindump, capture, bookmark — pick whichever matches your thought.',                  c: 'INTAKE_OS' },
+  { icon: '◈', t: 'Semantic Search',       d: 'QMD hybrid keyword + vector search. Recall any idea in seconds.',                       c: 'VEC_MATRIX' },
+  { icon: '⌘', t: 'Auto-Linking',          d: 'Every new note gets wikilinks pulled from your existing knowledge graph.',              c: 'LINK_SYNC' },
+  { icon: '⚡', t: 'Skills System',         d: '20+ slash commands wrap deep workflows like research, distill, and weekly review.',     c: 'SKILL_API' },
+  { icon: '▦', t: 'PARA Native',           d: 'Sane defaults for Projects, Areas, Resources, and Knowledge folders.',                  c: 'FS_STRUCT' },
 ];
 ---
 
-<section id="features" class="mx-auto max-w-6xl px-6 py-20">
-  <div class="text-center max-w-2xl mx-auto">
-    <p class="text-sm uppercase tracking-widest text-[var(--color-accent-2)]">Features</p>
-    <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
-      Built for thinking in markdown.
-    </h2>
-    <p class="mt-4 text-[var(--color-muted)]">
-      Skills, memory, and search — designed to compose with the tools you already use.
-    </p>
-  </div>
+<section id="features" class="cyber-section reveal" style="--section-accent: #00ff9d;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
 
-  <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    {features.map((f) => (
-      <div class="group rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 p-6 hover:bg-[var(--color-surface)] hover:border-[var(--color-accent)]/40 transition">
-        <div class="text-2xl">{f.icon}</div>
-        <h3 class="mt-4 font-medium tracking-tight">{f.title}</h3>
-        <p class="mt-2 text-sm text-[var(--color-muted)] leading-relaxed">{f.body}</p>
+  <div class="cyber-section-shell">
+    <header class="cyber-section-head">
+      <div class="cyber-pill">
+        <span class="cyber-pill-dot"></span>
+        <span>SYSTEM_CAPABILITIES</span>
       </div>
-    ))}
+      <h2 class="cyber-h2">
+        Built for<br/>
+        <span class="cyber-h2-stroke" data-text="Synergetic Thinking.">Synergetic Thinking.</span>
+      </h2>
+      <p class="cyber-sub">
+        OneBrain doesn't just store markdown. Every feature exists to make you and the agent better at each other's job.
+      </p>
+    </header>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {features.map((f) => (
+        <div class="cyber-card feature-card">
+          <span class="cyber-card-meta">{f.c}</span>
+          <div class="feature-icon" aria-hidden="true">{f.icon}</div>
+          <h3 class="cyber-card-title">{f.t}</h3>
+          <p class="cyber-card-desc">{f.d}</p>
+        </div>
+      ))}
+    </div>
   </div>
 </section>
+
+<style>
+  .feature-card { padding: 1.5rem 1.5rem 1.6rem; }
+  .feature-icon {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--section-accent);
+    line-height: 1;
+    margin-bottom: 14px;
+    text-shadow: 0 0 16px var(--section-accent);
+  }
+</style>

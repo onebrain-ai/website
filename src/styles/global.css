@@ -3,29 +3,302 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: "Chakra Petch", "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-bg: oklch(0.14 0.02 270);
-  --color-surface: oklch(0.18 0.02 270);
-  --color-surface-2: oklch(0.22 0.02 270);
-  --color-border: oklch(0.28 0.02 270);
-  --color-text: oklch(0.96 0.01 270);
-  --color-muted: oklch(0.70 0.02 270);
-  --color-accent: oklch(0.78 0.18 280);
-  --color-accent-2: oklch(0.82 0.16 200);
+  /* Cyber Palette — Operator Console */
+  --color-bg: #050507;
+  --color-surface: #0a0a12;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text: #f0f0f2;
+  --color-muted: #a1a1aa;
+
+  --color-accent: #bc13fe;
+  --color-accent-2: #00f3ff;
+  --color-accent-3: #ff2d92;
+  --color-accent-4: #ffb000;
 }
 
-html {
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 16px; /* Balanced font size */
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+
+  main > section {
+    scroll-snap-align: start;
+  }
+
+  footer {
+    scroll-snap-align: end;
+  }
+}
+
+/* Background Neural Network */
+#neural-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Navigation */
+.nav-glass {
+  background: rgba(2, 2, 4, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Tech Elements */
+.ui-bracket {
+  position: relative;
+}
+.ui-bracket::before, .ui-bracket::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--color-accent-2);
+  opacity: 0.5;
+}
+.ui-bracket::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.ui-bracket::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+
+.btn-tech {
+  position: relative;
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+  padding: 1.5px;
+}
+.btn-tech-inner {
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
   background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  scroll-behavior: smooth;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
-body {
-  background:
-    radial-gradient(800px 400px at 15% -10%, oklch(0.30 0.16 280 / 0.35), transparent 60%),
-    radial-gradient(700px 380px at 90% 0%, oklch(0.30 0.14 200 / 0.25), transparent 60%),
-    var(--color-bg);
+@keyframes cyber-flicker {
+  0% { opacity: 0.8; }
+  5% { opacity: 0.4; }
+  10% { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+.animate-flicker {
+  animation: cyber-flicker 4s infinite step-end;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Shared utility: text with stroke first, fill second (used by all section headlines) */
+.stroke-text {
+  paint-order: stroke fill;
+}
+
+/* ── Cyberpunk Section System ─────────────────────────
+   Reusable scaffolding so every section feels like one product.
+   Per-section accent flows through `--section-accent` CSS variable. */
+
+@keyframes cyber-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+.cyber-section {
+  position: relative;
   min-height: 100vh;
+  padding: 5rem 1.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  --section-accent: #00f3ff;
+}
+@media (min-width: 1024px) {
+  .cyber-section { padding: 4rem 4rem 3rem; }
+}
+
+.cyber-section-orb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 60vh;
+  transform: translate(-50%, -50%);
+  background: color-mix(in srgb, var(--section-accent) 9%, transparent);
+  filter: blur(180px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cyber-section-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+          mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+}
+
+.cyber-section-shell {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.cyber-section-head {
+  margin-bottom: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .cyber-section-head { margin-bottom: 3rem; }
+}
+
+.cyber-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--section-accent);
+  background: color-mix(in srgb, var(--section-accent) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--section-accent) 30%, transparent);
+  position: relative;
+  margin-bottom: 24px;
+}
+.cyber-pill::before, .cyber-pill::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid currentColor;
+}
+.cyber-pill::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.cyber-pill::after  { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+.cyber-pill-dot {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 12px currentColor;
+  animation: cyber-pulse 1.5s ease-in-out infinite;
+}
+
+.cyber-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5.6vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  color: #fff;
+}
+.cyber-h2-stroke {
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--section-accent);
+  text-shadow: 0 0 50px color-mix(in srgb, var(--section-accent) 35%, transparent);
+}
+
+.cyber-sub {
+  margin-top: 20px;
+  max-width: 640px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.cyber-card {
+  position: relative;
+  background: rgba(8, 8, 14, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.4rem 1.5rem;
+  transition: border-color 0.25s ease, background 0.25s ease;
+  backdrop-filter: blur(6px);
+}
+.cyber-card:hover {
+  border-color: color-mix(in srgb, var(--section-accent) 35%, transparent);
+  background: rgba(8, 8, 14, 0.7);
+}
+.cyber-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; bottom: -1px; left: -1px;
+  width: 2px;
+  background: var(--section-accent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cyber-card:hover::before { opacity: 0.8; }
+
+.cyber-card-meta {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.18);
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+}
+.cyber-card:hover .cyber-card-meta {
+  color: var(--section-accent);
+}
+.cyber-card-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+.cyber-card-desc {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { transition: opacity 0.4s ease; transform: none; }
+  .animate-flicker { animation: none; }
 }

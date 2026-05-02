@@ -1,30 +1,119 @@
 ---
 const layers = [
-  { name: "Obsidian", role: "Markdown editor & vault" },
-  { name: "Claude Code", role: "Agent runtime" },
-  { name: "OneBrain plugin", role: "Skills, memory, hooks" },
-  { name: "@onebrain-ai/cli", role: "Indexing, sync, sessions" },
-  { name: "qmd", role: "Local semantic search" },
+  { name: 'OBSIDIAN',      role: 'COGNITIVE_INTERFACE', desc: 'Local-first markdown environment. Your single source of truth.' },
+  { name: 'CLAUDE_CODE',   role: 'NEURAL_ENGINE',       desc: 'High-performance agentic runtime for extreme reasoning.' },
+  { name: 'ONEBRAIN_OS',   role: 'LOGIC_LAYER',         desc: 'Unified memory + workflow orchestration layer.' },
+  { name: 'ONEBRAIN_CLI',  role: 'BRIDGE_PROTOCOL',     desc: 'Indexing, sync, and autonomous automation.' },
+  { name: 'QMD_SEARCH',    role: 'SEMANTIC_MATRIX',     desc: 'Local hybrid keyword + vector search engine.' },
 ];
 ---
 
-<section class="mx-auto max-w-6xl px-6 py-20">
-  <div class="text-center max-w-2xl mx-auto">
-    <p class="text-sm uppercase tracking-widest text-[var(--color-accent-2)]">Stack</p>
-    <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
-      Standing on open shoulders.
-    </h2>
-    <p class="mt-4 text-[var(--color-muted)]">
-      OneBrain composes tools you can swap, not a monolith you can't.
-    </p>
-  </div>
+<section id="stack" class="cyber-section reveal" style="--section-accent: #00d4ff;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
 
-  <div class="mt-12 mx-auto max-w-3xl rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 divide-y divide-[var(--color-border)]">
-    {layers.map((l) => (
-      <div class="flex items-center justify-between px-6 py-4">
-        <span class="font-medium tracking-tight">{l.name}</span>
-        <span class="text-sm text-[var(--color-muted)]">{l.role}</span>
+  <div class="cyber-section-shell">
+    <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16 items-center">
+      <header>
+        <div class="cyber-pill">
+          <span class="cyber-pill-dot"></span>
+          <span>SYSTEM_ARCHITECTURE</span>
+        </div>
+        <h2 class="cyber-h2">
+          The Core<br/>
+          <span class="cyber-h2-stroke" data-text="Intelligence Stack.">Intelligence Stack.</span>
+        </h2>
+        <p class="cyber-sub">
+          Five layers that fuse human cognition with agentic execution — every layer open, local, and inspectable.
+        </p>
+      </header>
+
+      <div class="stack-list">
+        {layers.map((l, i) => (
+          <div class="stack-row">
+            <div class="stack-marker">
+              <span class="stack-num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="stack-dot"></span>
+            </div>
+            <div class="stack-body">
+              <div class="stack-name">{l.name}</div>
+              <div class="stack-role">{l.role}</div>
+              <div class="stack-desc">{l.desc}</div>
+            </div>
+          </div>
+        ))}
       </div>
-    ))}
+    </div>
   </div>
 </section>
+
+<style>
+  .stack-list {
+    position: relative;
+    padding-left: 18px;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .stack-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 18px;
+    padding: 12px 0;
+    align-items: start;
+  }
+  .stack-row + .stack-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .stack-marker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stack-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--section-accent);
+    letter-spacing: 0.05em;
+  }
+  .stack-dot {
+    position: absolute;
+    left: -23px;
+    top: 22px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  .stack-row:hover .stack-dot {
+    background: var(--section-accent);
+    border-color: var(--section-accent);
+    box-shadow: 0 0 16px var(--section-accent);
+  }
+  .stack-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: #fff;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .stack-role {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--section-accent);
+    text-transform: uppercase;
+  }
+  .stack-desc {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.55);
+  }
+</style>

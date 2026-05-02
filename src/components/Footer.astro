@@ -2,17 +2,289 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-[var(--color-border)] mt-12">
-  <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[var(--color-muted)]">
-    <div class="flex items-center gap-2">
-      <span class="inline-block w-6 h-6 rounded-md bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-2)] grid place-items-center text-xs">🧠</span>
-      <span>OneBrain · onebrain.run</span>
+<footer class="footer" id="footer">
+  <div class="footer-grid-bg" aria-hidden="true"></div>
+  <div class="footer-orb" aria-hidden="true"></div>
+
+  <div class="footer-shell">
+
+    <!-- Brand console -->
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">
+        <img src="/logo.svg" alt="OneBrain" />
+        <div class="footer-logo-text">
+          <span class="footer-logo-name">OneBrain</span>
+          <span class="footer-logo-tag">UNIFIED_INTELLIGENCE</span>
+        </div>
+      </a>
+
+      <p class="footer-blurb">
+        A unified intelligence where you and your AI agent co-evolve — both growing inside your Obsidian vault.
+      </p>
+
+      <div class="footer-status">
+        <span class="footer-status-dot"></span>
+        <span>NETWORK :: <strong>OPERATIONAL</strong></span>
+      </div>
     </div>
-    <div class="flex items-center gap-6">
-      <a href="https://github.com/onebrain-ai/onebrain" class="hover:text-[var(--color-text)] transition">GitHub</a>
-      <a href="https://github.com/onebrain-ai/onebrain/blob/main/CHANGELOG.md" class="hover:text-[var(--color-text)] transition">Changelog</a>
-      <a href="mailto:hello@onebrain.run" class="hover:text-[var(--color-text)] transition">Contact</a>
+
+    <!-- Link columns -->
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <div class="footer-col">
+        <h4 class="footer-col-title">PROJECT</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#synergy">Synergy</a></li>
+          <li><a href="#commands">Commands</a></li>
+          <li><a href="#cloud">Cloud</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">SOURCE</h4>
+        <ul>
+          <li><a href="https://github.com/onebrain-ai/onebrain" target="_blank" rel="noopener noreferrer">GitHub <span class="footer-ext">↗</span></a></li>
+          <li><a href="https://github.com/onebrain-ai/onebrain/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog <span class="footer-ext">↗</span></a></li>
+          <li><a href="https://www.npmjs.com/package/@onebrain-ai/cli" target="_blank" rel="noopener noreferrer">NPM Registry <span class="footer-ext">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">SOCIAL</h4>
+        <ul>
+          <li><a href="https://x.com/onebrain_run" target="_blank" rel="noopener noreferrer">X / Twitter <span class="footer-ext">↗</span></a></li>
+          <li><a href="mailto:hello@onebrain.run">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- Bottom HUD bar -->
+  <div class="footer-hud">
+    <div class="footer-hud-inner">
+      <span class="footer-hud-rec"><span class="footer-hud-rec-dot"></span>REC</span>
+      <span class="footer-hud-meta">© {year} ONEBRAIN_SYSTEM · LICENSE: MIT</span>
+      <span class="footer-hud-meta">REGION_GLOBAL · v2.2.2_STABLE</span>
     </div>
-    <p>© {year} OneBrain · MIT</p>
   </div>
 </footer>
+
+<style>
+  .footer {
+    position: relative;
+    margin-top: 4rem;
+    padding-top: 4rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(5, 5, 7, 0.6) 30%, #050507 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .footer-grid-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .footer-orb {
+    position: absolute;
+    bottom: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70vw;
+    height: 50vh;
+    background: rgba(255, 45, 146, 0.05);
+    filter: blur(180px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .footer-shell {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  @media (min-width: 768px) {
+    .footer-shell {
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 4rem;
+      padding: 0 4rem 4rem;
+    }
+  }
+
+  /* ── Brand ── */
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+  }
+  .footer-logo img {
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(0 0 16px rgba(255, 45, 146, 0.5));
+  }
+  .footer-logo-text { display: flex; flex-direction: column; line-height: 1; }
+  .footer-logo-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .footer-logo-tag {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: #00f3ff;
+    text-transform: uppercase;
+  }
+  .footer-blurb {
+    max-width: 320px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .footer-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    background: rgba(0, 243, 255, 0.04);
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .footer-status-dot {
+    width: 6px;
+    height: 6px;
+    background: #00f3ff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00f3ff;
+    animation: cyber-pulse 1.5s ease-in-out infinite;
+  }
+  .footer-status strong { color: #00f3ff; font-weight: 700; }
+
+  /* ── Nav columns ── */
+  .footer-nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .footer-col-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0 0 1.2rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+  }
+  .footer-col-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 28px;
+    height: 1px;
+    background: #ff2d92;
+  }
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .footer-col a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .footer-col a:hover { color: #00f3ff; }
+  .footer-ext {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 11px;
+    transition: color 0.2s ease;
+  }
+  .footer-col a:hover .footer-ext { color: #ff2d92; }
+
+  /* ── Bottom HUD bar ── */
+  .footer-hud {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+  }
+  .footer-hud-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 14px 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .footer-hud-inner { padding: 14px 4rem; }
+  }
+  .footer-hud-rec {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #ff2d92;
+    font-weight: 700;
+  }
+  .footer-hud-rec-dot {
+    width: 6px;
+    height: 6px;
+    background: #ff2d92;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ff2d92;
+    animation: cyber-pulse 1.2s ease-in-out infinite;
+  }
+  .footer-hud-meta { color: rgba(255, 255, 255, 0.35); }
+  .footer-hud-meta:last-child { color: rgba(255, 255, 255, 0.5); }
+</style>
