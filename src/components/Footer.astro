@@ -10,11 +10,14 @@ const year = new Date().getFullYear();
 
     <!-- Brand console -->
     <div class="footer-brand">
-      <a href="/" class="footer-logo">
-        <img src="/logo.svg" alt="OneBrain" />
+      <a href="/" class="footer-logo group">
+        <div class="relative w-10 h-10">
+          <div class="absolute inset-0 bg-[var(--color-accent-2)]/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center text-2xl animate-pulse">🧠</div>
+        </div>
         <div class="footer-logo-text">
           <span class="footer-logo-name">OneBrain</span>
-          <span class="footer-logo-tag">UNIFIED_INTELLIGENCE</span>
+          <span class="footer-logo-tag">YOUR_AI_THINKING_PARTNER</span>
         </div>
       </a>
 
@@ -135,11 +138,6 @@ const year = new Date().getFullYear();
     align-items: center;
     gap: 14px;
     text-decoration: none;
-  }
-  .footer-logo img {
-    width: 38px;
-    height: 38px;
-    filter: drop-shadow(0 0 16px rgba(255, 45, 146, 0.5));
   }
   .footer-logo-text { display: flex; flex-direction: column; line-height: 1; }
   .footer-logo-name {

@@ -47,8 +47,11 @@
           <div class="nebula-corner nebula-corner-br"></div>
           <canvas id="nebula-graph" aria-hidden="true"></canvas>
           <div class="nebula-core">
-            <img src="/logo.svg" alt="" aria-hidden="true" />
-            <span class="nebula-label">ONEBRAIN_CORE</span>
+            <div class="relative w-20 h-20">
+              <div class="absolute inset-0 bg-[var(--color-accent-2)]/30 blur-xl"></div>
+              <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center text-5xl">🧠</div>
+            </div>
+            <span class="nebula-label">OneBrain</span>
           </div>
           <div class="nebula-readout">
             <span>NODES <strong id="nebula-nodes">000</strong></span>
@@ -285,16 +288,12 @@
     justify-content: center;
     pointer-events: none;
   }
-  .nebula-core img {
-    width: 84px;
-    height: 84px;
-    filter: drop-shadow(0 0 30px rgba(188, 19, 254, 0.95));
-  }
   .nebula-label {
     margin-top: 16px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.5em;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
     color: #fff;
     font-weight: 700;
   }
