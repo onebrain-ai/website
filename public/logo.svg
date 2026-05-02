@@ -1,0 +1,40 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cyber-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bc13fe" />
+      <stop offset="100%" stop-color="#00f3ff" />
+    </linearGradient>
+    <filter id="neon-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <g filter="url(#neon-glow)">
+    <!-- Base Organic Brain Shape (Outline) -->
+    <path d="M100 45C80 45 60 55 55 85C50 115 65 145 100 155C135 145 150 115 145 85C140 55 120 45 100 45Z" 
+          stroke="url(#cyber-grad)" stroke-width="6" stroke-linecap="round" fill="#030303" />
+    
+    <!-- Central Fissure -->
+    <path d="M100 45V155" stroke="url(#cyber-grad)" stroke-width="2" opacity="0.3" />
+
+    <!-- Electronic Circuit Traces (Left Side) -->
+    <path d="M70 70H85V90" stroke="white" stroke-width="2.5" stroke-linecap="square" />
+    <path d="M60 100H80V125H90" stroke="white" stroke-width="2.5" stroke-linecap="square" />
+    <circle cx="70" cy="70" r="3.5" fill="#bc13fe" />
+    <circle cx="90" cy="125" r="3.5" fill="#00f3ff" />
+
+    <!-- Electronic Circuit Traces (Right Side) -->
+    <path d="M130 80H115V60" stroke="white" stroke-width="2.5" stroke-linecap="square" />
+    <path d="M140 110H120V135" stroke="white" stroke-width="2.5" stroke-linecap="square" />
+    <circle cx="130" cy="80" r="3.5" fill="#00f3ff" />
+    <circle cx="120" cy="135" r="3.5" fill="#bc13fe" />
+    
+    <!-- Neural Synergy Spark (Center) -->
+    <circle cx="100" cy="100" r="6" fill="white" />
+    <circle cx="100" cy="100" r="10" stroke="white" stroke-width="1" opacity="0.5">
+      <animate attributeName="r" values="8;14;8" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+</svg>

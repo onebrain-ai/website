@@ -1,23 +1,327 @@
 ---
 ---
 
-<section class="mx-auto max-w-6xl px-6 py-20">
-  <div class="grid md:grid-cols-2 gap-12 items-start">
-    <div>
-      <p class="text-sm uppercase tracking-widest text-[var(--color-accent-2)]">What is OneBrain?</p>
-      <h2 class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
-        A chief of staff that lives in your vault.
-      </h2>
-    </div>
-    <div class="space-y-4 text-[var(--color-muted)] leading-relaxed">
-      <p>
-        OneBrain is a Claude Code plugin that turns your Obsidian vault into a working memory for an AI agent.
-        It captures your braindumps, organizes notes by PARA, surfaces forgotten threads, and learns how you think over time.
-      </p>
-      <p>
-        Everything lives as plain markdown in your vault — portable, future-proof, and yours.
-        No lock-in, no proprietary database. The agent just reads and writes the files you already own.
-      </p>
+<section id="synergy" class="cyber-section reveal" style="--section-accent: #bc13fe;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
+
+  <div class="cyber-section-shell">
+    <div class="grid lg:grid-cols-[1.3fr_1fr] gap-12 lg:gap-16 items-center">
+
+      <!-- LEFT: Headline + benefit cards -->
+      <div>
+        <header>
+          <div class="cyber-pill">
+            <span class="cyber-pill-dot"></span>
+            <span>ONEBRAIN // SYNERGY</span>
+          </div>
+          <h2 class="cyber-h2">
+            Beyond a<br/>
+            <span class="cyber-h2-stroke" data-text="Second Brain.">Second Brain.</span>
+          </h2>
+          <p class="cyber-sub">
+            Most tools ask you to query an AI. OneBrain co-evolves with you — every preference you teach sharpens the agent, every link it surfaces sharpens you.
+          </p>
+        </header>
+
+        <div class="mt-10 grid sm:grid-cols-2 gap-4">
+          <div class="cyber-card">
+            <span class="cyber-card-meta">01</span>
+            <h3 class="cyber-card-title">HUMAN → AGENT</h3>
+            <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent gets sharper at being yours.</p>
+          </div>
+          <div class="cyber-card">
+            <span class="cyber-card-meta">02</span>
+            <h3 class="cyber-card-title">AGENT → HUMAN</h3>
+            <p class="cyber-card-desc">Captures, classifies, links, and synthesizes the noise of your day — so your attention stays on what only you can do.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Animated knowledge nebula (lg+) -->
+      <div class="hidden lg:block">
+        <div class="nebula-frame">
+          <div class="nebula-corner nebula-corner-tl"></div>
+          <div class="nebula-corner nebula-corner-tr"></div>
+          <div class="nebula-corner nebula-corner-bl"></div>
+          <div class="nebula-corner nebula-corner-br"></div>
+          <canvas id="nebula-graph" aria-hidden="true"></canvas>
+          <div class="nebula-core" aria-hidden="true">
+            <div class="nebula-breath"></div>
+          </div>
+          <div class="nebula-readout">
+            <span>NODES <strong id="nebula-nodes">000</strong></span>
+            <span>EDGES <strong id="nebula-edges">000</strong></span>
+            <span>CYCLE <strong>active</strong></span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
+
+<script is:inline>
+  (function () {
+    const canvas = document.getElementById('nebula-graph');
+    if (!canvas) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ctx = canvas.getContext('2d');
+    const nodesEl = document.getElementById('nebula-nodes');
+    const edgesEl = document.getElementById('nebula-edges');
+    let width, height, dpr;
+    let nodes = [];
+    const maxNodes = 150;          // denser graph
+    const maxDist = 85;            // longer connection range → more cluster overlap
+    const seedCount = 26;          // pre-seed (staggered, not instant)
+    const seedInterval = 60;       // gentler cadence for seed phase
+    const pulseDecay = 0.022;      // ~750ms full decay
+    const idleAfterFull = 1800;    // briefly admire the full cluster
+    const fadeOutDuration = 1800;  // gentle exhale — matches fade rate below
+    const fadeOutRate = 0.013;     // per-frame opacity decay (~1.3s for 1.0→0 at 60fps)
+    let spawnTimeout = null;       // recursive setTimeout handle for live phase
+    const mouse = { x: null, y: null, radius: 110 };
+    let spawnTimer = null;
+    let isResetting = false;
+
+    function init() {
+      dpr = window.devicePixelRatio || 1;
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      nodes = [];
+      if (spawnTimer) clearInterval(spawnTimer);
+      if (spawnTimeout) clearTimeout(spawnTimeout);
+      startSpawning();
+    }
+    // Random delay between live spawns — mimics actual OneBrain use:
+    // mostly normal-paced thoughts, occasional thinking pauses, rare bursts of insight.
+    function randomSpawnDelay() {
+      const r = Math.random();
+      if (r < 0.7) return 450 + Math.random() * 400;   // ~70% normal: 450–850ms
+      if (r < 0.9) return 1100 + Math.random() * 900;  // ~20% pause: 1100–2000ms ("thinking")
+      return 200 + Math.random() * 200;                // ~10% burst: 200–400ms ("insight")
+    }
+    function spawnOne(withPulse) {
+      const cx = width / 2;
+      const cy = height / 2;
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.pow(Math.random(), 0.8) * (width * 0.42);
+      nodes.push({
+        x: cx + Math.cos(angle) * (radius + 18),
+        y: cy + Math.sin(angle) * (radius + 18),
+        angle,
+        orbitSpeed: 0.001 + Math.random() * 0.0028,
+        orbitRadius: radius,
+        size: Math.random() * 1.4 + 1.1,
+        color: Math.random() > 0.6 ? '#bc13fe' : (Math.random() > 0.5 ? '#ff2d92' : '#00f3ff'),
+        opacity: 0,                             // always fade in — never pop
+        targetOpacity: 0.55 + Math.random() * 0.4,
+        pulse: withPulse ? 1 : 0,               // synapse fire — decays over ~750ms
+      });
+    }
+    function startSpawning() {
+      isResetting = false;
+      let count = 0;
+
+      function spawnLive() {
+        if (count >= maxNodes) {
+          // Brief pause for the user to admire the full cluster, then reset → loop
+          spawnTimeout = setTimeout(() => {
+            isResetting = true;
+            spawnTimeout = setTimeout(init, fadeOutDuration);
+          }, idleAfterFull);
+          return;
+        }
+        spawnOne(true);
+        count++;
+        if (nodesEl) nodesEl.textContent = String(count).padStart(3, '0');
+        spawnTimeout = setTimeout(spawnLive, randomSpawnDelay());
+      }
+
+      function spawnSeed() {
+        if (count >= seedCount) {
+          clearInterval(spawnTimer);
+          spawnTimer = null;
+          // Brief pause before live phase begins, then start the random-paced spawning
+          spawnTimeout = setTimeout(spawnLive, 600);
+          return;
+        }
+        spawnOne(false);
+        count++;
+        if (nodesEl) nodesEl.textContent = String(count).padStart(3, '0');
+      }
+
+      // Phase 1 (seed): nodes appear at gentle constant cadence — graph waking up
+      // Phase 2 (live): each new node fires synapses, with random timing — knowledge arriving naturally
+      spawnTimer = setInterval(spawnSeed, seedInterval);
+    }
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      const cx = width / 2;
+      const cy = height / 2;
+      let edgeCount = 0;
+
+      // Edges first — flashing layer driven by node pulses (max of either endpoint).
+      // Base edge: soft cool-white network (Obsidian graph vibe) so clusters stay readable at rest.
+      // Flash: bright white synapse fire, fades back into the cluster.
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dsq = dx * dx + dy * dy;
+          if (dsq < maxDist * maxDist) {
+            edgeCount++;
+            const d = Math.sqrt(dsq);
+            const proximity = 1 - d / maxDist;
+            const baseAlpha = proximity * 0.5 * a.opacity;
+            const pulse = Math.max(a.pulse, b.pulse);
+            const flashAlpha = baseAlpha + pulse * proximity * 0.55;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = pulse > 0.35 ? '#ffffff' : 'rgba(225, 235, 255, 1)';
+            ctx.lineWidth = 0.85 + pulse * 1.1;
+            ctx.globalAlpha = Math.min(0.95, flashAlpha);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Nodes + halo + decay
+      for (const n of nodes) {
+        if (!isResetting && n.opacity < n.targetOpacity) n.opacity += 0.04;
+        if (isResetting && n.opacity > 0) n.opacity -= fadeOutRate;
+        if (n.opacity < 0) n.opacity = 0;
+        if (n.pulse > 0) {
+          n.pulse -= pulseDecay;
+          if (n.pulse < 0) n.pulse = 0;
+        }
+        n.angle += n.orbitSpeed;
+        const tx = cx + Math.cos(n.angle) * n.orbitRadius;
+        const ty = cy + Math.sin(n.angle) * n.orbitRadius;
+        n.x += (tx - n.x) * 0.1;
+        n.y += (ty - n.y) * 0.1;
+        if (mouse.x !== null) {
+          const mdx = n.x - mouse.x;
+          const mdy = n.y - mouse.y;
+          const md = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (md < mouse.radius) {
+            const f = (mouse.radius - md) / mouse.radius;
+            n.x += (mdx / md) * f * 5;
+            n.y += (mdy / md) * f * 5;
+          }
+        }
+        // Halo on freshly fired node — gives the "spark" feel
+        if (n.pulse > 0.15) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.size + n.pulse * 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.globalAlpha = n.pulse * 0.35;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
+        ctx.fillStyle = n.color;
+        ctx.globalAlpha = n.opacity;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      if (edgesEl) edgesEl.textContent = String(edgeCount).padStart(3, '0');
+      if (!reduced) requestAnimationFrame(draw);
+    }
+    window.addEventListener('resize', init);
+    canvas.addEventListener('mousemove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = (e.clientX - r.left) * (width / r.width);
+      mouse.y = (e.clientY - r.top) * (height / r.height);
+    });
+    canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+    init();
+    draw();
+  })();
+</script>
+
+<style>
+  .nebula-frame {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: rgba(8, 8, 14, 0.55);
+    border: 1px solid rgba(188, 19, 254, 0.22);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+  }
+  .nebula-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #00f3ff;
+    z-index: 3;
+  }
+  .nebula-corner-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
+  .nebula-corner-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
+  .nebula-corner-bl { bottom: -3px; left: -3px;    border-right: 0; border-top: 0; }
+  .nebula-corner-br { bottom: -3px; right: -3px;   border-left: 0;  border-top: 0; }
+
+  #nebula-graph {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+  .nebula-core {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  /* Breathing orb — slow inhale/exhale that suggests a living core
+     pulse without any logo or label competing with the network graph */
+  .nebula-breath {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(0, 243, 255, 0.55) 0%,
+      rgba(188, 19, 254, 0.22) 45%,
+      transparent 75%);
+    filter: blur(32px);
+    animation: nebula-breathe 5s ease-in-out infinite;
+  }
+  @keyframes nebula-breathe {
+    0%, 100% { transform: scale(0.85); opacity: 0.6; }
+    50%      { transform: scale(1.25); opacity: 1;   }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nebula-breath { animation: none; opacity: 0.7; }
+  }
+  .nebula-readout {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    right: 14px;
+    z-index: 3;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+  }
+  .nebula-readout strong {
+    color: #fff;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+</style>

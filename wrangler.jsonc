@@ -9,5 +9,13 @@
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "WAITLIST_DB",
+			"database_name": "onebrain-waitlist",
+			"database_id": "96446beb-9407-4da8-9770-82946f85ebbd",
+			"migrations_dir": "migrations"
+		}
+	]
 }

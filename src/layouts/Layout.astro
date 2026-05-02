@@ -4,11 +4,13 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
 const {
-  title = "OneBrain — Personal AI OS for Obsidian",
-  description = "OneBrain is a personal AI operating system that lives inside your Obsidian vault. Capture, synthesize, and retrieve knowledge with Claude Code.",
+  title = "OneBrain — Your AI Thinking Partner",
+  description = "OneBrain — your AI thinking partner. A unified intelligence where human and AI agent co-evolve inside your Obsidian vault, learning from you as you learn from it.",
+  image = "/og.png",
 } = Astro.props;
 ---
 
@@ -27,12 +29,111 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content="https://onebrain.run" />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.url)} />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Neutral background base -->
+    <div class="fixed inset-0 bg-[#020204] -z-[10]"></div>
+    <canvas id="neural-canvas"></canvas>
     <slot />
+
+    <script is:inline>
+      (function() {
+        const canvas = document.getElementById('neural-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d', { alpha: true });
+        let width, height, dpr;
+        let nodes = [];
+        const nodeCount = 50;
+        const maxDistance = 200;
+        const mouse = { x: null, y: null, radius: 150 };
+
+        function init() {
+          dpr = window.devicePixelRatio || 1;
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          ctx.scale(dpr, dpr);
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          nodes = [];
+          for (let i = 0; i < nodeCount; i++) {
+            nodes.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              vx: (Math.random() - 0.5) * 0.4,
+              vy: (Math.random() - 0.5) * 0.4,
+              baseRadius: 1.5
+            });
+          }
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          nodes.forEach(node => {
+            node.x += node.vx;
+            node.y += node.vy;
+            if (mouse.x !== null) {
+              const dx = node.x - mouse.x;
+              const dy = node.y - mouse.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < mouse.radius) {
+                const force = (mouse.radius - dist) / mouse.radius;
+                node.x += (dx / dist) * force * 2;
+                node.y += (dy / dist) * force * 2;
+              }
+            }
+            if (node.x < 0 || node.x > width) node.vx *= -1;
+            if (node.y < 0 || node.y > height) node.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.baseRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.fill();
+          });
+          ctx.lineWidth = 0.5;
+          for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+              const dx = nodes[i].x - nodes[j].x;
+              const dy = nodes[i].y - nodes[j].y;
+              const distSq = dx * dx + dy * dy;
+              if (distSq < maxDistance * maxDistance) {
+                const dist = Math.sqrt(distSq);
+                const opacity = (1 - dist / maxDistance) * 0.1;
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.strokeStyle = 'rgba(255, 255, 255, ' + opacity + ')';
+                ctx.stroke();
+              }
+            }
+          }
+          requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        init();
+        draw();
+      })();
+
+      (function() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+          });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      })();
+    </script>
   </body>
 </html>
