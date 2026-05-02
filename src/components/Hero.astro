@@ -1,4 +1,6 @@
 ---
+import { getCliVersion } from '../lib/version';
+const cliVersion = await getCliVersion();
 ---
 
 <section class="hero" id="top">
@@ -14,7 +16,7 @@
   <!-- HUD CORNERS -->
   <div class="hud hud-tl">
     <div>SYS//ONEBRAIN.OS</div>
-    <div class="hud-dim">NODE 0x4F2A · v2.2.1</div>
+    <div class="hud-dim">NODE 0x4F2A · v{cliVersion}</div>
   </div>
   <div class="hud hud-tr">
     <div>NETWORK :: <span class="hud-on">ONLINE</span></div>

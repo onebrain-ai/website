@@ -1,5 +1,7 @@
 ---
+import { getCliVersion } from '../lib/version';
 const year = new Date().getFullYear();
+const cliVersion = await getCliVersion();
 ---
 
 <footer class="footer" id="footer">
@@ -66,7 +68,7 @@ const year = new Date().getFullYear();
     <div class="footer-hud-inner">
       <span class="footer-hud-rec"><span class="footer-hud-rec-dot"></span>REC</span>
       <span class="footer-hud-meta">© {year} ONEBRAIN_SYSTEM · LICENSE: MIT</span>
-      <span class="footer-hud-meta">REGION_GLOBAL · v2.2.2_STABLE</span>
+      <span class="footer-hud-meta">REGION_GLOBAL · v{cliVersion}_STABLE</span>
     </div>
   </div>
 </footer>

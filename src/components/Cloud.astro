@@ -1,8 +1,8 @@
 ---
 const tiers = [
-  { name: 'CORE_OS',  desc: 'Local vault · OSS skills · BYOK',           status: 'AVAILABLE_NOW' },
-  { name: 'PRO_NODE', desc: 'Sync · mobile · hosted runtime',            status: 'RESERVED' },
-  { name: 'NET_MESH', desc: 'Shared intelligence · team mesh',           status: 'RESERVED' },
+  { name: 'FREE', desc: 'Local vault · OSS skills · BYOK',           status: 'AVAILABLE_NOW' },
+  { name: 'PRO',  desc: 'Sync · mobile · hosted runtime',            status: 'RESERVED' },
+  { name: 'TEAM', desc: 'Shared intelligence · team mesh',           status: 'RESERVED' },
 ];
 ---
 
@@ -21,8 +21,8 @@ const tiers = [
             <span>ONEBRAIN // CLOUD</span>
           </div>
           <h2 class="cyber-h2">
-            Extend<br/>
-            <span class="cyber-h2-stroke" data-text="Everywhere.">Everywhere.</span>
+            OneBrain<br/>
+            <span class="cyber-h2-stroke" data-text="Cloud.">Cloud.</span>
           </h2>
           <p class="cyber-sub">
             Multi-device sync and hosted agent runtimes. Your unified intelligence travels with you.
@@ -96,11 +96,49 @@ const tiers = [
   (function () {
     const form = document.getElementById('waitlist-form');
     const banner = document.getElementById('waitlist-banner');
-    if (!form || !banner) return;
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
+    const input = form && form.querySelector('input[type="email"]');
+    const button = form && form.querySelector('button[type="submit"]');
+    if (!form || !banner || !input || !button) return;
+
+    function showBanner(state, message) {
+      banner.dataset.state = state;
+      banner.textContent = message;
       banner.classList.add('show');
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!email) return;
+
+      button.disabled = true;
+      const originalLabel = button.textContent;
+      const labelEl = button.querySelector('span');
+      if (labelEl) labelEl.textContent = 'SENDING_';
+
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          showBanner('success', '✓ Got it. You\'re on the list — we\'ll ping you at launch.');
+          form.reset();
+        } else if (data.error === 'invalid_email') {
+          showBanner('error', '✗ That email looks off. Try again.');
+        } else {
+          showBanner('error', '✗ Something went wrong. Try again in a moment.');
+        }
+      } catch {
+        showBanner('error', '✗ Network error. Try again.');
+      } finally {
+        button.disabled = false;
+        if (labelEl) labelEl.textContent = 'REQUEST_ACCESS';
+        else button.textContent = originalLabel;
+      }
     });
   })();
 </script>
@@ -242,9 +280,20 @@ const tiers = [
     letter-spacing: 0.04em;
   }
   .waitlist-banner.show { display: block; }
+  .waitlist-banner[data-state="success"] {
+    border-color: rgba(40, 201, 63, 0.45);
+    background: rgba(40, 201, 63, 0.06);
+    color: #6dd47e;
+  }
+  .waitlist-banner[data-state="error"] {
+    border-color: rgba(255, 95, 87, 0.45);
+    background: rgba(255, 95, 87, 0.06);
+    color: #ff8b85;
+  }
   .waitlist-banner-arrow { color: #38bdf8; margin-right: 6px; }
   .waitlist-link { color: #fff; text-decoration: underline; }
   .waitlist-link:hover { color: #38bdf8; }
+  .waitlist-btn:disabled { opacity: 0.5; cursor: wait; }
 
   .waitlist-foot {
     margin-top: 1.2rem;
