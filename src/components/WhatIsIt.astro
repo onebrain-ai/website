@@ -76,8 +76,9 @@
     const seedCount = 26;          // pre-seed (staggered, not instant)
     const seedInterval = 60;       // gentler cadence for seed phase
     const pulseDecay = 0.022;      // ~750ms full decay
-    const idleAfterFull = 3500;    // brief pause after maxNodes before reset
-    const fadeOutDuration = 700;   // reset fade-out window
+    const idleAfterFull = 1800;    // briefly admire the full cluster
+    const fadeOutDuration = 1800;  // gentle exhale — matches fade rate below
+    const fadeOutRate = 0.013;     // per-frame opacity decay (~1.3s for 1.0→0 at 60fps)
     let spawnTimeout = null;       // recursive setTimeout handle for live phase
     const mouse = { x: null, y: null, radius: 110 };
     let spawnTimer = null;
@@ -194,8 +195,9 @@
 
       // Nodes + halo + decay
       for (const n of nodes) {
-        if (n.opacity < n.targetOpacity) n.opacity += 0.04;
-        if (isResetting && n.opacity > 0) n.opacity -= 0.08;
+        if (!isResetting && n.opacity < n.targetOpacity) n.opacity += 0.04;
+        if (isResetting && n.opacity > 0) n.opacity -= fadeOutRate;
+        if (n.opacity < 0) n.opacity = 0;
         if (n.pulse > 0) {
           n.pulse -= pulseDecay;
           if (n.pulse < 0) n.pulse = 0;
