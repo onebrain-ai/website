@@ -16,7 +16,7 @@ const tiers = [
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
+    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-start">
 
       <!-- LEFT: heading + tiers -->
       <div>
@@ -160,32 +160,50 @@ const tiers = [
 </script>
 
 <style>
+  /* Vertical card style: 3 tiers laid out side-by-side, each card
+     orientates vertically (meta + name → desc → status). On mobile
+     they stack to a single column. */
   .tiers {
     margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   .tier-card {
-    padding: 1rem 1.2rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px 14px;
-    align-items: baseline;
+    padding: 1.25rem 1.25rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     text-decoration: none;
     color: inherit;
+    min-height: 170px;
+    position: relative;
   }
-  .tier-card .cyber-card-desc { grid-column: 1 / -1; margin-top: 0; }
-  .tier-name { letter-spacing: 0.06em; font-size: 0.95rem; }
+  .tier-card .cyber-card-meta {
+    position: absolute;
+    top: 0.85rem;
+    right: 1rem;
+  }
+  .tier-card .cyber-card-desc { margin-top: 0; }
+  .tier-name {
+    letter-spacing: 0.08em;
+    font-size: 1.05rem;
+    margin: 0;
+  }
   .tier-status {
+    margin-top: auto;
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.3em;
     color: var(--section-accent);
-    justify-self: end;
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   /* ── FREE: live, clickable, brand-glow border ── */
@@ -213,7 +231,7 @@ const tiers = [
     box-shadow: 0 0 12px var(--section-accent);
   }
   a.tier-card.tier-card-live:hover {
-    transform: translateX(2px);
+    transform: translateY(-2px);
     border-color: var(--section-accent);
     box-shadow:
       0 0 0 1px var(--section-accent),
