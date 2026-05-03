@@ -201,6 +201,30 @@
   animation: warp-blackout 1.7s ease forwards;
 }
 
+/* Subtle brand mark sitting at the centre of the blackout so the held
+   moment reads as a deliberate hand-off between sections rather than a
+   void. Inherits the blackout's opacity animation — appears as the page
+   clears, fades out as the new section's boot scanline reveals it. */
+.warp-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  opacity: 0.5;
+}
+.warp-mark-text {
+  font-family: 'Chakra Petch', sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
 @keyframes warp-sweep-up {
   0%   { opacity: 0;    transform: translateY(100%); }
   18%  { opacity: 0.85; }

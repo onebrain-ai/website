@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Brain from "../components/Brain.astro";
 
 interface Props {
   title?: string;
@@ -76,7 +77,12 @@ const {
          section, then a hash jump teleports to the target. The new section's
          own boot-sequence scanline sweeps down on arrival. -->
     <div id="warp-overlay" class="warp-overlay" aria-hidden="true"></div>
-    <div id="warp-blackout" class="warp-blackout" aria-hidden="true"></div>
+    <div id="warp-blackout" class="warp-blackout" aria-hidden="true">
+      <div class="warp-mark">
+        <Brain size={64} />
+        <span class="warp-mark-text">OneBrain</span>
+      </div>
+    </div>
 
     <slot />
 
