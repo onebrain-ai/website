@@ -18,16 +18,21 @@ const beats = [
 ];
 
 // Hub-and-spokes map of where the agent dispatches FROM the vault.
-// Each entry includes label-anchor hint so the SVG text doesn't run
-// off the diagram edges or collide with the centre core.
+// Each entry includes:
+//  - label-anchor hint so SVG text doesn't run off the diagram edge
+//  - duration + inbound flag so each particle has its own pace
+//    (varied 2.6–4.6s) and direction. inbound=true → data flows
+//    outer→centre (project sending into vault); inbound=false →
+//    data flows centre→outer (vault dispatching to project).
 const dispatches = [
-  { angle: -90, label: 'CLI / REPO',    anchor: 'middle' },
-  { angle: -40, label: 'WEBSITE',       anchor: 'start'  },
-  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start'  },
-  { angle:  40, label: 'AGENT MEMORY',  anchor: 'start'  },
-  { angle:  90, label: 'PROJECT NOTES', anchor: 'middle' },
-  { angle: 140, label: 'RESEARCH',      anchor: 'end'    },
-  { angle: 180, label: 'COMMS',         anchor: 'end'    },
+  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 3.4, inbound: false },
+  { angle: -52, label: 'WEBSITE',       anchor: 'start',  duration: 2.8, inbound: true  },
+  { angle: -16, label: 'CLOUD INFRA',   anchor: 'start',  duration: 4.2, inbound: false },
+  { angle:  22, label: 'AGENT MEMORY',  anchor: 'start',  duration: 3.0, inbound: true  },
+  { angle:  62, label: 'OFFICE DOCS',   anchor: 'start',  duration: 3.8, inbound: false },
+  { angle: 110, label: 'PROJECT NOTES', anchor: 'middle', duration: 2.6, inbound: true  },
+  { angle: 152, label: 'RESEARCH',      anchor: 'end',    duration: 4.6, inbound: false },
+  { angle: 200, label: 'COMMS',         anchor: 'end',    duration: 3.2, inbound: true  },
 ];
 ---
 
@@ -80,21 +85,24 @@ const dispatches = [
             );
           })}
 
-          <!-- Data-flow particles — one per spoke, staggered. CSS
-               --tx/--ty hold each spoke's outer endpoint so a single
-               keyframe animates every particle along its own line. -->
+          <!-- Data-flow particles — one per spoke. Each carries its
+               own duration + direction, so the eight pulses don't
+               sync into a strobe. CSS --tx/--ty hold each spoke's
+               outer endpoint; the .hub-particle-in / -out class
+               picks which keyframe to follow (inbound vs outbound). -->
           {dispatches.map((d, i) => {
             const rad = (d.angle * Math.PI) / 180;
             const tx = Math.cos(rad) * 150;
             const ty = Math.sin(rad) * 150;
-            const delay = (i * 0.45).toFixed(2);
+            // Stagger via prime-ish multiplier so identical durations
+            // don't realign every cycle.
+            const delay = ((i * 0.37) % d.duration).toFixed(2);
+            const dir = d.inbound ? 'hub-particle-in' : 'hub-particle-out';
             return (
               <circle
-                cx="0"
-                cy="0"
                 r="3.5"
-                class="hub-particle"
-                style={`--tx: ${tx.toFixed(1)}px; --ty: ${ty.toFixed(1)}px; animation-delay: ${delay}s;`}
+                class={`hub-particle ${dir}`}
+                style={`--tx: ${tx.toFixed(1)}px; --ty: ${ty.toFixed(1)}px; animation-duration: ${d.duration}s; animation-delay: ${delay}s;`}
               />
             );
           })}
@@ -196,31 +204,49 @@ const dispatches = [
     fill: var(--section-accent);
   }
 
-  /* Data-flow particles. Each particle starts at the centre, travels
-     out to its spoke's outer node, then returns. Opacity fades in/out
-     at the endpoints so the pulse reads as data being dispatched and
-     received rather than a continuous stream. Staggered via per-
-     particle animation-delay (set inline in the SVG). Animation runs
-     only when the section has .active so off-screen workflow doesn't
-     leak paint cost onto scroll-snap glides. */
+  /* Data-flow particles. White dots so they read clearly against
+     the accent-coloured spokes — they're "data packets in transit",
+     not part of the structure. Each particle has its own direction
+     (in or out), duration, and stagger delay (set inline) so the
+     eight pulses feel like asynchronous traffic, not a strobe.
+     Animation gated to .cyber-section.active so off-screen workflow
+     doesn't leak paint cost onto scroll-snap glides. */
   .hub-particle {
-    fill: var(--section-accent);
+    fill: #ffffff;
     opacity: 0;
     will-change: transform, opacity;
   }
-  .cyber-section.active .hub-particle {
-    animation: hub-particle-flow 3.6s ease-in-out infinite;
+  .cyber-section.active .hub-particle-out {
+    animation-name: hub-particle-flow-out;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
-  @keyframes hub-particle-flow {
-    0%   { transform: translate(0, 0);                 opacity: 0;    }
-    8%   {                                             opacity: 1;    }
-    45%  { transform: translate(var(--tx), var(--ty)); opacity: 1;    }
-    55%  { transform: translate(var(--tx), var(--ty)); opacity: 0.45; }
-    92%  {                                             opacity: 1;    }
-    100% { transform: translate(0, 0);                 opacity: 0;    }
+  .cyber-section.active .hub-particle-in {
+    animation-name: hub-particle-flow-in;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  /* Outbound: vault dispatches to project — start at centre,
+     travel to outer node, return. */
+  @keyframes hub-particle-flow-out {
+    0%   { transform: translate(0, 0);                 opacity: 0; }
+    8%   {                                             opacity: 1; }
+    50%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    92%  {                                             opacity: 1; }
+    100% { transform: translate(0, 0);                 opacity: 0; }
+  }
+  /* Inbound: project pushes data to vault — start at outer, travel
+     to centre, return. */
+  @keyframes hub-particle-flow-in {
+    0%   { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    8%   {                                             opacity: 1; }
+    50%  { transform: translate(0, 0);                 opacity: 1; }
+    92%  {                                             opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .cyber-section.active .hub-particle { animation: none; }
+    .cyber-section.active .hub-particle-in,
+    .cyber-section.active .hub-particle-out { animation: none; }
   }
 
   /* ── RIGHT: 3 beats ── */
