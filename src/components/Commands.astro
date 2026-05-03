@@ -1,27 +1,27 @@
 ---
+// 9 signature skills, ordered as a capture → organise → compound journey.
+// Cut from 12: dropped /bookmark (overlaps with /capture), /summarize
+// (overlaps with /research), and /daily (overlaps with /weekly).
 const commands = [
+  // Row 1 — CAPTURE
   { cmd: '/braindump',     desc: 'Capture raw thoughts; agent splits threads and files them.',
     usecase: "You just finished a meeting and have 10 random notes. Use /braindump to feed them all at once; OneBrain will extract tasks and file them into separate project notes automatically." },
   { cmd: '/capture',       desc: 'Quick titled note with auto-linking to related ideas.',
     usecase: 'Reading an interesting article? Use /capture to save a thought about it. OneBrain will automatically link it to your existing research notes on the same topic.' },
-  { cmd: '/bookmark',      desc: 'Save a URL with AI-generated name, description, and category.',
-    usecase: 'Found a library on GitHub. /bookmark it to keep your resources organized without manually filling in metadata.' },
   { cmd: '/research',      desc: 'Web research synthesized into a vault note with citations.',
     usecase: "Need to understand 'Large World Models'? Run /research. The agent fetches the latest papers and blog posts, then writes a comprehensive report in your vault." },
-  { cmd: '/summarize',     desc: 'URL → deep summary note. Checks bookmarks for cleanup.',
-    usecase: "A long whitepaper you don't have time to read. /summarize it to get the core insights and actionable takeaways instantly." },
+  // Row 2 — ORGANISE
   { cmd: '/consolidate',   desc: 'Process inbox into Projects / Areas / Knowledge with one pass.',
     usecase: 'Your inbox is full after a week of work. /consolidate reviews every note and moves them to the correct PARA folders.' },
   { cmd: '/connect',       desc: 'Find unlinked notes that should be connected; propose wikilinks.',
     usecase: "Building a knowledge base? /connect reveals 'hidden' relationships between notes you wrote months apart, creating a dense neural web." },
   { cmd: '/distill',       desc: 'Aggregate sessions on a topic into a structured digest.',
     usecase: "After 5 days of research on a project, /distill synthesizes all session logs into a single 'Source of Truth' knowledge note." },
-  { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
-    usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
-  { cmd: '/daily',         desc: 'Daily briefing: tasks due + open threads from last session.',
-    usecase: "Start your morning with /daily. The agent reminds you what you left unfinished yesterday and highlights today's high-priority tasks." },
+  // Row 3 — COMPOUND
   { cmd: '/learn',         desc: 'Teach the agent a fact or preference; persists to memory.',
     usecase: "Tell the agent: '/learn I prefer my research reports in bullet points.' It will follow this for all future /research tasks." },
+  { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
+    usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
   { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
     usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair stale confidence scores and broken wikilinks.' },
 ];
@@ -43,7 +43,7 @@ const commands = [
       </h2>
     </header>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {commands.map((c) => (
         <button
           type="button"
