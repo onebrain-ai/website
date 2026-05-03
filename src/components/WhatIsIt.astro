@@ -73,6 +73,16 @@
     let nodes = [];
     const maxNodes = 150;          // denser graph
     const maxDist = 85;            // longer connection range → more cluster overlap
+    // Mirror the six section accents — the synergy nebula reads as a snapshot
+    // of every section's identity merging together.
+    const SECTION_PALETTE = [
+      '#00ff9d', // features (green)
+      '#ff2d92', // synergy  (magenta)
+      '#ffb000', // how      (amber)
+      '#d946ef', // commands (fuchsia)
+      '#c8ff00', // stack    (chartreuse)
+      '#00bfff', // cloud    (sky)
+    ];
     const seedCount = 26;          // pre-seed (staggered, not instant)
     const seedInterval = 60;       // gentler cadence for seed phase
     const pulseDecay = 0.022;      // ~750ms full decay
@@ -122,7 +132,9 @@
         orbitSpeed: 0.001 + Math.random() * 0.0028,
         orbitRadius: radius,
         size: Math.random() * 1.4 + 1.1,
-        color: Math.random() > 0.6 ? '#bc13fe' : (Math.random() > 0.5 ? '#ff2d92' : '#00f3ff'),
+        // Random pick from the full section-accent palette — so the synergy
+        // nebula visually echoes every section's identity at once.
+        color: SECTION_PALETTE[Math.floor(Math.random() * SECTION_PALETTE.length)],
         opacity: 0,                             // always fade in — never pop
         targetOpacity: 0.55 + Math.random() * 0.4,
         pulse: withPulse ? 1 : 0,               // synapse fire — decays over ~750ms
