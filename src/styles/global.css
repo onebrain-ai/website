@@ -79,17 +79,10 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: linear-gradient(
-    180deg,
-    #ff2d92 0%,
-    #00ff9d 16.6%,
-    #ff2d92 33.3%,
-    #ffb000 50%,
-    #bc13fe 66.6%,
-    #c8ff00 83.3%,
-    #00bfff 100%
-  );
-  opacity: 0.35;
+  /* Neutral muted track. The colored gradient was bleeding through behind
+     the small grey inactive dots and making them look section-tinted —
+     defeating the 'inactive=grey, active=colored' contrast user wants. */
+  background: rgba(255, 255, 255, 0.08);
 }
 .page-spine-dots {
   position: relative;
@@ -111,11 +104,13 @@
 }
 .page-spine-dots li > span {
   display: block;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Solid muted grey — sits visibly on the dark track without picking up
+     accent colour. Only hover/active swap to the section accent. */
+  background: rgba(160, 160, 175, 0.55);
+  border: 1px solid rgba(160, 160, 175, 0.35);
   transition: all 0.3s ease;
 }
 .page-spine-dots li:hover > span {
