@@ -186,13 +186,22 @@
 .warp-overlay.warp-out::after {
   animation: warp-static 1.4s linear;
 }
-/* During the warp, the page itself collapses to (nearly) black at the
-   midpoint and re-emerges. That's what sells the 'warp through a tunnel'
-   feel — and it incidentally drags the synergy nebula canvas down with
-   the rest of the page so it doesn't look like a layer that's immune to
-   the wipe. */
-body.warping {
-  animation: warp-page-clear 1.4s linear;
+/* Blackout layer — sits above every canvas and below the sweep band, fades
+   to near-opaque black at the warp midpoint to mask the hash jump. Replaces
+   the previous body-level filter animation, which forced Safari to promote
+   the whole viewport to a compositor layer and rasterize a full-page texture
+   per frame (the 2–3s click hang). Opacity-only animation on a fixed layer
+   stays on the GPU. */
+.warp-blackout {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: #000;
+  opacity: 0;
+}
+.warp-blackout.warp-on {
+  animation: warp-blackout 1.4s linear;
 }
 
 @keyframes warp-sweep-up {
@@ -206,22 +215,17 @@ body.warping {
   44% { opacity: 0.6; }
   56% { opacity: 0.4; }
 }
-/* Page collapses to black at midpoint with a chromatic shift on the way
-   in/out — covers the entire viewport (canvases included) so nothing
-   looks 'unaffected' by the warp. */
-@keyframes warp-page-clear {
-  0%   { filter: none; opacity: 1; }
-  35%  { filter: saturate(1.4) hue-rotate(10deg); opacity: 0.7; }
-  48%  { filter: saturate(1.6) hue-rotate(-12deg) brightness(0.6); opacity: 0.05; }
-  52%  { filter: saturate(1.6) hue-rotate(12deg) brightness(0.6); opacity: 0.05; }
-  65%  { filter: saturate(1.3) hue-rotate(8deg); opacity: 0.85; }
-  100% { filter: none; opacity: 1; }
+@keyframes warp-blackout {
+  0%, 100% { opacity: 0; }
+  35%      { opacity: 0.45; }
+  48%, 52% { opacity: 0.95; }
+  65%      { opacity: 0.35; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .warp-overlay.warp-out,
   .warp-overlay.warp-out::after,
-  body.warping { animation: none; }
+  .warp-blackout.warp-on { animation: none; }
 }
 
 /* Background Neural Network */
