@@ -243,6 +243,12 @@
 .warp-mark-brain {
   filter: drop-shadow(0 0 32px rgba(255, 45, 146, 0.45))
           drop-shadow(0 0 70px rgba(0, 243, 255, 0.18));
+}
+/* Gate the breathe animation to .warp-on — without this, the fixed
+   #warp-blackout layer ticks a transform animation forever (its
+   opacity is 0, but the compositor still schedules the animation),
+   leaking paint cost onto every scroll-snap glide. */
+.warp-blackout.warp-on .warp-mark-brain {
   animation: warp-mark-breathe 2.6s ease-in-out infinite;
 }
 .warp-mark-text {
@@ -273,6 +279,9 @@
   border-radius: 50%;
   background: #ff2d92;
   box-shadow: 0 0 8px rgba(255, 45, 146, 0.85);
+}
+/* Same gating as .warp-mark-brain — only blink while the warp is on. */
+.warp-blackout.warp-on .warp-mark-dot {
   animation: warp-mark-dot 0.9s steps(2, jump-none) infinite;
 }
 @keyframes warp-mark-breathe {
@@ -283,8 +292,8 @@
   50% { opacity: 0.25; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .warp-mark-brain,
-  .warp-mark-dot { animation: none; }
+  .warp-blackout.warp-on .warp-mark-brain,
+  .warp-blackout.warp-on .warp-mark-dot { animation: none; }
 }
 
 @keyframes warp-sweep-up {

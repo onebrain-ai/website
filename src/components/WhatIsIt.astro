@@ -318,22 +318,26 @@
     justify-content: center;
     pointer-events: none;
   }
-  /* Breathing orb — slow inhale/exhale that suggests a living core
-     pulse without any logo or label competing with the network graph */
+  /* Breathing orb — soft inhale/exhale behind the network graph. The
+     `filter: blur(32px)` is baked in via a wider radial-gradient so we
+     can drop the runtime CSS filter, and the animation moves to
+     opacity-only — animating transform on a filter:blur surface forces
+     WebKit to re-rasterise the blur kernel every frame, leaking paint
+     cost onto scroll-snap glides. */
   .nebula-breath {
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     background: radial-gradient(circle,
-      rgba(255, 45, 146, 0.55) 0%,
-      rgba(255, 133, 193, 0.22) 45%,
-      transparent 75%);
-    filter: blur(32px);
+      rgba(255, 45, 146, 0.4) 0%,
+      rgba(255, 133, 193, 0.18) 28%,
+      rgba(255, 45, 146, 0.06) 55%,
+      transparent 80%);
     animation: nebula-breathe 5s ease-in-out infinite;
   }
   @keyframes nebula-breathe {
-    0%, 100% { transform: scale(0.85); opacity: 0.6; }
-    50%      { transform: scale(1.25); opacity: 1;   }
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1;    }
   }
   @media (prefers-reduced-motion: reduce) {
     .nebula-breath { animation: none; opacity: 0.7; }
