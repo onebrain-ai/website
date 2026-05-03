@@ -203,6 +203,16 @@
   opacity: 1;
   transform: translateY(0);
 }
+/* Sections opt out of the wrapper-level reveal animation: the transform on
+   the section box breaks scroll-snap (the snap target's visual top drifts
+   from its layout top, so 'scroll up' doesn't latch). The per-element
+   boot sequence below already handles the visual reveal of pill, H2,
+   sub, and content for sections. */
+.cyber-section.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
 
 /* Shared utility: text with stroke first, fill second (used by all section headlines) */
 .stroke-text {
