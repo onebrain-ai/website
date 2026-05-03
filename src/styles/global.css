@@ -151,47 +151,36 @@
    section before a hash jump teleports to the target. The new section's
    own boot-sequence scanline (already wired in cyber-section ::after)
    handles the top → bottom reveal on arrival. */
+/* Single thin band, mirrors the cyber-section boot scanline style but
+   travels bottom → top and is monochrome (warp is a transition between
+   sections — neutral, not section-tinted). Animates transform + opacity
+   only, no TV-static, no chromatic shift — keeps the sweep readable as
+   the same scanline language as the section reveal. */
 .warp-overlay {
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  /* Wider, brighter band so the sweep reads as a deliberate clear. */
   background: linear-gradient(
     180deg,
     transparent 0%,
-    transparent 42%,
-    rgba(255, 255, 255, 0.65) 50%,
-    rgba(255, 45, 146, 0.5) 51%,
-    transparent 58%,
+    transparent 48%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 52%,
     transparent 100%
   );
   opacity: 0;
   transform: translateY(100%);
 }
-/* TV-static frame that flashes for ~120ms at the jump midpoint.
-   Sits above the sweep band and adds a 'channel-change' beat. */
-.warp-overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  background-size: 220px 220px;
-  mix-blend-mode: overlay;
-  opacity: 0;
-}
 .warp-overlay.warp-out {
-  animation: warp-sweep-up 1.4s cubic-bezier(0.6, 0, 0.4, 1);
+  animation: warp-sweep-up 1.0s ease-in forwards;
 }
-.warp-overlay.warp-out::after {
-  animation: warp-static 1.4s linear;
-}
-/* Blackout layer — sits above every canvas and below the sweep band, fades
-   to near-opaque black at the warp midpoint to mask the hash jump. Replaces
-   the previous body-level filter animation, which forced Safari to promote
-   the whole viewport to a compositor layer and rasterize a full-page texture
-   per frame (the 2–3s click hang). Opacity-only animation on a fixed layer
-   stays on the GPU. */
+
+/* Blackout layer — grows in lockstep with the sweep (so the page clears as
+   the band rises), holds opaque for ~700ms (the requested pause), then
+   fades on the new section's boot scanline. Opacity-only on a fixed layer
+   stays GPU-composited; replaces the previous body-level filter animation
+   that caused Safari's 2–3s click hang. */
 .warp-blackout {
   position: fixed;
   inset: 0;
@@ -201,25 +190,19 @@
   opacity: 0;
 }
 .warp-blackout.warp-on {
-  animation: warp-blackout 1.4s linear;
+  animation: warp-blackout 1.9s ease forwards;
 }
 
 @keyframes warp-sweep-up {
   0%   { opacity: 0;    transform: translateY(100%); }
-  10%  { opacity: 0.95; }
-  90%  { opacity: 0.95; }
-  100% { opacity: 0;    transform: translateY(-100%); }
-}
-@keyframes warp-static {
-  0%, 38%, 62%, 100% { opacity: 0; }
-  44% { opacity: 0.6; }
-  56% { opacity: 0.4; }
+  15%  { opacity: 0.85; }
+  100% { opacity: 0.85; transform: translateY(-100%); }
 }
 @keyframes warp-blackout {
-  0%, 100% { opacity: 0; }
-  35%      { opacity: 0.45; }
-  48%, 52% { opacity: 0.95; }
-  65%      { opacity: 0.35; }
+  0%   { opacity: 0; }
+  53%  { opacity: 1; }   /* sweep up just finished (~1.0s) */
+  89%  { opacity: 1; }   /* held opaque (~700ms) — section boot begins under cover */
+  100% { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

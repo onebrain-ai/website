@@ -279,8 +279,10 @@ const {
           if (overlay) overlay.classList.add('warp-out');
           if (blackout) blackout.classList.add('warp-on');
         });
-        // Jump at the keyframe's blackout midpoint so the new section appears
-        // *after* the old one has visually collapsed.
+        // Jump mid-hold (sweep up done at ~1.0s, blackout fully opaque
+        // 1.0–1.7s). Hash jump + boot replay happen at 1.4s so the new
+        // section's scanline starts under cover and emerges as the
+        // blackout fades — sweep-down + content-rise read as one beat.
         setTimeout(() => {
           t.scrollIntoView({ block: 'start', behavior: 'instant' });
           if (t.classList.contains('active')) {
@@ -288,12 +290,12 @@ const {
             void t.offsetWidth;
             t.classList.add('active');
           }
-        }, 700);
+        }, 1400);
         setTimeout(() => {
           if (overlay) overlay.classList.remove('warp-out');
           if (blackout) blackout.classList.remove('warp-on');
           warpInFlight = false;
-        }, 1420);
+        }, 1920);
       }
 
       (function () {
