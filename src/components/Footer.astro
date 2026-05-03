@@ -68,7 +68,7 @@ const cliVersion = await getCliVersion();
   <div class="footer-hud">
     <div class="footer-hud-inner">
       <span class="footer-hud-rec"><span class="footer-hud-rec-dot"></span>REC</span>
-      <span class="footer-hud-meta">© {year} ONEBRAIN_SYSTEM · LICENSE: MIT</span>
+      <span class="footer-hud-meta">© {year} OneBrain · LICENSE: MIT</span>
       <span class="footer-hud-meta">REGION_GLOBAL · v{cliVersion}_STABLE</span>
     </div>
   </div>
@@ -249,8 +249,9 @@ const cliVersion = await getCliVersion();
     position: relative;
     z-index: 2;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px);
+    /* Solid bg + drop backdrop-filter — same Safari composite-cost
+       reasoning as .nav-glass. Lift alpha 0.4 → 0.6 to compensate. */
+    background: rgba(0, 0, 0, 0.6);
   }
   .footer-hud-inner {
     max-width: 1280px;

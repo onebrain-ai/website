@@ -71,7 +71,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         </div>
 
         <div class="cta-row reveal" style="transition-delay: 550ms;">
-          <a href="https://github.com/onebrain-ai/onebrain#installation" class="btn-cyber btn-cyber-primary">
+          <a href="https://github.com/onebrain-ai/onebrain#installation" target="_blank" rel="noopener noreferrer" class="btn-cyber btn-cyber-primary">
             <span>INITIALIZE_</span>
             <span class="btn-cyber-arrow">→</span>
           </a>
@@ -634,8 +634,10 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
       rgba(255, 255, 255, 0.022) 2px,
       rgba(255, 255, 255, 0.022) 3px
     );
-    mix-blend-mode: overlay;
-    opacity: 0.5;
+    /* mix-blend-mode dropped — fullscreen blend on a hero layer that
+       paints alongside particles + glitch + op-console is a Safari
+       compositor hot path. The 2.2% white scanlines read fine flat. */
+    opacity: 0.4;
   }
 
   /* Static film grain — drop the per-frame animation. Animating an element
@@ -847,13 +849,16 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     align-items: center;
     gap: 14px;
     padding: 14px 14px 14px 22px;
-    background: rgba(0, 0, 0, 0.55);
+    /* Solid-enough bg + drop backdrop-filter — the cmd-box sits over
+       the hero-orb blur and the particle canvas, so a backdrop-blur
+       here was forcing Safari to recomposite a filtered backdrop on
+       every particle frame. Lift alpha 0.55 → 0.7 to compensate. */
+    background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.1);
     max-width: 520px;
     position: relative;
     font-family: var(--font-mono);
     transition: border-color 0.25s ease;
-    backdrop-filter: blur(8px);
   }
   .cmd-box::before {
     content: '';
@@ -885,7 +890,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     font-weight: 700;
     letter-spacing: 0.22em;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
   }
   .cmd-copy:hover {
     color: #00f3ff;
@@ -921,7 +926,10 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     letter-spacing: 0.32em;
     text-transform: uppercase;
     border: 1px solid;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
     clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
     cursor: pointer;

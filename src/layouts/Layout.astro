@@ -9,10 +9,12 @@ interface Props {
 }
 
 const {
-  title = "OneBrain — Your AI Thinking Partner",
-  description = "OneBrain — your AI thinking partner. A unified intelligence where human and AI agent co-evolve inside your Obsidian vault, learning from you as you learn from it.",
+  title = "OneBrain — AI Thinking Partner for Obsidian",
+  description = "OneBrain is a living intelligence layer inside your Obsidian vault — you teach the agent, the agent extends you, both evolve.",
   image = "/og.png",
 } = Astro.props;
+const canonical = "https://onebrain.run/";
+const ogImageUrl = `https://onebrain.run${image}`;
 ---
 
 <!doctype html>
@@ -25,17 +27,36 @@ const {
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://onebrain.run" />
-    <meta property="og:image" content={new URL(image, Astro.site ?? Astro.url)} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@onebrain_run" />
+    <meta name="twitter:creator" content="@onebrain_run" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, Astro.site ?? Astro.url)} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "OneBrain",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "macOS, Linux, Windows",
+      "url": canonical,
+      "description": description,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "sameAs": [
+        "https://github.com/onebrain-ai/onebrain",
+        "https://x.com/onebrain_run",
+        "https://www.npmjs.com/package/@onebrain-ai/cli"
+      ]
+    })} />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,7 +223,7 @@ const {
           const io = new IntersectionObserver((entries) => {
             running = entries[0].isIntersecting;
             if (running) start();
-          }, { rootMargin: '100px' });
+          }, { rootMargin: '0px' });
           io.observe(heroEl);
         }
         // Throttle mousemove to ~30Hz so Safari isn't burning a full frame on each input event.

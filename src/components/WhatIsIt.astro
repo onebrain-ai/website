@@ -17,7 +17,7 @@
           </div>
           <h2 class="cyber-h2">
             Beyond a<br/>
-            <span class="cyber-h2-stroke" data-text="Second Brain.">Second Brain.</span>
+            <span class="cyber-h2-stroke">Second Brain.</span>
           </h2>
           <p class="cyber-sub">
             Most tools ask you to query an AI. OneBrain co-evolves with you — every preference you teach sharpens the agent, every link it surfaces sharpens you.
@@ -28,7 +28,7 @@
           <div class="cyber-card">
             <span class="cyber-card-meta">01</span>
             <h3 class="cyber-card-title">HUMAN → AGENT</h3>
-            <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent gets sharper at being yours.</p>
+            <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent calibrates to you with every interaction.</p>
           </div>
           <div class="cyber-card">
             <span class="cyber-card-meta">02</span>
@@ -73,16 +73,16 @@
     let nodes = [];
     const maxNodes = 150;          // denser graph
     const maxDist = 85;            // longer connection range → more cluster overlap
-    // Mirror the six section accents + white sparks. The synergy nebula
-    // reads as a snapshot of every section's identity merging together.
+    // Tonal magenta palette so the nebula reads as the Synergy section's
+    // accent (#ff2d92) rather than a rainbow that competes with every
+    // other section's colour. White synapse sparks stay for contrast and
+    // depth so the graph still feels alive, not monochrome.
     const SECTION_PALETTE = [
-      '#00ff9d', // features (green)
-      '#ff2d92', // synergy  (magenta)
-      '#ffb000', // how      (amber)
-      '#d946ef', // commands (fuchsia)
-      '#c8ff00', // stack    (chartreuse)
-      '#00bfff', // cloud    (sky)
-      '#ffffff', // synapse  (white)
+      '#ff2d92', // synergy core (brand magenta)
+      '#ff5fad', // lighter magenta (soft tone)
+      '#d6217a', // darker magenta (deep tone)
+      '#ff85c1', // pink wash
+      '#ffffff', // white synapse spark
     ];
     const seedCount = 26;          // pre-seed (staggered, not instant)
     const seedInterval = 60;       // gentler cadence for seed phase
@@ -130,7 +130,7 @@
         x: cx + Math.cos(angle) * (radius + 18),
         y: cy + Math.sin(angle) * (radius + 18),
         angle,
-        orbitSpeed: 0.001 + Math.random() * 0.0028,
+        orbitSpeed: 0.0008 + Math.random() * 0.00224,
         orbitRadius: radius,
         size: Math.random() * 1.4 + 1.1,
         // Random pick from the full section-accent palette — so the synergy
@@ -287,14 +287,14 @@
     position: relative;
     aspect-ratio: 1 / 1;
     background: rgba(8, 8, 14, 0.82);
-    border: 1px solid rgba(188, 19, 254, 0.22);
+    border: 1px solid rgba(255, 45, 146, 0.25);
     overflow: hidden;
   }
   .nebula-corner {
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid #00f3ff;
+    border: 1px solid var(--section-accent);
     z-index: 3;
   }
   .nebula-corner-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
@@ -325,8 +325,8 @@
     height: 120px;
     border-radius: 50%;
     background: radial-gradient(circle,
-      rgba(0, 243, 255, 0.55) 0%,
-      rgba(188, 19, 254, 0.22) 45%,
+      rgba(255, 45, 146, 0.55) 0%,
+      rgba(255, 133, 193, 0.22) 45%,
       transparent 75%);
     filter: blur(32px);
     animation: nebula-breathe 5s ease-in-out infinite;

@@ -27,7 +27,7 @@ const tiers = [
           </div>
           <h2 class="cyber-h2">
             OneBrain<br/>
-            <span class="cyber-h2-stroke" data-text="Cloud.">Cloud.</span>
+            <span class="cyber-h2-stroke">Cloud.</span>
           </h2>
           <p class="cyber-sub">
             Multi-device sync and hosted agent runtimes. Your unified intelligence travels with you.
@@ -97,12 +97,7 @@ const tiers = [
           role="status"
           aria-live="polite"
           class="waitlist-banner"
-        >
-          <span class="waitlist-banner-arrow">→</span>
-          Waitlist coming soon. Follow
-          <a href="https://x.com/onebrain_run" target="_blank" rel="noopener noreferrer" class="waitlist-link">@onebrain_run</a>
-          for the launch ping.
-        </div>
+        ></div>
 
         <p class="waitlist-foot">
           // early signups get priority access when PRO + TEAM go live
@@ -201,7 +196,10 @@ const tiers = [
     box-shadow:
       0 0 0 1px color-mix(in srgb, var(--section-accent) 25%, transparent),
       0 0 30px -8px color-mix(in srgb, var(--section-accent) 60%, transparent);
-    transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    /* Animate transform + border-color only — the 50px-spread box-shadow
+       on hover is a Safari paint hot path; switch it as a static :hover
+       value so the transition doesn't repaint the whole card every frame. */
+    transition: border-color 0.25s ease, transform 0.25s ease;
   }
   a.tier-card.tier-card-live::before {
     /* Left edge accent rail — same vocabulary as the hero cmd-box. */
@@ -379,7 +377,10 @@ const tiers = [
     text-transform: uppercase;
     border: 1px solid var(--section-accent);
     cursor: pointer;
-    transition: all 0.25s ease;
+    /* Animate just color/background — the box-shadow grows on hover but
+       transitioning a 50px-spread shadow is the Cloud-card paint hot
+       path. Snap-toggle the shadow at :hover with no transition cost. */
+    transition: color 0.25s ease, background 0.25s ease;
     clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
     box-shadow: 0 0 30px color-mix(in srgb, var(--section-accent) 30%, transparent);
   }
@@ -414,8 +415,6 @@ const tiers = [
     background: rgba(255, 95, 87, 0.06);
     color: #ff8b85;
   }
-  .waitlist-banner-arrow { color: var(--section-accent); margin-right: 6px; }
-  .waitlist-link { color: #fff; text-decoration: underline; }
   .waitlist-link:hover { color: var(--section-accent); }
   .waitlist-btn:disabled { opacity: 0.5; cursor: wait; }
 

@@ -124,7 +124,7 @@
      competing with the active dot. */
   background: rgba(180, 180, 195, 0.25);
   border: 1px solid rgba(180, 180, 195, 0.18);
-  transition: all 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .page-spine-dots li:hover > span {
   background: var(--dot-accent);
@@ -246,7 +246,7 @@
   animation: warp-mark-breathe 2.6s ease-in-out infinite;
 }
 .warp-mark-text {
-  font-family: 'Chakra Petch', sans-serif;
+  font-family: var(--font-display);
   font-style: italic;
   font-weight: 700;
   font-size: 2rem;
@@ -301,7 +301,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .warp-overlay.warp-out,
-  .warp-overlay.warp-out::after,
   .warp-blackout.warp-on { animation: none; }
 }
 
@@ -339,27 +338,12 @@
   transition: none !important;
 }
 
-/* Tech Elements */
-.ui-bracket {
-  position: relative;
-}
-.ui-bracket::before, .ui-bracket::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border: 1px solid var(--color-accent-2);
-  opacity: 0.5;
-}
-.ui-bracket::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
-.ui-bracket::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
-
 .btn-tech {
   position: relative;
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
   padding: 1.5px;
-  transition: filter 0.3s ease;
+  transition: box-shadow 0.2s ease;
 }
 .btn-tech-inner {
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
@@ -368,27 +352,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s ease;
+  transition: background 0.2s ease;
 }
 /* Hover: swap inner to white so the group-hover:text-black inside reads,
-   and add a soft brand glow on the gradient frame. */
+   and add a soft brand glow on the gradient frame. Use box-shadow not
+   drop-shadow filter — animating filter on the sticky-nav CTA is a
+   Safari paint hot path. */
 .btn-tech:hover .btn-tech-inner { background: #ffffff; }
-.btn-tech:hover { filter: drop-shadow(0 0 14px rgba(255, 45, 146, 0.5)); }
-
-@keyframes cyber-flicker {
-  0% { opacity: 0.8; }
-  5% { opacity: 0.4; }
-  10% { opacity: 0.9; }
-  100% { opacity: 1; }
-}
-.animate-flicker {
-  animation: cyber-flicker 4s infinite step-end;
-}
+.btn-tech:hover { box-shadow: 0 0 14px rgba(255, 45, 146, 0.5); }
 
 .reveal {
   opacity: 0;
   transform: translateY(20px);
-  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reveal.active {
   opacity: 1;
@@ -683,5 +660,4 @@
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { transition: opacity 0.4s ease; transform: none; }
-  .animate-flicker { animation: none; }
 }

@@ -23,7 +23,7 @@ const commands = [
   { cmd: '/learn',         desc: 'Teach the agent a fact or preference; persists to memory.',
     usecase: "Tell the agent: '/learn I prefer my research reports in bullet points.' It will follow this for all future /research tasks." },
   { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
-    usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair your entire knowledge system.' },
+    usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair stale confidence scores and broken wikilinks.' },
 ];
 ---
 
@@ -39,7 +39,7 @@ const commands = [
       </div>
       <h2 class="cyber-h2">
         Skills<br/>
-        <span class="cyber-h2-stroke" data-text="That Think.">That Think.</span>
+        <span class="cyber-h2-stroke">That Think.</span>
       </h2>
     </header>
 
@@ -175,8 +175,11 @@ const commands = [
   .skill-modal-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(2, 2, 4, 0.78);
-    backdrop-filter: blur(10px);
+    /* Drop the backdrop-filter blur — opening a fullscreen filter
+       layer over a 12-card grid with each card's own hover transitions
+       running was a Safari composite hot path. Lift bg alpha 0.78 →
+       0.92 so the grid still drops out cleanly behind the modal. */
+    background: rgba(2, 2, 4, 0.92);
   }
   .skill-modal-card {
     position: relative;
@@ -221,9 +224,12 @@ const commands = [
     margin-bottom: 8px;
   }
   .skill-modal-cmd {
-    font-family: var(--font-mono);
+    /* Match every other section title — display font italic, not mono.
+       Mono italic 900 was reading like a bug rather than a deliberate
+       contrast. */
+    font-family: var(--font-display);
     font-style: italic;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 1.8rem;
     color: #fff;
     margin: 0;
@@ -235,7 +241,7 @@ const commands = [
     color: rgba(255, 255, 255, 0.5);
     padding: 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
   }
   .skill-modal-close:hover { color: #d946ef; border-color: #d946ef; }
 
