@@ -13,14 +13,14 @@ const navLinks = [
 
 <header class="sticky top-0 z-50 nav-glass">
   <div class="mx-auto max-w-7xl px-6 flex items-center justify-between h-16">
-    <a href="/" class="flex items-center gap-3 group relative">
-      <div class="w-9 h-9 relative flex items-center justify-center">
+    <a href="/" class="flex items-center gap-3.5 group relative">
+      <div class="relative w-10 h-10 flex items-center justify-center">
         <div class="absolute inset-0 bg-[var(--color-accent)]/15 blur-md opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
-        <Brain size={32} class="relative" ariaLabel="OneBrain" />
+        <Brain size={40} class="relative" ariaLabel="OneBrain" />
       </div>
-      <div class="flex flex-col leading-none gap-1.5">
+      <div class="nav-logo-text">
         <span class="nav-wordmark">OneBrain</span>
-        <span class="font-mono text-[9px] text-[var(--color-accent-2)] tracking-[0.2em] uppercase opacity-70">Your AI Thinking Partner</span>
+        <span class="nav-tagline">Your AI Thinking Partner</span>
       </div>
     </a>
 
@@ -159,14 +159,27 @@ const navLinks = [
 </script>
 
 <style>
+  .nav-logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
   .nav-wordmark {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     color: #fff;
     letter-spacing: -0.01em;
-    line-height: 1;
+  }
+  .nav-tagline {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--color-accent-2);
+    text-transform: uppercase;
+    opacity: 0.7;
   }
 
   /* ── Hamburger trigger (mobile only) ── */
