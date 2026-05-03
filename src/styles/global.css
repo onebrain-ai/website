@@ -107,10 +107,10 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  /* Solid muted grey — sits visibly on the dark track without picking up
-     accent colour. Only hover/active swap to the section accent. */
-  background: rgba(160, 160, 175, 0.55);
-  border: 1px solid rgba(160, 160, 175, 0.35);
+  /* Faint grey — present enough to mark the snap point without
+     competing with the active dot. */
+  background: rgba(180, 180, 195, 0.25);
+  border: 1px solid rgba(180, 180, 195, 0.18);
   transition: all 0.3s ease;
 }
 .page-spine-dots li:hover > span {
