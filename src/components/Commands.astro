@@ -134,8 +134,16 @@ const commands = [
 </script>
 
 <style>
+  /* Section-scoped tightening so the 9-card grid + signpost row fits
+     a single viewport on laptop heights, mirroring the Features/
+     Workflow pattern. */
+  #commands .cyber-h2           { font-size: clamp(2rem, 4.6vw, 4rem); }
+  #commands .cyber-section-head { margin-bottom: 1.25rem; }
+  #commands .cyber-pill         { margin-bottom: 18px; }
+  #commands .grid               { gap: 0.65rem; }
+
   .cmd-card {
-    padding: 1.1rem 1.2rem 1.2rem;
+    padding: 0.85rem 1rem 0.95rem;
     text-align: left;
     cursor: pointer;
     background: rgba(8, 8, 14, 0.5);
@@ -289,8 +297,8 @@ const commands = [
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin-top: 1.5rem;
-    padding: 14px 18px;
+    margin-top: 0.9rem;
+    padding: 10px 16px;
     border: 1px dashed rgba(217, 70, 239, 0.28);
     background: color-mix(in srgb, var(--section-accent) 4%, transparent);
     font-family: var(--font-mono);
