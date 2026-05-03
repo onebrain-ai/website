@@ -291,6 +291,16 @@ const ogImageUrl = `https://onebrain.run${image}`;
         const sections = dots.map((d) => document.querySelector(d.dataset.target)).filter(Boolean);
         if (!sections.length) return;
 
+        // Header nav links indexed by their href so the active-section
+        // observer can highlight the matching link as the user scrolls
+        // (or after a spine-dot click). Hero (#top) has no header link
+        // — when the hero is active every link clears.
+        const navLinksByHref = new Map();
+        document.querySelectorAll('header a[href^="#"]').forEach((a) => {
+          const href = a.getAttribute('href');
+          if (href && href !== '#') navLinksByHref.set(href, a);
+        });
+
         let activeIdx = -1;
         function setActive(i) {
           if (i === activeIdx) return;
@@ -298,6 +308,13 @@ const ogImageUrl = `https://onebrain.run${image}`;
           dots.forEach((d, j) => d.classList.toggle('active', j === i));
           // Body tint: lets future global accents (e.g. cursor glow) follow current section.
           document.body.style.setProperty('--page-accent', dots[i].style.getPropertyValue('--dot-accent'));
+          // Mirror active state on the header nav so scroll + spine-
+          // dot clicks (not just header clicks) highlight the right
+          // menu item.
+          const activeHref = dots[i].dataset.target;
+          navLinksByHref.forEach((link, href) => {
+            link.classList.toggle('is-active', href === activeHref);
+          });
         }
 
         const io = new IntersectionObserver((entries) => {
