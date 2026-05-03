@@ -185,7 +185,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           const io = new IntersectionObserver((entries) => {
             running = entries[0].isIntersecting;
             if (running) start();
-          }, { rootMargin: '100px' });
+          }, { rootMargin: '0px' });
           io.observe(canvas);
         }
         window.addEventListener('resize', init);
@@ -226,7 +226,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         if (heroEl && 'IntersectionObserver' in window) {
           const io = new IntersectionObserver((entries) => {
             heroVisible = entries[0].isIntersecting;
-          }, { rootMargin: '50px' });
+          }, { rootMargin: '0px' });
           io.observe(heroEl);
         }
 
@@ -431,17 +431,19 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         }
 
         for (let i = 0; i < 4; i++) pushScenario();
-        // Pause the scenario rotation when the hero is offscreen so it isn't
-        // burning a setInterval + DOM mutations while the user is reading
-        // sections further down.
+        // Pause the scenario rotation the moment hero leaves the viewport.
+        // Observe .hero (not just the op-console body) with rootMargin:0 so
+        // we stop firing right as the next section snaps in — no burning
+        // setInterval + DOM mutations while user is reading other sections.
         let opTimer = null;
         function startOp() { if (!opTimer && !reduced) opTimer = setInterval(pushScenario, 2800); }
         function stopOp()  { if (opTimer) { clearInterval(opTimer); opTimer = null; } }
-        if ('IntersectionObserver' in window) {
+        const opHeroEl = document.querySelector('.hero');
+        if (opHeroEl && 'IntersectionObserver' in window) {
           const io = new IntersectionObserver((entries) => {
             entries[0].isIntersecting ? startOp() : stopOp();
-          }, { rootMargin: '100px' });
-          io.observe(body);
+          }, { rootMargin: '0px' });
+          io.observe(opHeroEl);
         } else {
           startOp();
         }
@@ -528,7 +530,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         if (heroEl && 'IntersectionObserver' in window) {
           const io = new IntersectionObserver((entries) => {
             entries[0].isIntersecting ? startHud() : stopHud();
-          }, { rootMargin: '50px' });
+          }, { rootMargin: '0px' });
           io.observe(heroEl);
         } else {
           startHud();
