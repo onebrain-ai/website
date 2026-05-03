@@ -308,6 +308,20 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Click-responsiveness on header nav links. Two specifics here:
+   1. Inner spans (the [ ] hover brackets) get pointer-events:none so
+      clicks always land on the <a> directly — Safari's hit-test does
+      not bubble through transitioning child elements.
+   2. :active cancels every transition on the link tree so any in-
+      flight hover color/opacity transition is dropped instantly when
+      the click commits, freeing the compositor to paint the warp's
+      first frame without contention. */
+.nav-glass a > span { pointer-events: none; }
+.nav-glass a:active,
+.nav-glass a:active * {
+  transition: none !important;
+}
+
 /* Tech Elements */
 .ui-bracket {
   position: relative;

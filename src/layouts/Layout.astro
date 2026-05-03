@@ -283,24 +283,25 @@ const {
           t.scrollIntoView({ block: 'start', behavior: 'instant' });
         }
       }
+      // Cache once at script init so the click → warp hot path does
+      // zero DOM lookups. Saves a getElementById × 2, a querySelector,
+      // and a matchMedia query per click — small in absolute time but
+      // measurable on Safari's main thread when other animations are
+      // already contending for the paint slot.
+      const _warpOverlay = document.getElementById('warp-overlay');
+      const _warpBlackout = document.getElementById('warp-blackout');
+      const _reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       function warpTo(targetSel) {
         if (warpInFlight) return;
         const t = document.querySelector(targetSel);
         if (!t) return;
-        const overlay = document.getElementById('warp-overlay');
-        const blackout = document.getElementById('warp-blackout');
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (_reducedMotion.matches) {
           jumpTo(t, targetSel);
           return;
         }
         warpInFlight = true;
-        // Apply classes synchronously — the rAF defer was needed when the
-        // warp animated `body { filter: ... }` (a page-wide compositor
-        // stall in Safari). Now the animations live on small fixed-
-        // position overlays only, so the click → first-paint path no
-        // longer eats a frame.
-        if (overlay) overlay.classList.add('warp-out');
-        if (blackout) blackout.classList.add('warp-on');
+        if (_warpOverlay) _warpOverlay.classList.add('warp-out');
+        if (_warpBlackout) _warpBlackout.classList.add('warp-on');
         // Jump mid-hold (sweep up done at ~0.8s, blackout fully opaque
         // 0.8–1.5s). Hash jump + boot replay happen at 1.2s so the new
         // section's scanline starts under cover and emerges as the
@@ -318,37 +319,52 @@ const {
           t.classList.add('active');
         }, 1200);
         setTimeout(() => {
-          if (overlay) overlay.classList.remove('warp-out');
-          if (blackout) blackout.classList.remove('warp-on');
+          if (_warpOverlay) _warpOverlay.classList.remove('warp-out');
+          if (_warpBlackout) _warpBlackout.classList.remove('warp-on');
           warpInFlight = false;
         }, 1720);
       }
 
-      // Single document-level mousedown listener at the capture phase —
-      // fires before any per-element handler in the entire DOM tree.
-      // Crucially we do NOT call e.preventDefault() here: preventDefault
-      // on a mousedown that lands on an <a> makes Safari run extra
-      // link-activation gating, which is the residual delay that the
-      // earlier per-link mousedown handler couldn't shake. Navigation is
-      // suppressed by the click handler below where it actually matters.
+      // Pre-resolve every header link's hash target into a WeakMap so
+      // the click hot path is just one Map.get + one warpTo call —
+      // no closest() walk, no getAttribute, no querySelector.
+      const _headerLinks = new WeakMap();
+      document.querySelectorAll('header a[href^="#"]').forEach((a) => {
+        const href = a.getAttribute('href');
+        if (!href || href === '#') return;
+        if (!document.querySelector(href)) return;
+        _headerLinks.set(a, href);
+      });
+      // Document-level mousedown at the capture phase — fires before
+      // any per-element handler in the entire DOM tree. Crucially we
+      // do NOT call e.preventDefault(): preventDefault on a mousedown
+      // that lands on an <a> makes Safari run extra link-activation
+      // gating before the handler is allowed to do anything else.
+      // Navigation is suppressed by the click handler below where it
+      // actually matters; warpInFlight absorbs the click re-fire.
       document.addEventListener('mousedown', (e) => {
         if (e.button !== 0) return;
-        const a = e.target.closest && e.target.closest('header a[href^="#"]');
-        if (!a) return;
-        const href = a.getAttribute('href');
-        if (!href || href === '#' || !document.querySelector(href)) return;
+        // parentElement walk is faster than closest() with a CSS
+        // selector — header is shallow (4–5 levels max), and we only
+        // accept exact <a> hits that are pre-registered in the map.
+        let n = e.target;
+        while (n && n.tagName !== 'A') n = n.parentElement;
+        if (!n) return;
+        const href = _headerLinks.get(n);
+        if (!href) return;
         warpTo(href);
       }, { capture: true });
-      // Click handler runs after release; warpInFlight has already
-      // latched, so this block is just here to suppress the native
-      // hash navigation that mousedown deliberately didn't prevent.
-      // Keyboard activation (Enter/Space on a focused link) lands here
-      // too — warpTo fires from this path for keyboard users.
+      // Click runs after release; warpInFlight has already latched,
+      // so this is here to suppress the native hash navigation that
+      // mousedown deliberately didn't prevent. Keyboard activation
+      // (Enter/Space on a focused link) lands here too — keyboard
+      // users get warpTo from this path.
       document.addEventListener('click', (e) => {
-        const a = e.target.closest && e.target.closest('header a[href^="#"]');
-        if (!a) return;
-        const href = a.getAttribute('href');
-        if (!href || href === '#' || !document.querySelector(href)) return;
+        let n = e.target;
+        while (n && n.tagName !== 'A') n = n.parentElement;
+        if (!n) return;
+        const href = _headerLinks.get(n);
+        if (!href) return;
         e.preventDefault();
         warpTo(href);
       });
