@@ -156,10 +156,16 @@
    sections — neutral, not section-tinted). Animates transform + opacity
    only, no TV-static, no chromatic shift — keeps the sweep readable as
    the same scanline language as the section reveal. */
+/* Both warp layers start *below* the 64px sticky nav so the header bar
+   stays visible throughout the transition — the warp clears section
+   content, not chrome. */
 .warp-overlay {
   position: fixed;
-  inset: 0;
-  z-index: 60;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 45;
   pointer-events: none;
   background: linear-gradient(
     180deg,
@@ -173,35 +179,37 @@
   transform: translateY(100%);
 }
 .warp-overlay.warp-out {
-  animation: warp-sweep-up 1.0s ease-in forwards;
+  animation: warp-sweep-up 0.8s ease-in forwards;
 }
 
-/* Blackout layer — grows in lockstep with the sweep (so the page clears as
-   the band rises), holds opaque for ~700ms (the requested pause), then
-   fades on the new section's boot scanline. Opacity-only on a fixed layer
-   stays GPU-composited; replaces the previous body-level filter animation
-   that caused Safari's 2–3s click hang. */
+/* Blackout layer — grows in lockstep with the sweep (so the section
+   clears as the band rises), holds opaque for ~700ms (the requested
+   pause), then fades on the new section's boot scanline. Sits below
+   nav (z:50) so the header keeps painting on top throughout. */
 .warp-blackout {
   position: fixed;
-  inset: 0;
-  z-index: 55;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 44;
   pointer-events: none;
   background: #000;
   opacity: 0;
 }
 .warp-blackout.warp-on {
-  animation: warp-blackout 1.9s ease forwards;
+  animation: warp-blackout 1.7s ease forwards;
 }
 
 @keyframes warp-sweep-up {
   0%   { opacity: 0;    transform: translateY(100%); }
-  15%  { opacity: 0.85; }
+  18%  { opacity: 0.85; }
   100% { opacity: 0.85; transform: translateY(-100%); }
 }
 @keyframes warp-blackout {
   0%   { opacity: 0; }
-  53%  { opacity: 1; }   /* sweep up just finished (~1.0s) */
-  89%  { opacity: 1; }   /* held opaque (~700ms) — section boot begins under cover */
+  47%  { opacity: 1; }   /* sweep up just finished (~0.8s) */
+  88%  { opacity: 1; }   /* held opaque ~700ms — section boot begins under cover */
   100% { opacity: 0; }
 }
 
