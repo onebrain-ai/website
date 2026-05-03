@@ -324,35 +324,34 @@ const {
         }, 1720);
       }
 
-      (function () {
-        const links = document.querySelectorAll('header a[href^="#"]');
-        links.forEach((a) => {
-          // Cache href + target lookup at bind time so click handlers
-          // do zero DOM work on the hot path.
-          const href = a.getAttribute('href');
-          if (!href || href === '#') return;
-          if (!document.querySelector(href)) return;
-          // mousedown (capture phase) fires earliest in Safari for <a>
-          // elements — earlier than pointerdown (which Safari routes
-          // through link-activation prep) and far earlier than click
-          // (which waits for release + native link delay). preventDefault
-          // here suppresses focus-ring + native :active handling that
-          // would otherwise paint a frame between press and warp start.
-          const onPress = (e) => {
-            if (e.button !== 0) return;
-            e.preventDefault();
-            warpTo(href);
-          };
-          a.addEventListener('mousedown', onPress, { capture: true });
-          // click stays for keyboard (Enter/Space) and as a safety net
-          // for any pointer mode mousedown skipped. warpInFlight inside
-          // warpTo prevents double-fire when mousedown already ran.
-          a.addEventListener('click', (e) => {
-            e.preventDefault();
-            warpTo(href);
-          });
-        });
-      })();
+      // Single document-level mousedown listener at the capture phase —
+      // fires before any per-element handler in the entire DOM tree.
+      // Crucially we do NOT call e.preventDefault() here: preventDefault
+      // on a mousedown that lands on an <a> makes Safari run extra
+      // link-activation gating, which is the residual delay that the
+      // earlier per-link mousedown handler couldn't shake. Navigation is
+      // suppressed by the click handler below where it actually matters.
+      document.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        const a = e.target.closest && e.target.closest('header a[href^="#"]');
+        if (!a) return;
+        const href = a.getAttribute('href');
+        if (!href || href === '#' || !document.querySelector(href)) return;
+        warpTo(href);
+      }, { capture: true });
+      // Click handler runs after release; warpInFlight has already
+      // latched, so this block is just here to suppress the native
+      // hash navigation that mousedown deliberately didn't prevent.
+      // Keyboard activation (Enter/Space on a focused link) lands here
+      // too — warpTo fires from this path for keyboard users.
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest && e.target.closest('header a[href^="#"]');
+        if (!a) return;
+        const href = a.getAttribute('href');
+        if (!href || href === '#' || !document.querySelector(href)) return;
+        e.preventDefault();
+        warpTo(href);
+      });
 
       // External / initial hash navigation also plays the warp:
       //   - URL with a hash on first load (stashed in <head>, replayed here)
