@@ -37,9 +37,11 @@
   }
 
   main > section {
-    scroll-snap-align: start;
-    /* Sticky nav (h-16) eats 64px — let snapped sections respect that. */
-    scroll-margin-top: 64px;
+    /* Center sections in the viewport on snap so each section's heading
+       lands near the optical centre instead of pushed under the sticky nav.
+       Sections taller than viewport gracefully fall back to top-snap as the
+       user scrolls through them. */
+    scroll-snap-align: center;
   }
 
   footer {
@@ -79,20 +81,6 @@
     #00bfff 100%
   );
   opacity: 0.35;
-}
-.page-spine-head {
-  position: absolute;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--page-accent, #ff2d92);
-  box-shadow:
-    0 0 12px var(--page-accent, #ff2d92),
-    0 0 24px var(--page-accent, #ff2d92);
-  transform: translate(-50%, -50%);
-  transition: background 0.4s ease, box-shadow 0.4s ease;
-  pointer-events: none;
 }
 .page-spine-dots {
   position: relative;
@@ -139,10 +127,6 @@
 /* Hide the spine on narrow viewports — it would crowd the mobile drawer. */
 @media (max-width: 1023px) {
   .page-spine { display: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-spine-head { transition: none; }
 }
 
 /* Background Neural Network */

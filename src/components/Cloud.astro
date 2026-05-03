@@ -65,12 +65,18 @@ const tiers = [
 
         <div class="waitlist-head">
           <span class="waitlist-rec-dot"></span>
-          <span>WAITLIST :: ACCEPTING_PAIRINGS</span>
+          <span>CLOUD WAITLIST :: OPEN</span>
         </div>
+
+        <h3 class="waitlist-title">Get the launch ping for <strong>PRO + TEAM</strong>.</h3>
+        <p class="waitlist-blurb">
+          Drop your email and we'll let you know the moment sync, hosted runtime,
+          and team mesh ship — no spam, just the launch notice.
+        </p>
 
         <form id="waitlist-form" class="waitlist-form">
           <label class="waitlist-label">
-            <span>NEURAL_ID // EMAIL</span>
+            <span>YOUR EMAIL</span>
             <input
               type="email"
               required
@@ -81,7 +87,7 @@ const tiers = [
           </label>
 
           <button type="submit" class="waitlist-btn">
-            <span>REQUEST_ACCESS</span>
+            <span>NOTIFY ME AT LAUNCH</span>
             <span class="waitlist-btn-arrow">→</span>
           </button>
         </form>
@@ -99,7 +105,7 @@ const tiers = [
         </div>
 
         <p class="waitlist-foot">
-          // join the network · early operators get priority pairing
+          // early signups get priority access when PRO + TEAM go live
         </p>
       </div>
 
@@ -151,7 +157,7 @@ const tiers = [
         showBanner('error', '✗ Network error. Try again.');
       } finally {
         button.disabled = false;
-        if (labelEl) labelEl.textContent = 'REQUEST_ACCESS';
+        if (labelEl) labelEl.textContent = 'NOTIFY ME AT LAUNCH';
         else button.textContent = originalLabel;
       }
     });
@@ -299,6 +305,28 @@ const tiers = [
     animation: cyber-pulse 1.5s ease-in-out infinite;
   }
 
+  .waitlist-title {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 1.25;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .waitlist-title strong {
+    color: var(--section-accent);
+    font-weight: 700;
+  }
+  .waitlist-blurb {
+    margin: 0 0 1.4rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.55);
+    max-width: 44ch;
+  }
   .waitlist-form {
     display: flex;
     flex-direction: column;
