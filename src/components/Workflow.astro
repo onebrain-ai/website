@@ -52,12 +52,16 @@ const dispatches = [
 
     <div class="workflow-grid">
 
-      <!-- LEFT: Hub-and-spokes diagram with inline labels -->
+      <!-- LEFT: Hub-and-spokes diagram with inline labels + animated
+           data-flow particles. Each spoke gets one particle that
+           travels centre↔outer-node on a loop, staggered so the
+           pulses feel alive without strobing. -->
       <div class="workflow-hub" aria-hidden="true">
         <svg viewBox="-280 -200 560 400" class="workflow-hub-svg">
           <!-- Outer ring -->
           <circle cx="0" cy="0" r="150" class="hub-ring" />
-          <!-- Spokes + nodes + labels -->
+
+          <!-- Spokes + outer nodes + labels -->
           {dispatches.map((d) => {
             const rad = (d.angle * Math.PI) / 180;
             const nodeR = 150;
@@ -65,8 +69,6 @@ const dispatches = [
             const nx = Math.cos(rad) * nodeR;
             const ny = Math.sin(rad) * nodeR;
             const lx = Math.cos(rad) * labelR;
-            // Bias label vertical: middle-anchor labels (top/bottom)
-            // get extra offset to clear the node circle.
             const ly = Math.sin(rad) * labelR
               + (d.anchor === 'middle' ? (Math.sin(rad) > 0 ? 14 : -8) : 4);
             return (
@@ -77,10 +79,30 @@ const dispatches = [
               </g>
             );
           })}
-          <!-- Centre vault label -->
-          <circle cx="0" cy="0" r="44" class="hub-core" />
-          <text x="0" y="-2" text-anchor="middle" class="hub-core-label">VAULT</text>
-          <text x="0" y="14" text-anchor="middle" class="hub-core-sub">.md</text>
+
+          <!-- Data-flow particles — one per spoke, staggered. CSS
+               --tx/--ty hold each spoke's outer endpoint so a single
+               keyframe animates every particle along its own line. -->
+          {dispatches.map((d, i) => {
+            const rad = (d.angle * Math.PI) / 180;
+            const tx = Math.cos(rad) * 150;
+            const ty = Math.sin(rad) * 150;
+            const delay = (i * 0.45).toFixed(2);
+            return (
+              <circle
+                cx="0"
+                cy="0"
+                r="3.5"
+                class="hub-particle"
+                style={`--tx: ${tx.toFixed(1)}px; --ty: ${ty.toFixed(1)}px; animation-delay: ${delay}s;`}
+              />
+            );
+          })}
+
+          <!-- Centre: Obsidian vault as command center -->
+          <circle cx="0" cy="0" r="52" class="hub-core" />
+          <text x="0" y="-3" text-anchor="middle" class="hub-core-label">OBSIDIAN</text>
+          <text x="0" y="13" text-anchor="middle" class="hub-core-sub">vault</text>
         </svg>
       </div>
 
@@ -162,9 +184,9 @@ const dispatches = [
   }
   .hub-core-label {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     fill: #fff;
   }
   .hub-core-sub {
@@ -172,6 +194,33 @@ const dispatches = [
     font-size: 9px;
     letter-spacing: 0.32em;
     fill: var(--section-accent);
+  }
+
+  /* Data-flow particles. Each particle starts at the centre, travels
+     out to its spoke's outer node, then returns. Opacity fades in/out
+     at the endpoints so the pulse reads as data being dispatched and
+     received rather than a continuous stream. Staggered via per-
+     particle animation-delay (set inline in the SVG). Animation runs
+     only when the section has .active so off-screen workflow doesn't
+     leak paint cost onto scroll-snap glides. */
+  .hub-particle {
+    fill: var(--section-accent);
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .cyber-section.active .hub-particle {
+    animation: hub-particle-flow 3.6s ease-in-out infinite;
+  }
+  @keyframes hub-particle-flow {
+    0%   { transform: translate(0, 0);                 opacity: 0;    }
+    8%   {                                             opacity: 1;    }
+    45%  { transform: translate(var(--tx), var(--ty)); opacity: 1;    }
+    55%  { transform: translate(var(--tx), var(--ty)); opacity: 0.45; }
+    92%  {                                             opacity: 1;    }
+    100% { transform: translate(0, 0);                 opacity: 0;    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cyber-section.active .hub-particle { animation: none; }
   }
 
   /* ── RIGHT: 3 beats ── */
