@@ -37,11 +37,11 @@
   }
 
   main > section {
-    /* Center sections in the viewport on snap so each section's heading
-       lands near the optical centre instead of pushed under the sticky nav.
-       Sections taller than viewport gracefully fall back to top-snap as the
-       user scrolls through them. */
-    scroll-snap-align: center;
+    /* Snap to top — center-snap fights the sticky nav and breaks
+       scrollIntoView() targets. Sections already use min-height:100vh +
+       flex centering so content lands near the optical centre on its own. */
+    scroll-snap-align: start;
+    scroll-margin-top: 64px;
   }
 
   footer {
