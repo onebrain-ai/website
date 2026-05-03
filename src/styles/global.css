@@ -235,8 +235,11 @@
 
 .cyber-section {
   position: relative;
-  min-height: 100vh;
-  padding: 5rem 1.5rem 3rem;
+  /* Fill the visible viewport below the sticky nav (64px tall) so flex
+     centring lines up with visible centre, not full-viewport centre.
+     100dvh handles mobile chrome that grows/shrinks the address bar. */
+  min-height: calc(100dvh - 64px);
+  padding: 4rem 1.5rem 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
