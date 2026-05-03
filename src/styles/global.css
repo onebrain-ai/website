@@ -45,16 +45,13 @@
     line-height: 1.5;
   }
 
-  /* Defensive cursor: every <a href> and enabled <button> always shows
-     the pointer hand. Catches descendants whose own styles might break
-     CSS-cursor inheritance. */
+  /* Just pin pointer on the interactive elements themselves; let
+     descendants inherit naturally. The `cursor: inherit` on every
+     descendant rule was overly broad and could collide with form
+     widgets or focus styles. */
   a[href],
   button:not([disabled]) {
     cursor: pointer;
-  }
-  a[href] *,
-  button:not([disabled]) * {
-    cursor: inherit;
   }
 
   main > section {
