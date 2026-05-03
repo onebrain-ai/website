@@ -41,23 +41,42 @@ const dispatches = [
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <header class="cyber-section-head">
-      <div class="cyber-pill">
-        <span class="cyber-pill-dot"></span>
-        <span>ONEBRAIN // WORKFLOW</span>
+
+    <!-- Top row: 50:50 split — section header on the left, the three
+         narrative beats on the right. Lifts the beats up alongside
+         the headline so the right half of the section above the
+         diagram isn't dead space. -->
+    <div class="workflow-top">
+      <header class="cyber-section-head">
+        <div class="cyber-pill">
+          <span class="cyber-pill-dot"></span>
+          <span>ONEBRAIN // WORKFLOW</span>
+        </div>
+        <h2 class="cyber-h2">
+          One Vault.<br/>
+          <span class="cyber-h2-stroke">All Your Projects.</span>
+        </h2>
+        <p class="cyber-sub">
+          Obsidian becomes your <strong>command center</strong> — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
+        </p>
+      </header>
+
+      <div class="workflow-beats">
+        {beats.map((b) => (
+          <div class="cyber-card workflow-beat">
+            <span class="workflow-beat-num">{b.n}</span>
+            <h3 class="cyber-card-title workflow-beat-label">{b.label}</h3>
+            <p class="cyber-card-desc workflow-beat-body">{b.body}</p>
+          </div>
+        ))}
       </div>
-      <h2 class="cyber-h2">
-        One Vault.<br/>
-        <span class="cyber-h2-stroke">All Your Projects.</span>
-      </h2>
-      <p class="cyber-sub">
-        Obsidian becomes your <strong>command center</strong> — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
-      </p>
-    </header>
+    </div>
 
-    <div class="workflow-grid">
+    <!-- Bottom: hub diagram, centred and full-width below the
+         header row. -->
+    <div class="workflow-hub-wrap">
 
-      <!-- LEFT: Hub-and-spokes diagram with inline labels + animated
+      <!-- Hub-and-spokes diagram with inline labels + animated
            data-flow particles. Each spoke gets one particle that
            travels centre↔outer-node on a loop, staggered so the
            pulses feel alive without strobing. -->
@@ -114,17 +133,6 @@ const dispatches = [
         </svg>
       </div>
 
-      <!-- RIGHT: 3 narrative beats -->
-      <div class="workflow-beats">
-        {beats.map((b) => (
-          <div class="cyber-card workflow-beat">
-            <span class="workflow-beat-num">{b.n}</span>
-            <h3 class="cyber-card-title workflow-beat-label">{b.label}</h3>
-            <p class="cyber-card-desc workflow-beat-body">{b.body}</p>
-          </div>
-        ))}
-      </div>
-
     </div>
   </div>
 </section>
@@ -136,33 +144,45 @@ const dispatches = [
      header rhythm and the beat padding so everything centres in
      view without spilling below the fold. */
   #workflow .cyber-h2          { font-size: clamp(2rem, 4.6vw, 4rem); }
-  #workflow .cyber-section-head { margin-bottom: 1.25rem; }
   #workflow .cyber-pill         { margin-bottom: 18px; }
+  /* Margin-bottom on the section-head is handled by .workflow-top
+     gap on desktop (where header sits left, beats sit right) and
+     on mobile (where they stack). Reset the default margin so it
+     doesn't push beats unevenly down on the desktop split. */
+  #workflow .cyber-section-head { margin-bottom: 0; }
 
-  .workflow-grid {
+  /* Top row: 50:50 — header + sub on the left, three beats on the
+     right. On mobile they stack so the section still reads cleanly. */
+  .workflow-top {
     display: grid;
     gap: 1.5rem;
-    align-items: center;
+    align-items: start;
+    margin-bottom: 1.75rem;
   }
   @media (min-width: 1024px) {
-    .workflow-grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    .workflow-top {
+      grid-template-columns: 1fr 1fr;
       gap: 2.5rem;
+      align-items: center;
     }
   }
 
-  /* ── LEFT: hub diagram with inline labels ── */
+  /* ── BOTTOM: hub diagram, full-width centred ── */
 
+  .workflow-hub-wrap {
+    display: flex;
+    justify-content: center;
+  }
   .workflow-hub {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    width: 100%;
   }
   .workflow-hub-svg {
     width: 100%;
-    max-width: 480px;
-    aspect-ratio: 1.4 / 1;
+    max-width: 720px;
+    aspect-ratio: 1.55 / 1;
     overflow: visible;
   }
 
