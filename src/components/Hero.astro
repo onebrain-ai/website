@@ -416,7 +416,23 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         }
 
         for (let i = 0; i < 4; i++) pushScenario();
-        if (!reduced) setInterval(pushScenario, 2800);
+        // Pause the scenario rotation when the hero is offscreen so it isn't
+        // burning a setInterval + DOM mutations while the user is reading
+        // sections further down.
+        let opTimer = null;
+        function startOp() { if (!opTimer && !reduced) opTimer = setInterval(pushScenario, 2800); }
+        function stopOp()  { if (opTimer) { clearInterval(opTimer); opTimer = null; } }
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            entries[0].isIntersecting ? startOp() : stopOp();
+          }, { rootMargin: '100px' });
+          io.observe(body);
+        } else {
+          startOp();
+        }
+        document.addEventListener('visibilitychange', () => {
+          document.hidden ? stopOp() : startOp();
+        });
       })();
 
       // 4. Clipboard copy. Modern API first; falls back to a hidden textarea
@@ -464,11 +480,12 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         });
       })();
 
-      // 5. Live HUD telemetry
+      // 5. Live HUD telemetry — also paused when hero is offscreen / tab hidden.
       (function () {
         const uptime = document.getElementById('hud-uptime');
         const lat = document.getElementById('hud-lat');
         const tx = document.getElementById('hud-tx');
+        if (!uptime && !lat && !tx) return;
         const start = Date.now();
         function tick() {
           if (uptime) {
@@ -483,8 +500,27 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           if (lat) lat.textContent = 9 + Math.floor(Math.random() * 9);
           if (tx) tx.textContent = 820 + Math.floor(Math.random() * 140);
         }
-        setInterval(tick, 1000); tick();
-        setInterval(jitter, 1700); jitter();
+        let tickTimer = null, jitterTimer = null;
+        function startHud() {
+          if (!tickTimer)   { tick();   tickTimer   = setInterval(tick, 1000); }
+          if (!jitterTimer) { jitter(); jitterTimer = setInterval(jitter, 1700); }
+        }
+        function stopHud() {
+          if (tickTimer)   { clearInterval(tickTimer);   tickTimer = null; }
+          if (jitterTimer) { clearInterval(jitterTimer); jitterTimer = null; }
+        }
+        const heroEl = document.querySelector('.hero');
+        if (heroEl && 'IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            entries[0].isIntersecting ? startHud() : stopHud();
+          }, { rootMargin: '50px' });
+          io.observe(heroEl);
+        } else {
+          startHud();
+        }
+        document.addEventListener('visibilitychange', () => {
+          document.hidden ? stopHud() : startHud();
+        });
       })();
     })();
   </script>
@@ -877,9 +913,10 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
   .op-console {
     position: relative;
-    background: rgba(8, 8, 14, 0.88);
+    /* op-console sits above the hero canvas + orbs; bg is already 88% opaque
+       so the blur was barely visible. Drop it — saves a compositor layer. */
+    background: rgba(8, 8, 14, 0.94);
     border: 1px solid rgba(255, 45, 146, 0.22);
-    backdrop-filter: blur(20px);
     font-family: var(--font-mono);
     box-shadow:
       0 0 60px rgba(255, 45, 146, 0.1),

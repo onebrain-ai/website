@@ -270,9 +270,9 @@ const tiers = [
   .waitlist-shell {
     position: relative;
     padding: 2rem 2rem 1.6rem;
-    background: rgba(8, 8, 14, 0.55);
+    background: rgba(8, 8, 14, 0.82);
     border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
-    backdrop-filter: blur(20px);
+    /* drop heavy backdrop-filter — solid bg keeps the look, frees the compositor */
   }
   .waitlist-frame {
     position: absolute;

@@ -412,11 +412,14 @@
 
 .cyber-card {
   position: relative;
-  background: rgba(8, 8, 14, 0.55);
+  /* Solid-enough background instead of backdrop-filter blur. Cards multiply
+     across grids (12+ on Commands, 6 on Features) — every blurred surface
+     forces its own compositor layer, which is what makes Safari/older Macs
+     drop hover events on busy pages. */
+  background: rgba(8, 8, 14, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 1.4rem 1.5rem;
   transition: border-color 0.25s ease, background 0.25s ease;
-  backdrop-filter: blur(6px);
 }
 .cyber-card:hover {
   border-color: color-mix(in srgb, var(--section-accent) 35%, transparent);
