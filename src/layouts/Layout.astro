@@ -44,17 +44,38 @@ const ogImageUrl = `https://onebrain.run${image}`;
 
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "OneBrain",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "macOS, Linux, Windows",
-      "url": canonical,
-      "description": description,
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "sameAs": [
-        "https://github.com/onebrain-ai/onebrain",
-        "https://x.com/onebrain_run",
-        "https://www.npmjs.com/package/@onebrain-ai/cli"
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://onebrain.run/#organization",
+          "name": "OneBrain",
+          "url": canonical,
+          "logo": "https://onebrain.run/brain.svg",
+          "sameAs": [
+            "https://github.com/onebrain-ai",
+            "https://x.com/onebrain_run",
+            "https://www.npmjs.com/package/@onebrain-ai/cli"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://onebrain.run/#website",
+          "url": canonical,
+          "name": "OneBrain",
+          "description": description,
+          "publisher": { "@id": "https://onebrain.run/#organization" },
+          "inLanguage": "en"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "OneBrain",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "macOS, Linux, Windows",
+          "url": canonical,
+          "description": description,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "publisher": { "@id": "https://onebrain.run/#organization" }
+        }
       ]
     })} />
     

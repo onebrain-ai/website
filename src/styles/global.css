@@ -18,6 +18,22 @@
   --color-accent-4: #ffb000;
 }
 
+/* Visually hide content while keeping it readable to screen readers and
+   search engines. Used inside the Hero h1 so Google indexes a keyword-
+   rich version (`OneBrain — AI thinking partner for Obsidian`) while
+   the visible h1 keeps the cinematic "UNIFIED INTELLIGENCE" phrase. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @layer base {
   html {
     background: var(--color-bg);
