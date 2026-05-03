@@ -195,6 +195,9 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
       // 2. Headline motion — UNIFIED periodic re-scramble + INTELLIGENCE neon glitch.
       // Two effects on different cadences so the eye never sees a fixed beat.
+      // Both gated to hero visibility — when scrolled away from the hero we stop
+      // firing entirely so other sections aren't dropping hover events under
+      // a hidden RAF loop.
       (function () {
         const CHARS = '!<>-_/[]{}=+*^?#01ABCDEFXZ';
         function scramble(el, target, duration) {
@@ -217,12 +220,22 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         }
         if (reduced) return;
 
+        // Hero visibility gate — when hero is offscreen, neither effect fires.
+        let heroVisible = true;
+        const heroEl = document.querySelector('.hero');
+        if (heroEl && 'IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            heroVisible = entries[0].isIntersecting;
+          }, { rootMargin: '50px' });
+          io.observe(heroEl);
+        }
+
         // UNIFIED — initial scramble + rare loop (every 12-20s).
         document.querySelectorAll('[data-scramble]').forEach((el) => {
           const t = el.dataset.scramble;
           setTimeout(() => scramble(el, t, 1100), 280);
           function loop() {
-            scramble(el, t, 600);
+            if (heroVisible) scramble(el, t, 600);
             setTimeout(loop, 12000 + Math.random() * 8000);
           }
           setTimeout(loop, 12000 + Math.random() * 6000);
@@ -232,8 +245,10 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         const stroke = document.querySelector('.hero-word-stroke');
         if (stroke) {
           function fire() {
-            stroke.classList.add('glitch');
-            setTimeout(() => stroke.classList.remove('glitch'), 320);
+            if (heroVisible) {
+              stroke.classList.add('glitch');
+              setTimeout(() => stroke.classList.remove('glitch'), 320);
+            }
             setTimeout(fire, 5000 + Math.random() * 4000);
           }
           setTimeout(fire, 2500);

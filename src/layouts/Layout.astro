@@ -101,9 +101,16 @@ const {
           }
         }
 
-        function draw() {
+        // Throttle to ~30 fps. Background ambience doesn't need 60.
+        let lastFrame = 0;
+        function draw(now) {
           rafId = 0;
           if (!running || !visible || reduced) return;
+          if (now && now - lastFrame < 33) {
+            rafId = requestAnimationFrame(draw);
+            return;
+          }
+          lastFrame = now || 0;
           ctx.clearRect(0, 0, width, height);
           for (const node of nodes) {
             node.x += node.vx;
@@ -156,13 +163,18 @@ const {
           visible = !document.hidden;
           if (visible) start();
         });
-        // Pause when canvas is fully off-screen (page scrolled past hero area).
+        // The canvas itself is fixed/viewport-sized so it would always be
+        // "intersecting" — observe the hero element instead. Once the user
+        // scrolls past the hero, the background ambience is no longer
+        // visible (other sections have their own grid/orb bg) so we stop
+        // running entirely. Massive main-thread win on long scrolls.
         if ('IntersectionObserver' in window) {
+          const heroEl = document.getElementById('top') || canvas;
           const io = new IntersectionObserver((entries) => {
             running = entries[0].isIntersecting;
             if (running) start();
-          }, { rootMargin: '200px' });
-          io.observe(canvas);
+          }, { rootMargin: '100px' });
+          io.observe(heroEl);
         }
         // Throttle mousemove to ~30Hz so Safari isn't burning a full frame on each input event.
         let mouseTick = 0;
