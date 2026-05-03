@@ -169,17 +169,51 @@
   opacity: 0;
   transform: translateY(100%);
 }
+/* TV-static frame that flashes for ~120ms at the jump midpoint.
+   Sits above the sweep band and adds a 'channel-change' beat. */
+.warp-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+  mix-blend-mode: overlay;
+  opacity: 0;
+}
 .warp-overlay.warp-out {
   animation: warp-sweep-up 0.9s cubic-bezier(0.6, 0, 0.4, 1);
 }
+.warp-overlay.warp-out::after {
+  animation: warp-static 0.9s linear;
+}
+/* During the warp, the page itself gets a brief chromatic shift —
+   feels like a tunnel transition rather than a curtain wipe. */
+body.warping {
+  animation: warp-page-glitch 0.9s linear;
+}
+
 @keyframes warp-sweep-up {
   0%   { opacity: 0;    transform: translateY(100%); }
   12%  { opacity: 0.95; }
   88%  { opacity: 0.95; }
   100% { opacity: 0;    transform: translateY(-100%); }
 }
+@keyframes warp-static {
+  0%, 38%, 62%, 100% { opacity: 0; }
+  44% { opacity: 0.6; }
+  56% { opacity: 0.4; }
+}
+@keyframes warp-page-glitch {
+  0%, 100% { filter: none; }
+  35% { filter: saturate(1.2) hue-rotate(8deg); }
+  50% { filter: saturate(1.6) hue-rotate(-12deg) brightness(1.05); }
+  65% { filter: saturate(1.2) hue-rotate(6deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .warp-overlay.warp-out { animation: none; }
+  .warp-overlay.warp-out,
+  .warp-overlay.warp-out::after,
+  body.warping { animation: none; }
 }
 
 /* Background Neural Network */

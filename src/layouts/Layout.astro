@@ -254,6 +254,7 @@ const {
           return;
         }
         if (overlay) overlay.classList.add('warp-out');
+        document.body.classList.add('warping');
         // Mid-sweep (≈ 50% of the 0.9s sweep-up keyframe), do the actual jump.
         // Long enough that the eye can read 'current section is being wiped
         // away' before the new section snaps in.
@@ -268,6 +269,7 @@ const {
         }, 450);
         setTimeout(() => {
           if (overlay) overlay.classList.remove('warp-out');
+          document.body.classList.remove('warping');
         }, 920);
       }
 
