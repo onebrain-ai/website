@@ -260,6 +260,19 @@ const {
       // the top→bottom reveal. Used by header nav links, spine dots, and
       // any external/initial hash navigation.
       let warpInFlight = false;
+      // Hero uses scroll-margin-top:-64px so it underlaps the sticky nav by
+      // design — but scrollIntoView in Safari mishandles negative scroll-
+      // margins together with scroll-snap mandatory, leaving content tucked
+      // partly under the nav after a warp. Force an explicit scroll-to-top
+      // for #top instead; every other section uses scrollIntoView with the
+      // standard scroll-padding-top:64 baseline.
+      function jumpTo(t, targetSel) {
+        if (targetSel === '#top') {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        } else {
+          t.scrollIntoView({ block: 'start', behavior: 'instant' });
+        }
+      }
       function warpTo(targetSel) {
         if (warpInFlight) return;
         const t = document.querySelector(targetSel);
@@ -267,7 +280,7 @@ const {
         const overlay = document.getElementById('warp-overlay');
         const blackout = document.getElementById('warp-blackout');
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          t.scrollIntoView({ block: 'start', behavior: 'instant' });
+          jumpTo(t, targetSel);
           return;
         }
         warpInFlight = true;
@@ -284,7 +297,7 @@ const {
         // section's scanline starts under cover and emerges as the
         // blackout fades — sweep-down + content-rise read as one beat.
         setTimeout(() => {
-          t.scrollIntoView({ block: 'start', behavior: 'instant' });
+          jumpTo(t, targetSel);
           if (t.classList.contains('active')) {
             t.classList.remove('active');
             void t.offsetWidth;
