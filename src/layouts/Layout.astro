@@ -44,6 +44,23 @@ const {
     <!-- Neutral background base -->
     <div class="fixed inset-0 bg-[#020204] -z-[10]"></div>
     <canvas id="neural-canvas"></canvas>
+
+    <!-- Section spine — fixed right-edge HUD that visualizes scroll position
+         and ties every section together with a gradient through their accents. -->
+    <aside id="page-spine" class="page-spine" aria-hidden="true">
+      <div class="page-spine-track"></div>
+      <div class="page-spine-head"></div>
+      <ol class="page-spine-dots">
+        <li data-target="#top"      style="--dot-accent: #ff2d92;"><span></span></li>
+        <li data-target="#features" style="--dot-accent: #00ff9d;"><span></span></li>
+        <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><span></span></li>
+        <li data-target="#how"      style="--dot-accent: #ffb000;"><span></span></li>
+        <li data-target="#commands" style="--dot-accent: #bc13fe;"><span></span></li>
+        <li data-target="#stack"    style="--dot-accent: #c8ff00;"><span></span></li>
+        <li data-target="#cloud"    style="--dot-accent: #00bfff;"><span></span></li>
+      </ol>
+    </aside>
+
     <slot />
 
     <script is:inline>
@@ -169,6 +186,61 @@ const {
           });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      })();
+
+      // Section spine: highlight the active dot via IntersectionObserver
+      // (cheap, no scroll listener) and animate the head dot along the
+      // shared track using each section's relative scroll position.
+      (function () {
+        const spine = document.getElementById('page-spine');
+        if (!spine) return;
+        const dots = Array.from(spine.querySelectorAll('.page-spine-dots li'));
+        const head = spine.querySelector('.page-spine-head');
+        const sections = dots.map((d) => document.querySelector(d.dataset.target)).filter(Boolean);
+        if (!sections.length) return;
+
+        let activeIdx = 0;
+        function setActive(i) {
+          if (i === activeIdx) return;
+          activeIdx = i;
+          dots.forEach((d, j) => d.classList.toggle('active', j === i));
+          // Body tint: lets future global accents (e.g. cursor glow) follow current section.
+          document.body.style.setProperty('--page-accent', dots[i].style.getPropertyValue('--dot-accent'));
+        }
+
+        const io = new IntersectionObserver((entries) => {
+          // Pick the entry with the largest intersection ratio.
+          let best = null;
+          for (const e of entries) {
+            if (e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) best = e;
+          }
+          if (best) {
+            const idx = sections.indexOf(best.target);
+            if (idx >= 0) setActive(idx);
+          }
+        }, { threshold: [0.25, 0.5, 0.75] });
+        sections.forEach((s) => io.observe(s));
+
+        // Move the head dot smoothly along the track based on overall scroll progress.
+        let raf = 0;
+        function tick() {
+          raf = 0;
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+          if (head) head.style.top = (pct * 100) + '%';
+        }
+        window.addEventListener('scroll', () => {
+          if (!raf) raf = requestAnimationFrame(tick);
+        }, { passive: true });
+        tick();
+
+        // Click-to-jump.
+        dots.forEach((d) => {
+          d.addEventListener('click', () => {
+            const t = document.querySelector(d.dataset.target);
+            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
       })();
     </script>
   </body>

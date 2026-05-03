@@ -38,11 +38,111 @@
 
   main > section {
     scroll-snap-align: start;
+    /* Sticky nav (h-16) eats 64px — let snapped sections respect that. */
+    scroll-margin-top: 64px;
   }
 
   footer {
     scroll-snap-align: end;
   }
+}
+
+/* ── Section spine (right-edge HUD / scroll progress) ────────────────
+   Fixed to the viewport. Hidden on narrow screens. The colored track
+   shows the full palette as a single gradient — visually wires every
+   section together. The animated head dot slides with scroll. */
+.page-spine {
+  position: fixed;
+  top: 50%;
+  right: 22px;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+.page-spine-track {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    #ff2d92 0%,
+    #00ff9d 16.6%,
+    #ff2d92 33.3%,
+    #ffb000 50%,
+    #bc13fe 66.6%,
+    #c8ff00 83.3%,
+    #00bfff 100%
+  );
+  opacity: 0.35;
+}
+.page-spine-head {
+  position: absolute;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--page-accent, #ff2d92);
+  box-shadow:
+    0 0 12px var(--page-accent, #ff2d92),
+    0 0 24px var(--page-accent, #ff2d92);
+  transform: translate(-50%, -50%);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+  pointer-events: none;
+}
+.page-spine-dots {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  pointer-events: auto;
+}
+.page-spine-dots li {
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.page-spine-dots li > span {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+}
+.page-spine-dots li:hover > span {
+  background: var(--dot-accent);
+  border-color: var(--dot-accent);
+  box-shadow: 0 0 10px var(--dot-accent);
+}
+.page-spine-dots li.active > span {
+  width: 9px;
+  height: 9px;
+  background: var(--dot-accent);
+  border-color: var(--dot-accent);
+  box-shadow:
+    0 0 10px var(--dot-accent),
+    0 0 22px var(--dot-accent);
+}
+
+/* Hide the spine on narrow viewports — it would crowd the mobile drawer. */
+@media (max-width: 1023px) {
+  .page-spine { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-spine-head { transition: none; }
 }
 
 /* Background Neural Network */
