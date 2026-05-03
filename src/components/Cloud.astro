@@ -6,7 +6,7 @@ const tiers = [
 ];
 ---
 
-<section id="cloud" class="cyber-section reveal" style="--section-accent: #ff6b35;">
+<section id="cloud" class="cyber-section reveal" style="--section-accent: #14b8a6;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -172,14 +172,14 @@ const tiers = [
     position: relative;
     padding: 2rem 2rem 1.6rem;
     background: rgba(8, 8, 14, 0.55);
-    border: 1px solid rgba(56, 189, 248, 0.22);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
     backdrop-filter: blur(20px);
   }
   .waitlist-frame {
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid #00f3ff;
+    border: 1px solid var(--section-accent);
   }
   .waitlist-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
   .waitlist-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
@@ -193,16 +193,16 @@ const tiers = [
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.3em;
-    color: #38bdf8;
+    color: var(--section-accent);
     text-transform: uppercase;
     margin-bottom: 1.4rem;
   }
   .waitlist-rec-dot {
     width: 6px;
     height: 6px;
-    background: #38bdf8;
+    background: var(--section-accent);
     border-radius: 50%;
-    box-shadow: 0 0 10px #38bdf8;
+    box-shadow: 0 0 10px var(--section-accent);
     animation: cyber-pulse 1.5s ease-in-out infinite;
   }
 
@@ -236,7 +236,7 @@ const tiers = [
   }
   .waitlist-input:focus {
     outline: none;
-    border-color: #38bdf8;
+    border-color: var(--section-accent);
   }
   .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.22); }
 
@@ -246,23 +246,23 @@ const tiers = [
     justify-content: center;
     gap: 12px;
     padding: 14px 24px;
-    background: #38bdf8;
+    background: var(--section-accent);
     color: #050507;
     font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    border: 1px solid #38bdf8;
+    border: 1px solid var(--section-accent);
     cursor: pointer;
     transition: all 0.25s ease;
     clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 30px color-mix(in srgb, var(--section-accent) 30%, transparent);
   }
   .waitlist-btn:hover {
     background: #fff;
-    color: #38bdf8;
-    box-shadow: 0 0 50px rgba(56, 189, 248, 0.55);
+    color: var(--section-accent);
+    box-shadow: 0 0 50px color-mix(in srgb, var(--section-accent) 55%, transparent);
   }
   .waitlist-btn-arrow { transition: transform 0.3s ease; }
   .waitlist-btn:hover .waitlist-btn-arrow { transform: translateX(4px); }
@@ -271,12 +271,12 @@ const tiers = [
     display: none;
     margin-top: 1rem;
     padding: 12px 16px;
-    border: 1px solid rgba(56, 189, 248, 0.4);
-    background: rgba(56, 189, 248, 0.06);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
     font-family: var(--font-mono);
     font-size: 11px;
     line-height: 1.6;
-    color: #7dd3fc;
+    color: color-mix(in srgb, var(--section-accent) 70%, white);
     letter-spacing: 0.04em;
   }
   .waitlist-banner.show { display: block; }
@@ -290,9 +290,9 @@ const tiers = [
     background: rgba(255, 95, 87, 0.06);
     color: #ff8b85;
   }
-  .waitlist-banner-arrow { color: #38bdf8; margin-right: 6px; }
+  .waitlist-banner-arrow { color: var(--section-accent); margin-right: 6px; }
   .waitlist-link { color: #fff; text-decoration: underline; }
-  .waitlist-link:hover { color: #38bdf8; }
+  .waitlist-link:hover { color: var(--section-accent); }
   .waitlist-btn:disabled { opacity: 0.5; cursor: wait; }
 
   .waitlist-foot {
