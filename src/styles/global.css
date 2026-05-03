@@ -25,9 +25,13 @@
     font-family: var(--font-sans);
     font-size: 16px; /* Balanced font size */
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
-    /* Mandatory snap so every scroll input lands on a section — no
-       half-section scroll positions, even on small wheel deltas. */
+    /* Note: deliberately NOT scroll-behavior: smooth.
+       smooth + scroll-snap-type: mandatory has a known browser quirk
+       — during the smooth transition after a click, the mouse pointer
+       hangs at its old screen position while the page moves under it,
+       so the cursor reverts to default until the user nudges the mouse.
+       Instant snap eliminates the lag entirely. Programmatic smooth
+       scroll (e.g. spine-dot clicks) still opts in via scrollIntoView. */
     scroll-snap-type: y mandatory;
     /* Reserve the sticky nav's height so a snapped section's top edge
        lands just below the nav, not behind it. */
