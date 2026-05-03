@@ -54,10 +54,12 @@
   opacity: 0.3;
 }
 
-/* Navigation */
+/* Navigation. Solid background + light blur — Safari struggles with
+   blur(20px) saturate(180%) on a sticky element that recomposites on every scroll. */
 .nav-glass {
-  background: rgba(2, 2, 4, 0.85);
-  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(2, 2, 4, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -81,6 +83,7 @@
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
   padding: 1.5px;
+  transition: filter 0.3s ease;
 }
 .btn-tech-inner {
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
@@ -89,8 +92,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease;
 }
+/* Hover: swap inner to white so the group-hover:text-black inside reads,
+   and add a soft brand glow on the gradient frame. */
+.btn-tech:hover .btn-tech-inner { background: #ffffff; }
+.btn-tech:hover { filter: drop-shadow(0 0 14px rgba(255, 45, 146, 0.5)); }
 
 @keyframes cyber-flicker {
   0% { opacity: 0.8; }

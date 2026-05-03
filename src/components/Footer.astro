@@ -1,5 +1,6 @@
 ---
 import { getCliVersion } from '../lib/version';
+import Brain from './Brain.astro';
 const year = new Date().getFullYear();
 const cliVersion = await getCliVersion();
 ---
@@ -13,9 +14,9 @@ const cliVersion = await getCliVersion();
     <!-- Brand console -->
     <div class="footer-brand">
       <a href="/" class="footer-logo group">
-        <div class="relative w-10 h-10">
-          <div class="absolute inset-0 bg-[var(--color-accent-2)]/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center text-2xl animate-pulse">🧠</div>
+        <div class="relative w-10 h-10 flex items-center justify-center">
+          <div class="absolute inset-0 bg-[var(--color-accent-2)]/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
+          <Brain size={40} class="relative" ariaLabel="OneBrain" />
         </div>
         <div class="footer-logo-text">
           <span class="footer-logo-name">OneBrain</span>

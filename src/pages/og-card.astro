@@ -1,0 +1,310 @@
+---
+// Hidden render target for the OG share image.
+// Visit /og-card at exactly 1200x630, screenshot to public/og.png.
+// Regenerate via: bun run og:gen (see package.json).
+import Brain from '../components/Brain.astro';
+export const prerender = true;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>OG · OneBrain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,700;1,700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="card">
+      <!-- Background layers -->
+      <div class="grid" aria-hidden="true"></div>
+      <div class="orb orb-magenta" aria-hidden="true"></div>
+      <div class="orb orb-cyan" aria-hidden="true"></div>
+      <div class="scanlines" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <!-- HUD corners -->
+      <div class="hud hud-tl">
+        <div>SYS//ONEBRAIN.OS</div>
+        <div class="dim">NODE 0x4F2A · CONSOLE_BOOTED</div>
+      </div>
+      <div class="hud hud-tr">
+        <div>NETWORK :: <span class="on">ONLINE</span></div>
+        <div class="dim">REGION ASIA-SE-1</div>
+      </div>
+      <div class="hud hud-bl">
+        <div class="dim">// LIVE_FEED</div>
+        <div>onebrain.run</div>
+      </div>
+      <div class="hud hud-br">
+        <div class="dim">github.com/onebrain-ai</div>
+      </div>
+
+      <!-- Faint background wordmark -->
+      <div class="bg-wordmark" aria-hidden="true">UNIFIED<br />INTELLIGENCE</div>
+
+      <!-- Foreground content -->
+      <div class="content">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span>ONEBRAIN.OS :: YOUR_AI_THINKING_PARTNER</span>
+        </div>
+
+        <h1 class="title">
+          <Brain size={140} class="brain" ariaLabel="" />
+          <span class="title-text">OneBrain</span>
+        </h1>
+
+        <p class="tagline">
+          Your AI thinking partner — a living intelligence layer
+          inside your Obsidian vault.
+        </p>
+
+        <div class="cta-row">
+          <div class="cta primary">
+            <span>$ npm i -g @onebrain-ai/cli</span>
+          </div>
+          <div class="cta ghost">
+            <span>onebrain.run</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style is:global>
+      :root {
+        --magenta: #ff2d92;
+        --cyan: #00f3ff;
+        --bg: #050507;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        font-family: 'Chakra Petch', sans-serif;
+        color: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        background: radial-gradient(ellipse at 50% 0%, #0a0a14 0%, #050507 60%, #020204 100%);
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 56px 56px;
+        -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+                mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+        z-index: 1;
+      }
+
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        z-index: 0;
+      }
+      .orb-magenta {
+        right: -8%;
+        top: 18%;
+        width: 600px;
+        height: 600px;
+        background: rgba(255, 45, 146, 0.18);
+      }
+      .orb-cyan {
+        left: -10%;
+        bottom: 8%;
+        width: 480px;
+        height: 480px;
+        background: rgba(0, 243, 255, 0.12);
+      }
+
+      .scanlines {
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          0deg,
+          transparent 0,
+          transparent 2px,
+          rgba(255, 255, 255, 0.025) 2px,
+          rgba(255, 255, 255, 0.025) 3px
+        );
+        mix-blend-mode: overlay;
+        opacity: 0.6;
+        z-index: 3;
+      }
+
+      .vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 50%, rgba(0, 0, 0, 0.65) 100%);
+        z-index: 4;
+      }
+
+      .hud {
+        position: absolute;
+        z-index: 6;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        line-height: 1.7;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .hud-tl { top: 36px; left: 44px; }
+      .hud-tr { top: 36px; right: 44px; text-align: right; }
+      .hud-bl { bottom: 32px; left: 44px; }
+      .hud-br { bottom: 32px; right: 44px; text-align: right; }
+      .dim { color: rgba(255, 255, 255, 0.32); }
+      .on  { color: var(--cyan); }
+
+      .bg-wordmark {
+        position: absolute;
+        top: 50%;
+        right: -120px;
+        transform: translateY(-50%);
+        font-family: 'Chakra Petch', sans-serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: 180px;
+        line-height: 0.92;
+        text-align: right;
+        color: transparent;
+        -webkit-text-stroke: 1.2px rgba(255, 45, 146, 0.1);
+        z-index: 2;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .content {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 80px;
+        gap: 0;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 18px;
+        background: rgba(255, 45, 146, 0.06);
+        border: 1px solid rgba(255, 45, 146, 0.4);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--magenta);
+        align-self: flex-start;
+        margin-bottom: 28px;
+        position: relative;
+      }
+      .pill::before, .pill::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border: 1px solid var(--magenta);
+      }
+      .pill::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+      .pill::after  { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+      .pill-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--magenta);
+        border-radius: 50%;
+        box-shadow: 0 0 12px var(--magenta);
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        margin: 0;
+        font-family: 'Chakra Petch', sans-serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: 132px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        text-transform: none;
+      }
+      .brain {
+        flex: 0 0 auto;
+        filter: drop-shadow(0 0 32px rgba(255, 45, 146, 0.45));
+      }
+      .title-text {
+        background: linear-gradient(180deg, #ffffff 0%, #ffffff 60%, rgba(0, 243, 255, 0.85) 100%);
+        -webkit-background-clip: text;
+                background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 80px rgba(0, 243, 255, 0.25);
+      }
+
+      .tagline {
+        margin: 28px 0 38px;
+        max-width: 760px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 22px;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.72);
+        font-weight: 400;
+      }
+
+      .cta-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .cta {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        padding: 14px 22px;
+        position: relative;
+      }
+      .cta.primary {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.95);
+      }
+      .cta.primary::before {
+        content: '';
+        position: absolute;
+        top: -1px; bottom: -1px; left: -1px;
+        width: 3px;
+        background: linear-gradient(180deg, var(--magenta), var(--cyan));
+      }
+      .cta.ghost {
+        background: var(--magenta);
+        color: #050507;
+        clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
+        padding: 14px 28px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        box-shadow: 0 0 40px rgba(255, 45, 146, 0.45);
+      }
+    </style>
+  </body>
+</html>

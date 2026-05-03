@@ -1,7 +1,7 @@
 ---
 ---
 
-<section id="synergy" class="cyber-section reveal" style="--section-accent: #bc13fe;">
+<section id="synergy" class="cyber-section reveal" style="--section-accent: #ff2d92;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -83,6 +83,11 @@
     const mouse = { x: null, y: null, radius: 110 };
     let spawnTimer = null;
     let isResetting = false;
+
+    // Visibility/lifecycle state — declared up-front so draw()/start() never hit a TDZ.
+    let rafId = 0;
+    let running = true;
+    let visible = true;
 
     function init() {
       dpr = window.devicePixelRatio || 1;
@@ -234,7 +239,23 @@
       ctx.globalAlpha = 1;
 
       if (edgesEl) edgesEl.textContent = String(edgeCount).padStart(3, '0');
-      if (!reduced) requestAnimationFrame(draw);
+      if (running && visible && !reduced) rafId = requestAnimationFrame(draw);
+      else rafId = 0;
+    }
+    function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
+    let rafId = 0;
+    let running = true;
+    let visible = true;
+    document.addEventListener('visibilitychange', () => {
+      visible = !document.hidden;
+      if (visible) start();
+    });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        running = entries[0].isIntersecting;
+        if (running) start();
+      }, { rootMargin: '300px' });
+      io.observe(canvas);
     }
     window.addEventListener('resize', init);
     canvas.addEventListener('mousemove', (e) => {
@@ -244,7 +265,7 @@
     });
     canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
     init();
-    draw();
+    start();
   })();
 </script>
 

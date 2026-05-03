@@ -1,6 +1,10 @@
 ---
 import { getCliVersion } from '../lib/version';
 const cliVersion = await getCliVersion();
+
+const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const now = new Date();
+const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMonth()]}-${now.getFullYear()}`;
 ---
 
 <section class="hero" id="top">
@@ -39,7 +43,7 @@ const cliVersion = await getCliVersion();
         <div class="hero-pill reveal">
           <span class="hero-pill-dot"></span>
           <span>ONEBRAIN.OS :: CONSOLE_BOOTED</span>
-          <span class="hero-pill-meta">// 02-MAY-2026</span>
+          <span class="hero-pill-meta">// {buildDate}</span>
         </div>
 
         <h1 class="hero-h1 reveal" style="transition-delay: 100ms;">
@@ -121,14 +125,17 @@ const cliVersion = await getCliVersion();
     (function () {
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // 1. Particle field
+      // 1. Particle field — pauses when tab hidden or hero scrolls offscreen.
       (function () {
         const canvas = document.getElementById('hero-particles');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         let w, h, dpr, particles = [];
+        let running = true;
+        let visible = true;
+        let rafId = 0;
         function init() {
-          dpr = window.devicePixelRatio || 1;
+          dpr = Math.min(window.devicePixelRatio || 1, 1.5);
           w = canvas.parentElement.clientWidth;
           h = canvas.parentElement.clientHeight;
           canvas.width = w * dpr;
@@ -137,7 +144,7 @@ const cliVersion = await getCliVersion();
           ctx.scale(dpr, dpr);
           canvas.style.width = w + 'px';
           canvas.style.height = h + 'px';
-          const count = Math.min(140, Math.floor((w * h) / 11000));
+          const count = Math.min(110, Math.floor((w * h) / 13000));
           particles = [];
           for (let i = 0; i < count; i++) {
             const roll = Math.random();
@@ -153,6 +160,8 @@ const cliVersion = await getCliVersion();
           }
         }
         function draw() {
+          rafId = 0;
+          if (!running || !visible || reduced) return;
           ctx.clearRect(0, 0, w, h);
           for (const p of particles) {
             p.x += p.vx; p.y += p.vy;
@@ -165,11 +174,23 @@ const cliVersion = await getCliVersion();
             ctx.fill();
           }
           ctx.globalAlpha = 1;
-          if (!reduced) requestAnimationFrame(draw);
+          rafId = requestAnimationFrame(draw);
+        }
+        function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
+        document.addEventListener('visibilitychange', () => {
+          visible = !document.hidden;
+          if (visible) start();
+        });
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            running = entries[0].isIntersecting;
+            if (running) start();
+          }, { rootMargin: '100px' });
+          io.observe(canvas);
         }
         window.addEventListener('resize', init);
         init();
-        draw();
+        start();
       })();
 
       // 2. Headline motion — UNIFIED periodic re-scramble + INTELLIGENCE neon glitch.
@@ -398,20 +419,44 @@ const cliVersion = await getCliVersion();
         if (!reduced) setInterval(pushScenario, 2800);
       })();
 
-      // 4. Clipboard copy
+      // 4. Clipboard copy. Modern API first; falls back to a hidden textarea
+      // (covers HTTP previews, Safari user-gesture quirks, and old Edge).
       (function () {
         const btn = document.getElementById('cmd-copy');
         const text = document.getElementById('cmd-text');
         if (!btn || !text) return;
         const label = btn.querySelector('.cmd-copy-label');
+
+        function legacyCopy(value) {
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          let ok = false;
+          try { ok = document.execCommand('copy'); } catch { ok = false; }
+          document.body.removeChild(ta);
+          return ok;
+        }
+
         btn.addEventListener('click', async () => {
+          const value = text.textContent.trim();
+          let ok = false;
           try {
-            await navigator.clipboard.writeText(text.textContent.trim());
-            btn.classList.add('copied');
-            label.textContent = 'COPIED';
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(value);
+              ok = true;
+            } else {
+              ok = legacyCopy(value);
+            }
           } catch (e) {
-            label.textContent = 'ERR';
+            console.warn('[hero] clipboard primary path failed, falling back:', e);
+            ok = legacyCopy(value);
           }
+          btn.classList.toggle('copied', ok);
+          label.textContent = ok ? 'COPIED' : 'ERR';
           setTimeout(() => {
             btn.classList.remove('copied');
             label.textContent = 'COPY';
@@ -514,6 +559,10 @@ const cliVersion = await getCliVersion();
     opacity: 0.5;
   }
 
+  /* Static film grain — drop the per-frame animation. Animating an element
+     with mix-blend-mode forces Safari to recomposite the page every step,
+     which is the single biggest stutter source on the hero. The grain still
+     reads as grain without movement. */
   .hero-grain {
     position: absolute;
     inset: -10%;
@@ -522,14 +571,6 @@ const cliVersion = await getCliVersion();
     opacity: 0.06;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     background-size: 200px 200px;
-    animation: heroGrain 0.6s steps(4) infinite;
-  }
-  @keyframes heroGrain {
-    0%   { transform: translate(0, 0); }
-    25%  { transform: translate(-3%, 2%); }
-    50%  { transform: translate(2%, -1%); }
-    75%  { transform: translate(-1%, -2%); }
-    100% { transform: translate(0, 0); }
   }
 
   .hero-vignette {

@@ -19,7 +19,7 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/brain.svg" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
@@ -29,12 +29,12 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content="https://onebrain.run" />
-    <meta property="og:image" content={new URL(image, Astro.url)} />
+    <meta property="og:image" content={new URL(image, Astro.site ?? Astro.url)} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, Astro.url)} />
+    <meta name="twitter:image" content={new URL(image, Astro.site ?? Astro.url)} />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,22 +47,30 @@ const {
     <slot />
 
     <script is:inline>
+      // Site-wide neural canvas. Tuned for Safari: pauses when tab hidden,
+      // pauses when canvas is offscreen, throttles mousemove, and skips frames
+      // on slow devices. Nothing else on this canvas — keep it cheap.
       (function() {
         const canvas = document.getElementById('neural-canvas');
         if (!canvas) return;
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
         const ctx = canvas.getContext('2d', { alpha: true });
         let width, height, dpr;
         let nodes = [];
-        const nodeCount = 50;
-        const maxDistance = 200;
+        const nodeCount = 40;
+        const maxDistanceSq = 200 * 200;
         const mouse = { x: null, y: null, radius: 150 };
+        let running = true;
+        let visible = true;
+        let rafId = 0;
 
         function init() {
-          dpr = window.devicePixelRatio || 1;
+          dpr = Math.min(window.devicePixelRatio || 1, 1.5);
           width = window.innerWidth;
           height = window.innerHeight;
           canvas.width = width * dpr;
           canvas.height = height * dpr;
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
           ctx.scale(dpr, dpr);
           canvas.style.width = width + 'px';
           canvas.style.height = height + 'px';
@@ -73,21 +81,23 @@ const {
               y: Math.random() * height,
               vx: (Math.random() - 0.5) * 0.4,
               vy: (Math.random() - 0.5) * 0.4,
-              baseRadius: 1.5
             });
           }
         }
 
         function draw() {
+          rafId = 0;
+          if (!running || !visible || reduced) return;
           ctx.clearRect(0, 0, width, height);
-          nodes.forEach(node => {
+          for (const node of nodes) {
             node.x += node.vx;
             node.y += node.vy;
             if (mouse.x !== null) {
               const dx = node.x - mouse.x;
               const dy = node.y - mouse.y;
-              const dist = Math.sqrt(dx * dx + dy * dy);
-              if (dist < mouse.radius) {
+              const distSq = dx * dx + dy * dy;
+              if (distSq < mouse.radius * mouse.radius) {
+                const dist = Math.sqrt(distSq);
                 const force = (mouse.radius - dist) / mouse.radius;
                 node.x += (dx / dist) * force * 2;
                 node.y += (dy / dist) * force * 2;
@@ -96,34 +106,60 @@ const {
             if (node.x < 0 || node.x > width) node.vx *= -1;
             if (node.y < 0 || node.y > height) node.vy *= -1;
             ctx.beginPath();
-            ctx.arc(node.x, node.y, node.baseRadius, 0, Math.PI * 2);
+            ctx.arc(node.x, node.y, 1.5, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
             ctx.fill();
-          });
+          }
           ctx.lineWidth = 0.5;
           for (let i = 0; i < nodes.length; i++) {
+            const ni = nodes[i];
             for (let j = i + 1; j < nodes.length; j++) {
-              const dx = nodes[i].x - nodes[j].x;
-              const dy = nodes[i].y - nodes[j].y;
+              const nj = nodes[j];
+              const dx = ni.x - nj.x;
+              const dy = ni.y - nj.y;
               const distSq = dx * dx + dy * dy;
-              if (distSq < maxDistance * maxDistance) {
-                const dist = Math.sqrt(distSq);
-                const opacity = (1 - dist / maxDistance) * 0.1;
+              if (distSq < maxDistanceSq) {
+                const opacity = (1 - Math.sqrt(distSq) / 200) * 0.1;
                 ctx.beginPath();
-                ctx.moveTo(nodes[i].x, nodes[i].y);
-                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.moveTo(ni.x, ni.y);
+                ctx.lineTo(nj.x, nj.y);
                 ctx.strokeStyle = 'rgba(255, 255, 255, ' + opacity + ')';
                 ctx.stroke();
               }
             }
           }
-          requestAnimationFrame(draw);
+          rafId = requestAnimationFrame(draw);
         }
 
+        function start() {
+          if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw);
+        }
+
+        // Pause when tab is hidden — Safari especially benefits.
+        document.addEventListener('visibilitychange', () => {
+          visible = !document.hidden;
+          if (visible) start();
+        });
+        // Pause when canvas is fully off-screen (page scrolled past hero area).
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            running = entries[0].isIntersecting;
+            if (running) start();
+          }, { rootMargin: '200px' });
+          io.observe(canvas);
+        }
+        // Throttle mousemove to ~30Hz so Safari isn't burning a full frame on each input event.
+        let mouseTick = 0;
+        window.addEventListener('mousemove', (e) => {
+          const now = performance.now();
+          if (now - mouseTick < 32) return;
+          mouseTick = now;
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        }, { passive: true });
         window.addEventListener('resize', init);
-        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
         init();
-        draw();
+        start();
       })();
 
       (function() {
