@@ -242,7 +242,10 @@
      centring lines up with visible centre, not full-viewport centre.
      100dvh handles mobile chrome that grows/shrinks the address bar. */
   min-height: calc(100dvh - 64px);
-  padding: 4rem 1.5rem 3rem;
+  /* Trim vertical padding so dense sections (Features 6-card grid,
+     Commands 12-card grid) don't overflow the 836px content area on
+     standard 900px laptop viewports. */
+  padding: 2.5rem 1.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -366,10 +369,10 @@
 }
 
 .cyber-section-head {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.75rem;
 }
 @media (min-width: 1024px) {
-  .cyber-section-head { margin-bottom: 3rem; }
+  .cyber-section-head { margin-bottom: 2rem; }
 }
 
 .cyber-pill {

@@ -243,15 +243,21 @@
       else rafId = 0;
     }
     function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
+    function stopSpawn() {
+      if (spawnTimer) { clearInterval(spawnTimer); spawnTimer = null; }
+      if (spawnTimeout) { clearTimeout(spawnTimeout); spawnTimeout = null; }
+    }
     document.addEventListener('visibilitychange', () => {
       visible = !document.hidden;
       if (visible) start();
+      else stopSpawn();
     });
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         running = entries[0].isIntersecting;
         if (running) start();
-      }, { rootMargin: '300px' });
+        else stopSpawn();
+      }, { rootMargin: '0px' });
       io.observe(canvas);
     }
     window.addEventListener('resize', init);
