@@ -114,4 +114,31 @@ const glowId = `ob-brain-glow-${uid}`;
     .brain-anim { animation: none; }
     .brain-anim stop { animation: none; }
   }
+
+  /* ── Hover state ──
+     "Breathing" pulse — gentle scale + brand-color glow swap. Activates when
+     the logo or its anchor parent is hovered. Uses the same magenta↔cyan
+     brand language as the synergy nebula and INTELLIGENCE glitch so the logo
+     reads as part of the same animated system. :global() escapes Astro's
+     style scoping so the parent <a> in Nav.astro / Footer.astro participates. */
+  :global(a:hover) .brain,
+  .brain:hover {
+    animation: ob-brain-breath 1.6s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes ob-brain-breath {
+    0%, 100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 6px rgba(255, 45, 146, 0.45));
+    }
+    50% {
+      transform: scale(1.06);
+      filter: drop-shadow(0 0 18px rgba(0, 243, 255, 0.55));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(a:hover) .brain,
+    .brain:hover { animation: none; }
+  }
 </style>
