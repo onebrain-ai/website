@@ -235,15 +235,29 @@ const tiers = [
 
   /* ── PRO / TEAM: dimmed, "coming soon" ── */
   .tier-card.tier-card-soon {
-    opacity: 0.45;
+    opacity: 0.55;
     cursor: default;
   }
   .tier-card.tier-card-soon .tier-status {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--section-accent);
     letter-spacing: 0.32em;
+    animation: tier-soon-blink 2.4s ease-in-out infinite;
   }
   .tier-card.tier-card-soon .cyber-card-desc {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.32);
+  }
+  /* Stagger TEAM relative to PRO so they pulse out of sync — feels like
+     two independent "incoming" signals rather than one synchronized banner. */
+  .tier-card.tier-card-soon:nth-of-type(3) .tier-status {
+    animation-delay: 1.2s;
+  }
+  @keyframes tier-soon-blink {
+    0%, 100% { opacity: 1; }
+    48%      { opacity: 0.25; }
+    52%      { opacity: 0.25; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tier-card.tier-card-soon .tier-status { animation: none; }
   }
 
   /* Waitlist console */
