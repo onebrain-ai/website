@@ -206,6 +206,23 @@
   animation: warp-blackout 1.7s ease forwards;
 }
 
+/* Gridline backdrop inside the blackout — same 56px × 56px pattern as
+   .cyber-section-grid, with the same radial-ellipse mask so it fades to
+   pure black at the edges. Sits behind .warp-mark and inherits the
+   blackout's opacity animation, so the held beat reads as the same
+   visual language as every other section instead of a flat void. */
+.warp-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+          mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+}
+
 /* Brand mark at the centre of the blackout — surfaces during the held
    beat so the transition reads as a deliberate hand-off rather than a
    void. Inherits the blackout layer's opacity animation; the inner
