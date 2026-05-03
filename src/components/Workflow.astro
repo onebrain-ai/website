@@ -1,20 +1,11 @@
 ---
+// Tight 3-beat summary that lives below the sub paragraph on the left.
+// Each line is one short sentence — the long-form beat cards were
+// pulled in favour of the animation getting top-half real estate.
 const beats = [
-  {
-    n: '01',
-    label: 'CONTEXT POOL',
-    body: 'Every project, decision, research thread, and agent memory lives in the vault. The agent reads one place and understands the whole picture — no context switching, no re-explaining.',
-  },
-  {
-    n: '02',
-    label: 'DISPATCH',
-    body: 'Agent goes from the vault to the repo, the website source, the infra dashboard, the API spec — wherever the work actually lives. Code stays in its place; orchestration stays here.',
-  },
-  {
-    n: '03',
-    label: 'NO TOOL SPRAWL',
-    body: 'Slack threads, Linear tickets, Notion docs, scattered spreadsheets — all collapse into one place: plain markdown in your vault. Version-controlled, AI-readable, yours forever.',
-  },
+  'Read once, understand all — agent context lives in one place, never re-explained.',
+  'Code in repos, orchestration in vault — agent dispatches from here to wherever the work actually lives.',
+  'Markdown replaces Slack / Linear / Notion — version-controlled, AI-readable, yours forever.',
 ];
 
 // Hub-and-spokes map of where the agent dispatches FROM the vault.
@@ -42,39 +33,35 @@ const dispatches = [
 
   <div class="cyber-section-shell">
 
-    <!-- Top row: 50:50 split — section header on the left, the three
-         narrative beats on the right. Lifts the beats up alongside
-         the headline so the right half of the section above the
-         diagram isn't dead space. -->
+    <!-- 50:50 — header + bullet recap on the left, animated hub on
+         the right. The animation owns the right half so the
+         "command center → many destinations" idea reads visually
+         before the user reads any copy. -->
     <div class="workflow-top">
-      <header class="cyber-section-head">
-        <div class="cyber-pill">
-          <span class="cyber-pill-dot"></span>
-          <span>ONEBRAIN // WORKFLOW</span>
-        </div>
-        <h2 class="cyber-h2">
-          One Vault.<br/>
-          <span class="cyber-h2-stroke">All Your Projects.</span>
-        </h2>
-        <p class="cyber-sub">
-          Obsidian becomes your <strong>command center</strong> — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
-        </p>
-      </header>
-
-      <div class="workflow-beats">
-        {beats.map((b) => (
-          <div class="cyber-card workflow-beat">
-            <span class="workflow-beat-num">{b.n}</span>
-            <h3 class="cyber-card-title workflow-beat-label">{b.label}</h3>
-            <p class="cyber-card-desc workflow-beat-body">{b.body}</p>
+      <div class="workflow-text">
+        <header class="cyber-section-head">
+          <div class="cyber-pill">
+            <span class="cyber-pill-dot"></span>
+            <span>ONEBRAIN // WORKFLOW</span>
           </div>
-        ))}
-      </div>
-    </div>
+          <h2 class="cyber-h2">
+            One Vault.<br/>
+            <span class="cyber-h2-stroke">All Your Projects.</span>
+          </h2>
+          <p class="cyber-sub">
+            Obsidian becomes your <strong>command center</strong> — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
+          </p>
+        </header>
 
-    <!-- Bottom: hub diagram, centred and full-width below the
-         header row. -->
-    <div class="workflow-hub-wrap">
+        <ul class="workflow-recap">
+          {beats.map((b) => (
+            <li>
+              <span class="workflow-recap-mark">»</span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <!-- Hub-and-spokes diagram with inline labels + animated
            data-flow particles. Each spoke gets one particle that
@@ -138,41 +125,60 @@ const dispatches = [
 </section>
 
 <style>
-  /* Section-scoped tightening — the workflow section's diagram + 3
-     stacked beats was running taller than the visible viewport on
-     laptop heights, mirroring the Features-section issue. Trim the
-     header rhythm and the beat padding so everything centres in
-     view without spilling below the fold. */
-  #workflow .cyber-h2          { font-size: clamp(2rem, 4.6vw, 4rem); }
+  /* Section-scoped tightening so header + recap + hub fit one
+     viewport. */
+  #workflow .cyber-h2           { font-size: clamp(2rem, 4.6vw, 4rem); }
   #workflow .cyber-pill         { margin-bottom: 18px; }
-  /* Margin-bottom on the section-head is handled by .workflow-top
-     gap on desktop (where header sits left, beats sit right) and
-     on mobile (where they stack). Reset the default margin so it
-     doesn't push beats unevenly down on the desktop split. */
-  #workflow .cyber-section-head { margin-bottom: 0; }
+  #workflow .cyber-section-head { margin-bottom: 1rem; }
 
-  /* Top row: 50:50 — header + sub on the left, three beats on the
-     right. On mobile they stack so the section still reads cleanly. */
+  /* 50:50 split. Left column carries the message (header + recap
+     bullets); right column carries the animated hub diagram. */
   .workflow-top {
     display: grid;
-    gap: 1.5rem;
-    align-items: start;
-    margin-bottom: 1.75rem;
+    gap: 1.75rem;
+    align-items: center;
   }
   @media (min-width: 1024px) {
     .workflow-top {
       grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
-      align-items: center;
+      gap: 3rem;
     }
   }
 
-  /* ── BOTTOM: hub diagram, full-width centred ── */
-
-  .workflow-hub-wrap {
+  .workflow-text {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
   }
+  /* Recap bullets — three short lines that summarise the beats the
+     long-form cards used to spell out, kept lean so the section
+     fits. */
+  .workflow-recap {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 1rem;
+  }
+  .workflow-recap li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 10px;
+    align-items: start;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .workflow-recap-mark {
+    color: var(--section-accent);
+    font-weight: 700;
+  }
+
+  /* ── RIGHT: hub diagram with inline labels ── */
+
   .workflow-hub {
     display: flex;
     align-items: center;
@@ -181,8 +187,8 @@ const dispatches = [
   }
   .workflow-hub-svg {
     width: 100%;
-    max-width: 720px;
-    aspect-ratio: 1.55 / 1;
+    max-width: 520px;
+    aspect-ratio: 1.4 / 1;
     overflow: visible;
   }
 
@@ -267,38 +273,5 @@ const dispatches = [
   @media (prefers-reduced-motion: reduce) {
     .cyber-section.active .hub-particle-in,
     .cyber-section.active .hub-particle-out { animation: none; }
-  }
-
-  /* ── RIGHT: 3 beats ── */
-
-  .workflow-beats {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-  }
-  .workflow-beat {
-    padding: 0.95rem 1.2rem;
-    position: relative;
-    border-left: 2px solid color-mix(in srgb, var(--section-accent) 50%, transparent);
-  }
-  .workflow-beat-num {
-    position: absolute;
-    top: 0.8rem;
-    right: 1rem;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.32em;
-    color: rgba(255, 255, 255, 0.3);
-  }
-  .workflow-beat-label {
-    color: var(--section-accent);
-    letter-spacing: 0.16em;
-    margin: 0 0 6px;
-    font-size: 0.9rem;
-  }
-  .workflow-beat-body {
-    margin: 0;
-    line-height: 1.55;
-    font-size: 12px;
   }
 </style>
