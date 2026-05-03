@@ -37,11 +37,12 @@
   }
 
   main > section {
-    /* Snap to top — center-snap fights the sticky nav and breaks
-       scrollIntoView() targets. Sections already use min-height:100vh +
-       flex centering so content lands near the optical centre on its own. */
+    /* Snap each section's top edge to viewport top. Sections are
+       min-height:100vh + flex-centred internally, so the section's
+       *content* lands at viewport centre — the sticky nav covers the
+       top 64px of section padding (orb / grid bg only), never the
+       headline or cards. */
     scroll-snap-align: start;
-    scroll-margin-top: 64px;
   }
 
   footer {
