@@ -26,7 +26,12 @@
     font-size: 16px; /* Balanced font size */
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
+    /* Mandatory snap so every scroll input lands on a section — no
+       half-section scroll positions, even on small wheel deltas. */
+    scroll-snap-type: y mandatory;
+    /* Reserve the sticky nav's height so a snapped section's top edge
+       lands just below the nav, not behind it. */
+    scroll-padding-top: 64px;
   }
 
   body {
