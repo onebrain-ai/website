@@ -1,7 +1,8 @@
 ---
 // Hidden render target for the OG share image.
-// Visit /og-card at exactly 1200x630, screenshot to public/og.png.
-// Regenerate via: bun run og:gen (see package.json).
+// Visit /og-card at exactly 1200×630, screenshot then export as JPEG q90 to
+// public/og.jpg. Was PNG (369 KB); switched to JPEG to drop OG-fetch
+// payload to ~108 KB without visible quality loss on the gradient + text.
 import Brain from '../components/Brain.astro';
 export const prerender = true;
 ---
