@@ -41,6 +41,18 @@
     line-height: 1.5;
   }
 
+  /* Defensive cursor: every <a href> and enabled <button> always shows
+     the pointer hand. Catches descendants whose own styles might break
+     CSS-cursor inheritance. */
+  a[href],
+  button:not([disabled]) {
+    cursor: pointer;
+  }
+  a[href] *,
+  button:not([disabled]) * {
+    cursor: inherit;
+  }
+
   main > section {
     scroll-snap-align: start;
   }
