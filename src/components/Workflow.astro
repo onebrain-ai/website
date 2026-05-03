@@ -1,0 +1,233 @@
+---
+const beats = [
+  {
+    n: '01',
+    label: 'CONTEXT POOL',
+    body: 'Every project, decision, research thread, and agent memory lives in the vault. The agent reads one place and understands the whole picture — no context switching, no re-explaining.',
+  },
+  {
+    n: '02',
+    label: 'DISPATCH',
+    body: 'Agent goes from the vault to the repo, the website source, the infra dashboard, the API spec — wherever the work actually lives. Code stays in its place; orchestration stays here.',
+  },
+  {
+    n: '03',
+    label: 'NO TOOL SPRAWL',
+    body: 'Slack threads, Linear tickets, Notion docs, scattered spreadsheets — all collapse into one place: plain markdown in your vault. Version-controlled, AI-readable, yours forever.',
+  },
+];
+
+// Hub-and-spokes map of where the agent dispatches FROM the vault.
+const dispatches = [
+  { angle: -75, label: 'CLI / REPO',     gloss: 'code · PRs · CI' },
+  { angle: -35, label: 'WEBSITE',        gloss: 'astro · cf workers' },
+  { angle:  10, label: 'CLOUD INFRA',    gloss: 'd1 · workers · routes' },
+  { angle:  55, label: 'AGENT MEMORY',   gloss: 'persist · recall' },
+  { angle: 105, label: 'PROJECT NOTES',  gloss: 'PARA · tasks · logs' },
+  { angle: 155, label: 'RESEARCH',       gloss: 'web · papers · refs' },
+  { angle: 205, label: 'COMMS',          gloss: 'telegram · email' },
+];
+---
+
+<section id="workflow" class="cyber-section reveal" style="--section-accent: #ff5e3a;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
+
+  <div class="cyber-section-shell">
+    <header class="cyber-section-head">
+      <div class="cyber-pill">
+        <span class="cyber-pill-dot"></span>
+        <span>ONEBRAIN // WORKFLOW</span>
+      </div>
+      <h2 class="cyber-h2">
+        One Vault.<br/>
+        <span class="cyber-h2-stroke">All Your Projects.</span>
+      </h2>
+      <p class="cyber-sub">
+        Obsidian becomes your <strong>command center</strong> — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
+      </p>
+    </header>
+
+    <div class="workflow-grid">
+
+      <!-- LEFT: Hub-and-spokes diagram -->
+      <div class="workflow-hub" aria-hidden="true">
+        <svg viewBox="-200 -200 400 400" class="workflow-hub-svg">
+          <!-- Outer ring -->
+          <circle cx="0" cy="0" r="170" class="hub-ring" />
+          <!-- Spokes -->
+          {dispatches.map((d) => {
+            const rad = (d.angle * Math.PI) / 180;
+            const x = Math.cos(rad) * 170;
+            const y = Math.sin(rad) * 170;
+            return (
+              <g>
+                <line x1="0" y1="0" x2={x} y2={y} class="hub-spoke" />
+                <circle cx={x} cy={y} r="5" class="hub-node" />
+              </g>
+            );
+          })}
+          <!-- Centre vault label -->
+          <circle cx="0" cy="0" r="48" class="hub-core" />
+          <text x="0" y="-2" text-anchor="middle" class="hub-core-label">VAULT</text>
+          <text x="0" y="14" text-anchor="middle" class="hub-core-sub">.md</text>
+        </svg>
+
+        <ul class="workflow-spokes-list">
+          {dispatches.map((d) => (
+            <li>
+              <span class="spoke-dot"></span>
+              <span class="spoke-label">{d.label}</span>
+              <span class="spoke-gloss">{d.gloss}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- RIGHT: 3 narrative beats -->
+      <div class="workflow-beats">
+        {beats.map((b) => (
+          <div class="cyber-card workflow-beat">
+            <span class="workflow-beat-num">{b.n}</span>
+            <h3 class="cyber-card-title workflow-beat-label">{b.label}</h3>
+            <p class="cyber-card-desc workflow-beat-body">{b.body}</p>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .workflow-grid {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .workflow-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 3rem;
+    }
+  }
+
+  /* ── LEFT: hub diagram ── */
+
+  .workflow-hub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
+    background: rgba(8, 8, 14, 0.55);
+    position: relative;
+  }
+  .workflow-hub-svg {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1 / 1;
+    overflow: visible;
+  }
+
+  .hub-ring {
+    fill: none;
+    stroke: color-mix(in srgb, var(--section-accent) 18%, transparent);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+  }
+  .hub-spoke {
+    stroke: color-mix(in srgb, var(--section-accent) 35%, transparent);
+    stroke-width: 1;
+  }
+  .hub-node {
+    fill: var(--section-accent);
+  }
+  .hub-core {
+    fill: rgba(2, 2, 4, 0.92);
+    stroke: var(--section-accent);
+    stroke-width: 1.5;
+  }
+  .hub-core-label {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    fill: #fff;
+  }
+  .hub-core-sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    fill: var(--section-accent);
+  }
+
+  /* Spoke labels list — rendered as a separate text legend below the
+     SVG so labels stay legible at every viewport width without
+     overlapping the spokes. */
+  .workflow-spokes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 18px;
+  }
+  .workflow-spokes-list li {
+    display: grid;
+    grid-template-columns: 8px auto 1fr;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+  }
+  .spoke-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--section-accent);
+    border-radius: 50%;
+  }
+  .spoke-label {
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.12em;
+  }
+  .spoke-gloss {
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.04em;
+    font-size: 9px;
+  }
+
+  /* ── RIGHT: 3 beats ── */
+
+  .workflow-beats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .workflow-beat {
+    padding: 1.25rem 1.4rem;
+    position: relative;
+    border-left: 2px solid color-mix(in srgb, var(--section-accent) 50%, transparent);
+  }
+  .workflow-beat-num {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    color: rgba(255, 255, 255, 0.3);
+  }
+  .workflow-beat-label {
+    color: var(--section-accent);
+    letter-spacing: 0.16em;
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+  }
+  .workflow-beat-body {
+    margin: 0;
+    line-height: 1.65;
+  }
+</style>
