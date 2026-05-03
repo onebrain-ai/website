@@ -294,14 +294,13 @@ const {
           return;
         }
         warpInFlight = true;
-        // Defer class application to the next frame so the click handler
-        // returns immediately. Synchronously adding a class that triggers a
-        // page-wide animation can stall Safari's compositor for hundreds of
-        // ms before the first frame paints.
-        requestAnimationFrame(() => {
-          if (overlay) overlay.classList.add('warp-out');
-          if (blackout) blackout.classList.add('warp-on');
-        });
+        // Apply classes synchronously — the rAF defer was needed when the
+        // warp animated `body { filter: ... }` (a page-wide compositor
+        // stall in Safari). Now the animations live on small fixed-
+        // position overlays only, so the click → first-paint path no
+        // longer eats a frame.
+        if (overlay) overlay.classList.add('warp-out');
+        if (blackout) blackout.classList.add('warp-on');
         // Jump mid-hold (sweep up done at ~0.8s, blackout fully opaque
         // 0.8–1.5s). Hash jump + boot replay happen at 1.2s so the new
         // section's scanline starts under cover and emerges as the
@@ -328,23 +327,30 @@ const {
       (function () {
         const links = document.querySelectorAll('header a[href^="#"]');
         links.forEach((a) => {
-          const fire = (e) => {
-            const href = a.getAttribute('href');
-            if (!href || href === '#' || !document.querySelector(href)) return;
+          // Cache href + target lookup at bind time so click handlers
+          // do zero DOM work on the hot path.
+          const href = a.getAttribute('href');
+          if (!href || href === '#') return;
+          if (!document.querySelector(href)) return;
+          // mousedown (capture phase) fires earliest in Safari for <a>
+          // elements — earlier than pointerdown (which Safari routes
+          // through link-activation prep) and far earlier than click
+          // (which waits for release + native link delay). preventDefault
+          // here suppresses focus-ring + native :active handling that
+          // would otherwise paint a frame between press and warp start.
+          const onPress = (e) => {
+            if (e.button !== 0) return;
             e.preventDefault();
             warpTo(href);
           };
-          // pointerdown fires on press (no wait for release / native
-          // link-click delay), matching the snappier feel of spine-dot
-          // <li>s which carry no link semantics. warpInFlight guards
-          // against the click event re-firing the same warp on release.
-          a.addEventListener('pointerdown', (e) => {
-            if (e.pointerType === 'mouse' && e.button !== 0) return;
-            fire(e);
+          a.addEventListener('mousedown', onPress, { capture: true });
+          // click stays for keyboard (Enter/Space) and as a safety net
+          // for any pointer mode mousedown skipped. warpInFlight inside
+          // warpTo prevents double-fire when mousedown already ran.
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            warpTo(href);
           });
-          // click handler keeps Enter/Space (keyboard activation) and
-          // covers any pointer modes pointerdown skipped.
-          a.addEventListener('click', fire);
         });
       })();
 
