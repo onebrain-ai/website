@@ -20,7 +20,7 @@ const navLinks = [
       </div>
       <div class="nav-logo-text">
         <span class="nav-wordmark">OneBrain</span>
-        <span class="nav-tagline">Your AI Thinking Partner</span>
+        <span class="nav-tagline">Your AI <span class="nav-tagline-pair">Thinking Partner</span></span>
       </div>
     </a>
 
@@ -180,6 +180,12 @@ const navLinks = [
     color: var(--color-accent-2);
     text-transform: uppercase;
     opacity: 0.7;
+  }
+  /* Force "Thinking Partner" to break as one unit so the wrap pattern
+     reads "Your AI" / "Thinking Partner" instead of the default
+     "Your AI Thinking" / "Partner". */
+  .nav-tagline-pair {
+    white-space: nowrap;
   }
 
   /* ── Hamburger trigger (mobile only) ── */
