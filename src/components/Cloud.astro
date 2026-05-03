@@ -306,25 +306,28 @@ const tiers = [
   }
 
   .waitlist-title {
-    margin: 0 0 0.6rem;
-    font-family: var(--font-display);
+    margin: 0 0 0.7rem;
+    /* Match site H2 vocabulary — Chakra Petch italic, just smaller. */
+    font-family: 'Chakra Petch', var(--font-display), sans-serif;
     font-style: italic;
     font-weight: 700;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     line-height: 1.25;
     color: #fff;
     letter-spacing: -0.01em;
+    text-transform: none;
   }
   .waitlist-title strong {
     color: var(--section-accent);
     font-weight: 700;
   }
   .waitlist-blurb {
-    margin: 0 0 1.4rem;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    line-height: 1.65;
-    color: rgba(255, 255, 255, 0.55);
+    /* Match .cyber-sub vocabulary — JetBrains Mono body. */
+    margin: 0 0 2rem;
+    font-family: 'JetBrains Mono', var(--font-mono), monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.6);
     max-width: 44ch;
   }
   .waitlist-form {
