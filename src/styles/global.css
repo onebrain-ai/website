@@ -334,13 +334,17 @@
    filter / blur / text-shadow keyframes — so it runs the same on a
    passively-cooled MacBook as on a top-spec workstation. */
 
-/* The scanline band itself — only renders when .active fires. */
+/* The scanline band itself — only renders when .active fires.
+   Sits above .cyber-section-shell (z:10) so the sweep visually crosses
+   *over* every piece of content during the boot sequence — including
+   the synergy nebula canvas, which previously appeared to float above
+   the scanline because the shell's stacking context outranked it. */
 .cyber-section::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 9;
+  z-index: 11;
   background: linear-gradient(
     180deg,
     transparent 0%,
