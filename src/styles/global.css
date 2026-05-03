@@ -42,12 +42,15 @@
   }
 
   main > section {
-    /* Snap each section's top edge to viewport top. Sections are
-       min-height:100vh + flex-centred internally, so the section's
-       *content* lands at viewport centre — the sticky nav covers the
-       top 64px of section padding (orb / grid bg only), never the
-       headline or cards. */
     scroll-snap-align: start;
+  }
+  /* Hero opts out of scroll-padding-top: its layout is designed for the
+     full viewport with the sticky nav overlapping the top 64px (the HUD
+     corners sit at top:80 to clear the nav). A negative scroll-margin
+     cancels the padding for this single section so it snaps at y=0 and
+     the empty padding band above the HUD disappears. */
+  main > section#top {
+    scroll-margin-top: -64px;
   }
 
   footer {
