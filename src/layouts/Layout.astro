@@ -60,7 +60,17 @@ const ogImageUrl = `https://onebrain.run${image}`;
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Non-blocking font load: media="print" makes the browser fetch
+         the stylesheet without applying or blocking, then onload swaps
+         media to "all" so the styles take effect. The hero h1 (LCP
+         candidate) paints with the system fallback first, swaps to
+         Chakra Petch on load. `display=swap` keeps the swap painless.
+         <noscript> falls back to a regular blocking link for JS-off
+         users so they still get the brand fonts. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+    </noscript>
 
     <!-- Stash any incoming hash before the browser performs its default scroll-to-id.
          The main script will replay it as a warp on load. Has to live in <head>
