@@ -18,14 +18,16 @@ const beats = [
 ];
 
 // Hub-and-spokes map of where the agent dispatches FROM the vault.
+// Each entry includes label-anchor hint so the SVG text doesn't run
+// off the diagram edges or collide with the centre core.
 const dispatches = [
-  { angle: -75, label: 'CLI / REPO',     gloss: 'code · PRs · CI' },
-  { angle: -35, label: 'WEBSITE',        gloss: 'astro · cf workers' },
-  { angle:  10, label: 'CLOUD INFRA',    gloss: 'd1 · workers · routes' },
-  { angle:  55, label: 'AGENT MEMORY',   gloss: 'persist · recall' },
-  { angle: 105, label: 'PROJECT NOTES',  gloss: 'PARA · tasks · logs' },
-  { angle: 155, label: 'RESEARCH',       gloss: 'web · papers · refs' },
-  { angle: 205, label: 'COMMS',          gloss: 'telegram · email' },
+  { angle: -90, label: 'CLI / REPO',    anchor: 'middle' },
+  { angle: -40, label: 'WEBSITE',       anchor: 'start'  },
+  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start'  },
+  { angle:  40, label: 'AGENT MEMORY',  anchor: 'start'  },
+  { angle:  90, label: 'PROJECT NOTES', anchor: 'middle' },
+  { angle: 140, label: 'RESEARCH',      anchor: 'end'    },
+  { angle: 180, label: 'COMMS',         anchor: 'end'    },
 ];
 ---
 
@@ -50,38 +52,36 @@ const dispatches = [
 
     <div class="workflow-grid">
 
-      <!-- LEFT: Hub-and-spokes diagram -->
+      <!-- LEFT: Hub-and-spokes diagram with inline labels -->
       <div class="workflow-hub" aria-hidden="true">
-        <svg viewBox="-200 -200 400 400" class="workflow-hub-svg">
+        <svg viewBox="-280 -200 560 400" class="workflow-hub-svg">
           <!-- Outer ring -->
-          <circle cx="0" cy="0" r="170" class="hub-ring" />
-          <!-- Spokes -->
+          <circle cx="0" cy="0" r="150" class="hub-ring" />
+          <!-- Spokes + nodes + labels -->
           {dispatches.map((d) => {
             const rad = (d.angle * Math.PI) / 180;
-            const x = Math.cos(rad) * 170;
-            const y = Math.sin(rad) * 170;
+            const nodeR = 150;
+            const labelR = 175;
+            const nx = Math.cos(rad) * nodeR;
+            const ny = Math.sin(rad) * nodeR;
+            const lx = Math.cos(rad) * labelR;
+            // Bias label vertical: middle-anchor labels (top/bottom)
+            // get extra offset to clear the node circle.
+            const ly = Math.sin(rad) * labelR
+              + (d.anchor === 'middle' ? (Math.sin(rad) > 0 ? 14 : -8) : 4);
             return (
               <g>
-                <line x1="0" y1="0" x2={x} y2={y} class="hub-spoke" />
-                <circle cx={x} cy={y} r="5" class="hub-node" />
+                <line x1="0" y1="0" x2={nx} y2={ny} class="hub-spoke" />
+                <circle cx={nx} cy={ny} r="5" class="hub-node" />
+                <text x={lx} y={ly} text-anchor={d.anchor} class="hub-node-label">{d.label}</text>
               </g>
             );
           })}
           <!-- Centre vault label -->
-          <circle cx="0" cy="0" r="48" class="hub-core" />
+          <circle cx="0" cy="0" r="44" class="hub-core" />
           <text x="0" y="-2" text-anchor="middle" class="hub-core-label">VAULT</text>
           <text x="0" y="14" text-anchor="middle" class="hub-core-sub">.md</text>
         </svg>
-
-        <ul class="workflow-spokes-list">
-          {dispatches.map((d) => (
-            <li>
-              <span class="spoke-dot"></span>
-              <span class="spoke-label">{d.label}</span>
-              <span class="spoke-gloss">{d.gloss}</span>
-            </li>
-          ))}
-        </ul>
       </div>
 
       <!-- RIGHT: 3 narrative beats -->
@@ -100,34 +100,39 @@ const dispatches = [
 </section>
 
 <style>
+  /* Section-scoped tightening — the workflow section's diagram + 3
+     stacked beats was running taller than the visible viewport on
+     laptop heights, mirroring the Features-section issue. Trim the
+     header rhythm and the beat padding so everything centres in
+     view without spilling below the fold. */
+  #workflow .cyber-h2          { font-size: clamp(2rem, 4.6vw, 4rem); }
+  #workflow .cyber-section-head { margin-bottom: 1.25rem; }
+  #workflow .cyber-pill         { margin-bottom: 18px; }
+
   .workflow-grid {
     display: grid;
-    gap: 2rem;
-    align-items: start;
+    gap: 1.5rem;
+    align-items: center;
   }
   @media (min-width: 1024px) {
     .workflow-grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-      gap: 3rem;
+      gap: 2.5rem;
     }
   }
 
-  /* ── LEFT: hub diagram ── */
+  /* ── LEFT: hub diagram with inline labels ── */
 
   .workflow-hub {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
-    padding: 1.5rem;
-    border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
-    background: rgba(8, 8, 14, 0.55);
-    position: relative;
+    justify-content: center;
+    padding: 0.5rem;
   }
   .workflow-hub-svg {
     width: 100%;
-    max-width: 360px;
-    aspect-ratio: 1 / 1;
+    max-width: 480px;
+    aspect-ratio: 1.4 / 1;
     overflow: visible;
   }
 
@@ -144,6 +149,12 @@ const dispatches = [
   .hub-node {
     fill: var(--section-accent);
   }
+  .hub-node-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    fill: rgba(255, 255, 255, 0.85);
+  }
   .hub-core {
     fill: rgba(2, 2, 4, 0.92);
     stroke: var(--section-accent);
@@ -151,7 +162,7 @@ const dispatches = [
   }
   .hub-core-label {
     font-family: var(--font-mono);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.18em;
     fill: #fff;
@@ -163,58 +174,22 @@ const dispatches = [
     fill: var(--section-accent);
   }
 
-  /* Spoke labels list — rendered as a separate text legend below the
-     SVG so labels stay legible at every viewport width without
-     overlapping the spokes. */
-  .workflow-spokes-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px 18px;
-  }
-  .workflow-spokes-list li {
-    display: grid;
-    grid-template-columns: 8px auto 1fr;
-    align-items: baseline;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-  }
-  .spoke-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--section-accent);
-    border-radius: 50%;
-  }
-  .spoke-label {
-    color: rgba(255, 255, 255, 0.85);
-    letter-spacing: 0.12em;
-  }
-  .spoke-gloss {
-    color: rgba(255, 255, 255, 0.4);
-    letter-spacing: 0.04em;
-    font-size: 9px;
-  }
-
   /* ── RIGHT: 3 beats ── */
 
   .workflow-beats {
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
+    gap: 0.7rem;
   }
   .workflow-beat {
-    padding: 1.25rem 1.4rem;
+    padding: 0.95rem 1.2rem;
     position: relative;
     border-left: 2px solid color-mix(in srgb, var(--section-accent) 50%, transparent);
   }
   .workflow-beat-num {
     position: absolute;
-    top: 1rem;
-    right: 1.2rem;
+    top: 0.8rem;
+    right: 1rem;
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.32em;
@@ -223,11 +198,12 @@ const dispatches = [
   .workflow-beat-label {
     color: var(--section-accent);
     letter-spacing: 0.16em;
-    margin: 0 0 8px;
-    font-size: 0.95rem;
+    margin: 0 0 6px;
+    font-size: 0.9rem;
   }
   .workflow-beat-body {
     margin: 0;
-    line-height: 1.65;
+    line-height: 1.55;
+    font-size: 12px;
   }
 </style>
