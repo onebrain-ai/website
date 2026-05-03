@@ -308,11 +308,15 @@ const {
         // blackout fades — sweep-down + content-rise read as one beat.
         setTimeout(() => {
           jumpTo(t, targetSel);
-          if (t.classList.contains('active')) {
-            t.classList.remove('active');
-            void t.offsetWidth;
-            t.classList.add('active');
-          }
+          // Always replay the boot scanline on arrival — strip + reflow
+          // + add. Hero gets .active here too (it never had .active
+          // applied otherwise, since hero relies on its own intro
+          // animations on initial load), which fires its own ::after
+          // scanline and makes the warp arrival read identically across
+          // every section.
+          t.classList.remove('active');
+          void t.offsetWidth;
+          t.classList.add('active');
         }, 1200);
         setTimeout(() => {
           if (overlay) overlay.classList.remove('warp-out');
@@ -324,12 +328,23 @@ const {
       (function () {
         const links = document.querySelectorAll('header a[href^="#"]');
         links.forEach((a) => {
-          a.addEventListener('click', (e) => {
+          const fire = (e) => {
             const href = a.getAttribute('href');
             if (!href || href === '#' || !document.querySelector(href)) return;
             e.preventDefault();
             warpTo(href);
+          };
+          // pointerdown fires on press (no wait for release / native
+          // link-click delay), matching the snappier feel of spine-dot
+          // <li>s which carry no link semantics. warpInFlight guards
+          // against the click event re-firing the same warp on release.
+          a.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            fire(e);
           });
+          // click handler keeps Enter/Space (keyboard activation) and
+          // covers any pointer modes pointerdown skipped.
+          a.addEventListener('click', fire);
         });
       })();
 
