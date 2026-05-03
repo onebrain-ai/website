@@ -167,11 +167,16 @@
   left: 0;
   z-index: 45;
   pointer-events: none;
+  /* Sweep-up uses the *current* section's accent (carried on body
+     via --page-accent set by spine-dot IntersectionObserver), so the
+     band reads as the section's own light departing. The new section
+     reveals with its own boot scanline using its own --section-accent
+     — sweep-up is "old colour", sweep-down is "new colour". */
   background: linear-gradient(
     180deg,
     transparent 0%,
     transparent 48%,
-    rgba(255, 255, 255, 0.55) 50%,
+    color-mix(in srgb, var(--page-accent, #ffffff) 55%, transparent) 50%,
     transparent 52%,
     transparent 100%
   );
@@ -292,12 +297,14 @@
   opacity: 0.3;
 }
 
-/* Navigation. Solid background + light blur — Safari struggles with
-   blur(20px) saturate(180%) on a sticky element that recomposites on every scroll. */
+/* Navigation. The 92%-opaque background already hides everything behind
+   it — the prior blur(8px) added nothing visually but kept Safari
+   composing a filtered layer for the sticky element on every scroll/
+   click frame, which delayed hit-test response on header link clicks
+   (mousedown was perceptibly slower than the spine-dot <li> path).
+   Drop the filter; the background colour carries the glass feel. */
 .nav-glass {
   background: rgba(2, 2, 4, 0.92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
