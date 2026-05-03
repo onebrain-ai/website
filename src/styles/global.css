@@ -146,6 +146,41 @@
   .page-spine { display: none; }
 }
 
+/* ── Warp overlay ──
+   Fullscreen scanline that sweeps bottom → top to clear the current
+   section before a hash jump teleports to the target. The new section's
+   own boot-sequence scanline (already wired in cyber-section ::after)
+   handles the top → bottom reveal on arrival. */
+.warp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 46%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 45, 146, 0.4) 50.5%,
+    transparent 54%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(100%);
+}
+.warp-overlay.warp-out {
+  animation: warp-sweep-up 0.56s cubic-bezier(0.6, 0, 0.4, 1);
+}
+@keyframes warp-sweep-up {
+  0%   { opacity: 0;    transform: translateY(100%); }
+  15%  { opacity: 0.95; }
+  85%  { opacity: 0.95; }
+  100% { opacity: 0;    transform: translateY(-100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .warp-overlay.warp-out { animation: none; }
+}
+
 /* Background Neural Network */
 #neural-canvas {
   position: fixed;

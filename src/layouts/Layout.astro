@@ -60,6 +60,11 @@ const {
       </ol>
     </aside>
 
+    <!-- Warp overlay — fullscreen scanline that sweeps up to clear the current
+         section, then a hash jump teleports to the target. The new section's
+         own boot-sequence scanline sweeps down on arrival. -->
+    <div id="warp-overlay" class="warp-overlay" aria-hidden="true"></div>
+
     <slot />
 
     <script is:inline>
@@ -231,11 +236,48 @@ const {
         }, { threshold: [0.25, 0.5, 0.75] });
         sections.forEach((s) => io.observe(s));
 
-        // Click-to-jump.
+        // Click-to-jump uses the warp transition.
         dots.forEach((d) => {
-          d.addEventListener('click', () => {
-            const t = document.querySelector(d.dataset.target);
-            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          d.addEventListener('click', () => warpTo(d.dataset.target));
+        });
+      })();
+
+      // Warp transition — bottom→top scanline clears the current section,
+      // page jumps instantly, the new section's own boot-sequence handles
+      // the top→bottom reveal. Used by header nav links + spine dots.
+      function warpTo(targetSel) {
+        const t = document.querySelector(targetSel);
+        if (!t) return;
+        const overlay = document.getElementById('warp-overlay');
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          t.scrollIntoView({ block: 'start', behavior: 'instant' });
+          return;
+        }
+        if (overlay) overlay.classList.add('warp-out');
+        setTimeout(() => {
+          t.scrollIntoView({ block: 'start', behavior: 'instant' });
+          // Replay the target's reveal animations (scanline + content rise).
+          // The IntersectionObserver only adds .active once, but each warp
+          // should feel like a fresh boot, so toggle it ourselves.
+          if (t.classList.contains('active')) {
+            t.classList.remove('active');
+            void t.offsetWidth;
+            t.classList.add('active');
+          }
+        }, 280);
+        setTimeout(() => {
+          if (overlay) overlay.classList.remove('warp-out');
+        }, 560);
+      }
+
+      (function () {
+        const links = document.querySelectorAll('header a[href^="#"]');
+        links.forEach((a) => {
+          a.addEventListener('click', (e) => {
+            const href = a.getAttribute('href');
+            if (!href || href === '#' || !document.querySelector(href)) return;
+            e.preventDefault();
+            warpTo(href);
           });
         });
       })();
