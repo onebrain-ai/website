@@ -293,10 +293,46 @@
   }
 }
 
+/* Content rise — sub paragraph + cards stream in after the H2 ignites,
+   each card staggered by 80ms. Subtle (12px lift, 0.6s) so it reads as
+   "section booted, content streaming in" rather than a busy reveal. */
+.cyber-section.active .cyber-sub {
+  animation: section-content-rise 0.7s ease-out 0.55s backwards;
+}
+.cyber-section.active .cyber-card,
+.cyber-section.active .stack-row,
+.cyber-section.active .waitlist-shell {
+  animation: section-content-rise 0.6s ease-out 0.7s backwards;
+}
+.cyber-section.active .cyber-card:nth-child(2),
+.cyber-section.active .stack-row:nth-child(2)  { animation-delay: 0.78s; }
+.cyber-section.active .cyber-card:nth-child(3),
+.cyber-section.active .stack-row:nth-child(3)  { animation-delay: 0.86s; }
+.cyber-section.active .cyber-card:nth-child(4),
+.cyber-section.active .stack-row:nth-child(4)  { animation-delay: 0.94s; }
+.cyber-section.active .cyber-card:nth-child(5),
+.cyber-section.active .stack-row:nth-child(5)  { animation-delay: 1.02s; }
+.cyber-section.active .cyber-card:nth-child(6)  { animation-delay: 1.10s; }
+.cyber-section.active .cyber-card:nth-child(7)  { animation-delay: 1.18s; }
+.cyber-section.active .cyber-card:nth-child(8)  { animation-delay: 1.26s; }
+.cyber-section.active .cyber-card:nth-child(9)  { animation-delay: 1.34s; }
+.cyber-section.active .cyber-card:nth-child(10) { animation-delay: 1.42s; }
+.cyber-section.active .cyber-card:nth-child(11) { animation-delay: 1.50s; }
+.cyber-section.active .cyber-card:nth-child(12) { animation-delay: 1.58s; }
+.cyber-section.active .waitlist-shell { animation-delay: 0.85s; }
+
+@keyframes section-content-rise {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cyber-section.active::after,
   .cyber-section.active .cyber-pill,
-  .cyber-section.active .cyber-h2-stroke { animation: none; }
+  .cyber-section.active .cyber-h2-stroke,
+  .cyber-section.active .cyber-sub,
+  .cyber-section.active .cyber-card,
+  .cyber-section.active .waitlist-shell { animation: none; }
 }
 @media (min-width: 1024px) {
   .cyber-section { padding: 4rem 4rem 3rem; }
