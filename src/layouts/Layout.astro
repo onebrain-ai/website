@@ -254,20 +254,21 @@ const {
           return;
         }
         if (overlay) overlay.classList.add('warp-out');
+        // Mid-sweep (≈ 50% of the 0.9s sweep-up keyframe), do the actual jump.
+        // Long enough that the eye can read 'current section is being wiped
+        // away' before the new section snaps in.
         setTimeout(() => {
           t.scrollIntoView({ block: 'start', behavior: 'instant' });
           // Replay the target's reveal animations (scanline + content rise).
-          // The IntersectionObserver only adds .active once, but each warp
-          // should feel like a fresh boot, so toggle it ourselves.
           if (t.classList.contains('active')) {
             t.classList.remove('active');
             void t.offsetWidth;
             t.classList.add('active');
           }
-        }, 280);
+        }, 450);
         setTimeout(() => {
           if (overlay) overlay.classList.remove('warp-out');
-        }, 560);
+        }, 920);
       }
 
       (function () {

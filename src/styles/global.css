@@ -156,25 +156,26 @@
   inset: 0;
   z-index: 60;
   pointer-events: none;
+  /* Wider, brighter band so the sweep reads as a deliberate clear. */
   background: linear-gradient(
     180deg,
     transparent 0%,
-    transparent 46%,
-    rgba(255, 255, 255, 0.55) 50%,
-    rgba(255, 45, 146, 0.4) 50.5%,
-    transparent 54%,
+    transparent 42%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 45, 146, 0.5) 51%,
+    transparent 58%,
     transparent 100%
   );
   opacity: 0;
   transform: translateY(100%);
 }
 .warp-overlay.warp-out {
-  animation: warp-sweep-up 0.56s cubic-bezier(0.6, 0, 0.4, 1);
+  animation: warp-sweep-up 0.9s cubic-bezier(0.6, 0, 0.4, 1);
 }
 @keyframes warp-sweep-up {
   0%   { opacity: 0;    transform: translateY(100%); }
-  15%  { opacity: 0.95; }
-  85%  { opacity: 0.95; }
+  12%  { opacity: 0.95; }
+  88%  { opacity: 0.95; }
   100% { opacity: 0;    transform: translateY(-100%); }
 }
 @media (prefers-reduced-motion: reduce) {
