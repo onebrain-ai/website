@@ -243,20 +243,17 @@
       else rafId = 0;
     }
     function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
-    function stopSpawn() {
-      if (spawnTimer) { clearInterval(spawnTimer); spawnTimer = null; }
-      if (spawnTimeout) { clearTimeout(spawnTimeout); spawnTimeout = null; }
-    }
+    // Only gate the draw loop — spawn timers (setInterval/setTimeout) keep
+    // running because their work is cheap (push a node to an array) and
+    // tearing them down requires restarting the whole seed→live lifecycle.
     document.addEventListener('visibilitychange', () => {
       visible = !document.hidden;
       if (visible) start();
-      else stopSpawn();
     });
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         running = entries[0].isIntersecting;
         if (running) start();
-        else stopSpawn();
       }, { rootMargin: '0px' });
       io.observe(canvas);
     }
