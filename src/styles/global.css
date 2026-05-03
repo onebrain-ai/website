@@ -116,17 +116,17 @@
   cursor: pointer;
 }
 .page-spine-dots li > span {
+  position: relative;
   display: block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  /* Faint grey core + a soft tinted halo in the dot's own accent so
-     each inactive dot reads as "section in standby" rather than dead
-     grey. The 2.4s breath gives the spine a subtle heartbeat without
-     drawing attention away from the active dot. */
+  /* Faint grey — present enough to mark the snap point without
+     competing with the active dot. Subtle 2.4s opacity breath gives
+     the strip a heartbeat; opacity is GPU-composited so it doesn't
+     hit the paint thread. */
   background: rgba(180, 180, 195, 0.25);
   border: 1px solid rgba(180, 180, 195, 0.18);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--dot-accent) 20%, transparent);
   animation: spine-dot-breathe 2.4s ease-in-out infinite;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -141,33 +141,39 @@
   height: 9px;
   background: var(--dot-accent);
   border-color: var(--dot-accent);
+  /* Static glow on the dot itself — no box-shadow animation, which
+     was a paint hot path on this position:fixed element and competed
+     with scroll-snap's compositor pass. The pulse moves to a ::after
+     halo using transform + opacity (both GPU). */
   box-shadow:
     0 0 10px var(--dot-accent),
     0 0 22px var(--dot-accent);
+  animation: none;
+}
+.page-spine-dots li.active > span::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--dot-accent) 65%, transparent) 0%,
+    transparent 70%);
+  pointer-events: none;
   animation: spine-dot-pulse 1.8s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-/* Inactive dots breathe at a slow common cadence; active dot pulses
-   slightly faster + brighter so the eye still latches onto it. */
 @keyframes spine-dot-breathe {
   0%, 100% { opacity: 0.55; }
   50%      { opacity: 1;    }
 }
 @keyframes spine-dot-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 10px var(--dot-accent),
-      0 0 22px var(--dot-accent);
-  }
-  50% {
-    box-shadow:
-      0 0 14px var(--dot-accent),
-      0 0 32px var(--dot-accent);
-  }
+  0%, 100% { transform: scale(1);    opacity: 0.45; }
+  50%      { transform: scale(1.45); opacity: 0.75; }
 }
 @media (prefers-reduced-motion: reduce) {
   .page-spine-dots li > span,
-  .page-spine-dots li.active > span { animation: none; }
+  .page-spine-dots li.active > span::after { animation: none; }
 }
 
 /* Hide the spine on narrow viewports — it would crowd the mobile drawer. */
