@@ -362,12 +362,17 @@ const tiers = [
   }
   .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.22); }
 
+  /* Matches Hero's btn-cyber-primary so the waitlist CTA reads as the
+     same button family — clip-path bevels, mono caps, accent fill on
+     dark text, white-flip on hover. align-self:flex-start drops the
+     full-width stretch the form's column flex was forcing — auto-
+     width feels less "marketing landing page" and more operator HUD. */
   .waitlist-btn {
+    align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 12px;
-    padding: 14px 24px;
+    padding: 18px 30px;
     background: var(--section-accent);
     color: #050507;
     font-family: var(--font-mono);
@@ -377,17 +382,17 @@ const tiers = [
     text-transform: uppercase;
     border: 1px solid var(--section-accent);
     cursor: pointer;
-    /* Animate just color/background — the box-shadow grows on hover but
-       transitioning a 50px-spread shadow is the Cloud-card paint hot
-       path. Snap-toggle the shadow at :hover with no transition cost. */
-    transition: color 0.25s ease, background 0.25s ease;
+    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
-    box-shadow: 0 0 30px color-mix(in srgb, var(--section-accent) 30%, transparent);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--section-accent) 35%, transparent);
   }
   .waitlist-btn:hover {
     background: #fff;
     color: var(--section-accent);
-    box-shadow: 0 0 50px color-mix(in srgb, var(--section-accent) 55%, transparent);
+    box-shadow: 0 0 70px color-mix(in srgb, var(--section-accent) 60%, transparent);
   }
   .waitlist-btn-arrow { transition: transform 0.3s ease; }
   .waitlist-btn:hover .waitlist-btn-arrow { transform: translateX(4px); }
