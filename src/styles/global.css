@@ -363,6 +363,19 @@
   transition: none !important;
 }
 
+/* Active-section highlight on header nav links. Toggled by the
+   spine-dot IntersectionObserver in Layout.astro so the menu shows
+   which section the user is on for any nav method (scroll, spine-
+   dot click, or header-link click). Mirrors the :hover treatment —
+   white link colour + reveal the [ ] bracket spans. !important
+   beats Tailwind's `opacity-0` utility on the bracket spans. */
+.nav-glass a.is-active {
+  color: #fff !important;
+}
+.nav-glass a.is-active > span {
+  opacity: 1 !important;
+}
+
 .btn-tech {
   position: relative;
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);

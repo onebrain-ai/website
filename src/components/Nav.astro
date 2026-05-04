@@ -195,17 +195,9 @@ const navLinks = [
     white-space: nowrap;
   }
 
-  /* Active-section highlight on the header nav. Toggled by the
-     spine-dot IntersectionObserver in Layout.astro, so the menu
-     reflects the section the user is reading whether they got there
-     by scrolling, spine-dot click, or header-link click. Mirrors the
-     hover state — white text + the [ ] brackets revealed. */
-  header a.is-active {
-    color: #fff;
-  }
-  header a.is-active > span {
-    opacity: 1;
-  }
+  /* Active-section highlight rules live in global.css so they
+     compete with Tailwind utilities (opacity-0 on the [ ] bracket
+     spans) without Astro's per-component style scoping interfering. */
 
   /* ── Hamburger trigger (mobile only) ── */
   .nav-toggle {

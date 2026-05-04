@@ -291,15 +291,16 @@ const ogImageUrl = `https://onebrain.run${image}`;
         const sections = dots.map((d) => document.querySelector(d.dataset.target)).filter(Boolean);
         if (!sections.length) return;
 
-        // Header nav links indexed by their href so the active-section
-        // observer can highlight the matching link as the user scrolls
-        // (or after a spine-dot click). Hero (#top) has no header link
-        // — when the hero is active every link clears.
-        const navLinksByHref = new Map();
-        document.querySelectorAll('header a[href^="#"]').forEach((a) => {
-          const href = a.getAttribute('href');
-          if (href && href !== '#') navLinksByHref.set(href, a);
-        });
+        // Every header nav link (desktop + mobile drawer) tagged with
+        // its href, so the active-section observer can highlight the
+        // matching links as the user scrolls (or after a spine-dot
+        // click). Both copies of each link get the class — Map-by-
+        // href would have collapsed the desktop+drawer pair into one
+        // and missed the visible desktop link. Hero (#top) has no
+        // header link — when hero is active every link clears.
+        const navLinks = Array.from(
+          document.querySelectorAll('header a[href^="#"]')
+        ).map((a) => ({ el: a, href: a.getAttribute('href') }));
 
         let activeIdx = -1;
         function setActive(i) {
