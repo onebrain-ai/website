@@ -256,17 +256,36 @@
       else rafId = 0;
     }
     function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
-    // Only gate the draw loop — spawn timers (setInterval/setTimeout) keep
-    // running because their work is cheap (push a node to an array) and
-    // tearing them down requires restarting the whole seed→live lifecycle.
+    function clearSpawnTimers() {
+      if (spawnTimer)   { clearInterval(spawnTimer);   spawnTimer = null; }
+      if (spawnTimeout) { clearTimeout(spawnTimeout);  spawnTimeout = null; }
+    }
+    // Tear down the spawn lifecycle when the section leaves the
+    // viewport / tab is hidden, then restart it on re-show. The user
+    // sees the network bloom from scratch each time they scroll back —
+    // matches the "load + run again on screen" model the user asked
+    // for. Restarting is cheap (init() resets nodes + reseeds).
     document.addEventListener('visibilitychange', () => {
       visible = !document.hidden;
-      if (visible) start();
+      if (visible && running) {
+        if (!spawnTimer && !spawnTimeout) init();
+        start();
+      } else {
+        clearSpawnTimers();
+      }
     });
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
+        const wasRunning = running;
         running = entries[0].isIntersecting;
-        if (running) start();
+        if (running && !wasRunning) {
+          if (visible) {
+            if (!spawnTimer && !spawnTimeout) init();
+            start();
+          }
+        } else if (!running) {
+          clearSpawnTimers();
+        }
       }, { rootMargin: '0px' });
       io.observe(canvas);
     }
