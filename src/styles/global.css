@@ -695,6 +695,30 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* Off-screen unload — every <section> gets data-vis="off" via the
+   IntersectionObserver in Layout.astro while it sits outside the
+   viewport (rootMargin 200px on each side). Dropping animation-name
+   to none releases the entire animation pipeline for that element:
+   no compositor work, no keyframe interpolation, no animation
+   object held in memory. When the section scrolls back into view,
+   data-vis flips to "on", this rule no longer matches, and the
+   original animation property re-applies — animations restart from
+   0% on the next paint.
+   * matches descendants only; ::before/::after pseudos and the
+   section element itself are listed explicitly so e.g. cyber-
+   section::after's scanline keyframe is also released.
+   The user will not see a "boot" lag because rootMargin gives
+   ~200px of preroll; animations are already running by the time
+   the section's leading edge enters the viewport. */
+section[data-vis="off"],
+section[data-vis="off"]::before,
+section[data-vis="off"]::after,
+section[data-vis="off"] *,
+section[data-vis="off"] *::before,
+section[data-vis="off"] *::after {
+  animation-name: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { transition: opacity 0.4s ease; transform: none; }

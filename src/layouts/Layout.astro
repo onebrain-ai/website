@@ -119,9 +119,9 @@ const ogImageUrl = `https://onebrain.run${image}`;
         <li data-target="#features" style="--dot-accent: #00ff9d;"><span></span></li>
         <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><span></span></li>
         <li data-target="#stack"    style="--dot-accent: #c8ff00;"><span></span></li>
-        <li data-target="#workflow" style="--dot-accent: #ff5e3a;"><span></span></li>
+        <li data-target="#workflow" style="--dot-accent: #7c3aed;"><span></span></li>
         <li data-target="#how"      style="--dot-accent: #ffb000;"><span></span></li>
-        <li data-target="#commands" style="--dot-accent: #d946ef;"><span></span></li>
+        <li data-target="#commands" style="--dot-accent: #ff5e3a;"><span></span></li>
         <li data-target="#cloud"    style="--dot-accent: #00bfff;"><span></span></li>
       </ol>
     </aside>
@@ -279,6 +279,26 @@ const ogImageUrl = `https://onebrain.run${image}`;
           });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      })();
+
+      // Section visibility: tag every <section> with data-vis="off" while it
+      // is outside the viewport, and "on" while it is intersecting. CSS rules
+      // in global.css use this attribute to drop animation-name to none on
+      // every continuous CSS animation in that section, releasing the
+      // animation pipeline (no compositor work, no keyframe interpolation,
+      // no memory) while the user is reading another part of the page.
+      // rootMargin:200px so animations spin up just before the section
+      // scrolls into view — no visible "boot" lag.
+      (function() {
+        const sections = document.querySelectorAll('section[id]');
+        if (!sections.length) return;
+        sections.forEach((s) => { s.dataset.vis = 'off'; });
+        const visObs = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            e.target.dataset.vis = e.isIntersecting ? 'on' : 'off';
+          });
+        }, { rootMargin: '200px 0px', threshold: 0 });
+        sections.forEach((s) => visObs.observe(s));
       })();
 
       // Section spine: highlight the active dot via IntersectionObserver.
