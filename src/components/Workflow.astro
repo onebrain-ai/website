@@ -97,6 +97,7 @@ const dispatches = [
                 <circle
                   cx={nx} cy={ny} r="5"
                   class={`hub-node-ping ${pingDir}`}
+                  data-spoke={i}
                   style={`animation-duration: ${d.duration}s; animation-delay: ${delay}s;`}
                 />
                 <circle cx={nx} cy={ny} r="5" class="hub-node" />
@@ -122,6 +123,7 @@ const dispatches = [
               <circle
                 r="3.5"
                 class={`hub-particle ${dir}`}
+                data-spoke={i}
                 style={`--tx: ${tx.toFixed(1)}px; --ty: ${ty.toFixed(1)}px; animation-duration: ${d.duration}s; animation-delay: ${delay}s;`}
               />
             );
@@ -140,6 +142,29 @@ const dispatches = [
     </div>
   </div>
 </section>
+
+<script is:inline>
+  /* Per-cycle duration randomization for the workflow particles +
+     pings. Without this, each spoke loops on a fixed duration and
+     the diagram falls into a visible pattern within ~10 seconds.
+     On every animationiteration we re-roll the duration in a
+     2.4–5.8s range and apply the same value to the spoke's particle
+     AND its corresponding ping so they stay in lockstep. */
+  (function () {
+    const particles = document.querySelectorAll('.hub-particle');
+    if (!particles.length) return;
+    function randomDur() { return (2.4 + Math.random() * 3.4).toFixed(2); }
+    particles.forEach((p) => {
+      const idx = p.dataset.spoke;
+      const ping = document.querySelector(`.hub-node-ping[data-spoke="${idx}"]`);
+      p.addEventListener('animationiteration', () => {
+        const d = randomDur() + 's';
+        p.style.animationDuration = d;
+        if (ping) ping.style.animationDuration = d;
+      });
+    });
+  })();
+</script>
 
 <style>
   /* Section-scoped tightening so header + recap + hub fit one
