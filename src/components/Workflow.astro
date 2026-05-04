@@ -16,15 +16,17 @@ const beats = [
 //    outer→centre (project sending into vault); inbound=false →
 //    data flows centre→outer (vault dispatching to project).
 // 8 nodes evenly spaced at 45° intervals around the ring.
+// Travel takes 25% of the cycle, so cycle 3.2s → 800ms travel,
+// cycle 8s → 2000ms travel. Initial spread across the range.
 const dispatches = [
-  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 11.0, inbound: false },
-  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration:  9.5, inbound: true  },
-  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 12.5, inbound: false },
-  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 10.0, inbound: true  },
-  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration: 11.5, inbound: false },
-  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration:  9.0, inbound: true  },
-  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 13.0, inbound: false },
-  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration: 10.5, inbound: true  },
+  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 5.5, inbound: false },
+  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration: 4.2, inbound: true  },
+  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 6.8, inbound: false },
+  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 4.8, inbound: true  },
+  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration: 6.0, inbound: false },
+  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration: 3.6, inbound: true  },
+  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 7.5, inbound: false },
+  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration: 5.0, inbound: true  },
 ];
 ---
 
@@ -152,10 +154,11 @@ const dispatches = [
   (function () {
     const particles = document.querySelectorAll('.hub-particle');
     if (!particles.length) return;
-    /* Slowest re-roll = 9s so even the "fast" cycle is fully
-       trackable. Range 9–14s; new value each iteration is held
-       constant for that whole cycle (linear timing function). */
-    function randomDur() { return (9 + Math.random() * 5).toFixed(2); }
+    /* Travel = 25% of cycle, so cycle 3.2s ↔ 8s gives a travel
+       leg of 800ms ↔ 2000ms — snappy enough to feel like data
+       moving, slow enough to follow with the eye. Held constant
+       for the whole cycle (linear timing function). */
+    function randomDur() { return (3.2 + Math.random() * 4.8).toFixed(2); }
     particles.forEach((p) => {
       const idx = p.dataset.spoke;
       const ping = document.querySelector(`.hub-node-ping[data-spoke="${idx}"]`);
@@ -281,31 +284,25 @@ const dispatches = [
     animation-timing-function: ease-out;
   }
   /* Outbound: TWO pulses per cycle.
-       1. Arrival pulse at 37% — when the particle reaches the
-          outer node (fade-out begins right after).
-       2. Release pulse at 57% — when the node is about to send
-          the particle back (fade-in for return).
-     Between the two, the ring transform "resets" from scale 2.4
-     back to scale 1 while opacity is 0 — invisible reset so the
-     second pulse looks fresh, not a continuation of the first. */
+       1. Arrival pulse at 30% — particle reaches outer node.
+       2. Release pulse at 65% — node sends particle back. */
   @keyframes hub-node-ping-out {
-    0%, 34%   { transform: scale(1);   opacity: 0;    stroke-width: 2; }
-    37%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    52%       { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
-    54%       { transform: scale(1);   opacity: 0;    stroke-width: 2; }
-    57%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    72%, 100% { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
+    0%, 27%   { transform: scale(1);   opacity: 0;    stroke-width: 2; }
+    30%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
+    50%       { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
+    62%       { transform: scale(1);   opacity: 0;    stroke-width: 2; }
+    65%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
+    85%, 100% { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
   }
   /* Inbound: TWO pulses per cycle, mirrored.
-       1. Release pulse at 0% — outer node releases the particle
-          toward the vault (particle fades in 0–6%).
-       2. Arrival pulse at 94% — particle arrives back at the
-          outer node (fade-out 94–100%). */
+       1. Release pulse at 0% — outer node releases particle to
+          vault.
+       2. Arrival pulse at 95% — particle arrives back at outer. */
   @keyframes hub-node-ping-in {
     0%        { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    15%       { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
-    91%       { transform: scale(1);   opacity: 0;    stroke-width: 2; }
-    94%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
+    20%       { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
+    92%       { transform: scale(1);   opacity: 0;    stroke-width: 2; }
+    95%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
     100%      { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
   }
   .hub-node-label {
@@ -321,11 +318,11 @@ const dispatches = [
     transform-box: fill-box;
     transform-origin: center;
   }
-  /* Slow inhale/exhale on the vault core. 11s = the median
-     particle cycle (range 9–13) so breath + traffic feel like
+  /* Slow inhale/exhale on the vault core. 5.5s = the median
+     particle cycle (range 3.2–8s) so breath + traffic feel like
      one tempo. */
   .cyber-section.active .hub-core {
-    animation: hub-core-breathe 11s ease-in-out infinite;
+    animation: hub-core-breathe 5.5s ease-in-out infinite;
   }
   @keyframes hub-core-breathe {
     0%, 100% { stroke-width: 1.5; stroke-opacity: 0.55; }
@@ -377,33 +374,32 @@ const dispatches = [
     animation-iteration-count: infinite;
   }
   /* Outbound: vault → project. Symmetric stages:
-       0–6%   fade in at vault
-       6–37%  travel out (31%)
-       37–43% fade out at destination (delivered)
-       43–57% pause invisible at destination
-       57–63% fade in at destination
-       63–94% travel back (31%)
-       94–100% fade out at vault */
+       0–5%   fade in at vault
+       5–30%  travel out (25% — gives 800ms–2000ms over 3.2–8s cycle)
+       30–35% fade out at destination (delivered)
+       35–65% pause invisible at destination (30%)
+       65–70% fade in at destination
+       70–95% travel back (25%)
+       95–100% fade out at vault */
   @keyframes hub-particle-flow-out {
     0%   { transform: translate(0, 0);                 opacity: 0; }
-    6%   { transform: translate(0, 0);                 opacity: 1; }
-    37%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
-    43%  { transform: translate(var(--tx), var(--ty)); opacity: 0; }
-    57%  { transform: translate(var(--tx), var(--ty)); opacity: 0; }
-    63%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
-    94%  { transform: translate(0, 0);                 opacity: 1; }
+    5%   { transform: translate(0, 0);                 opacity: 1; }
+    30%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    35%  { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    65%  { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    70%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    95%  { transform: translate(0, 0);                 opacity: 1; }
     100% { transform: translate(0, 0);                 opacity: 0; }
   }
-  /* Inbound: project → vault. Same shape, mirrored — travel
-     legs go to (0,0) instead of (tx,ty). */
+  /* Inbound: project → vault. Same shape, mirrored. */
   @keyframes hub-particle-flow-in {
     0%   { transform: translate(var(--tx), var(--ty)); opacity: 0; }
-    6%   { transform: translate(var(--tx), var(--ty)); opacity: 1; }
-    37%  { transform: translate(0, 0);                 opacity: 1; }
-    43%  { transform: translate(0, 0);                 opacity: 0; }
-    57%  { transform: translate(0, 0);                 opacity: 0; }
-    63%  { transform: translate(0, 0);                 opacity: 1; }
-    94%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    5%   { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    30%  { transform: translate(0, 0);                 opacity: 1; }
+    35%  { transform: translate(0, 0);                 opacity: 0; }
+    65%  { transform: translate(0, 0);                 opacity: 0; }
+    70%  { transform: translate(0, 0);                 opacity: 1; }
+    95%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
     100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
