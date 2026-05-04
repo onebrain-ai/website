@@ -16,17 +16,19 @@ const beats = [
 //    outer→centre (project sending into vault); inbound=false →
 //    data flows centre→outer (vault dispatching to project).
 // 8 nodes evenly spaced at 45° intervals around the ring.
-// Travel takes 25% of the cycle, so cycle 3.2s → 800ms travel,
-// cycle 8s → 2000ms travel. Initial spread across the range.
+// Travel takes 25% of the cycle. To kill the residual flicker,
+// raise the floor: cycle 6s → 1.5s travel, cycle 12s → 3s travel.
+// 800ms (the original spec) read as too fast for the eye to track
+// — the diagram still felt like blinking even with linear timing.
 const dispatches = [
-  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 5.5, inbound: false },
-  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration: 4.2, inbound: true  },
-  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 6.8, inbound: false },
-  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 4.8, inbound: true  },
-  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration: 6.0, inbound: false },
-  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration: 3.6, inbound: true  },
-  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 7.5, inbound: false },
-  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration: 5.0, inbound: true  },
+  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration:  9.0, inbound: false },
+  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration:  7.5, inbound: true  },
+  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 10.5, inbound: false },
+  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration:  8.0, inbound: true  },
+  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration:  9.5, inbound: false },
+  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration:  6.5, inbound: true  },
+  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 11.5, inbound: false },
+  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration:  8.5, inbound: true  },
 ];
 ---
 
@@ -154,11 +156,13 @@ const dispatches = [
   (function () {
     const particles = document.querySelectorAll('.hub-particle');
     if (!particles.length) return;
-    /* Travel = 25% of cycle, so cycle 3.2s ↔ 8s gives a travel
-       leg of 800ms ↔ 2000ms — snappy enough to feel like data
-       moving, slow enough to follow with the eye. Held constant
-       for the whole cycle (linear timing function). */
-    function randomDur() { return (3.2 + Math.random() * 4.8).toFixed(2); }
+    /* Travel = 25% of cycle. Range 6–12s gives a travel leg of
+       1.5s–3s. The 800ms floor from the previous spec read as
+       flicker even with linear timing because the eye couldn't
+       lock onto the dot before it disappeared at the destination.
+       1.5s lets the eye follow the full trip end-to-end. Held
+       constant for the whole cycle. */
+    function randomDur() { return (6 + Math.random() * 6).toFixed(2); }
     particles.forEach((p) => {
       const idx = p.dataset.spoke;
       const ping = document.querySelector(`.hub-node-ping[data-spoke="${idx}"]`);
@@ -318,11 +322,11 @@ const dispatches = [
     transform-box: fill-box;
     transform-origin: center;
   }
-  /* Slow inhale/exhale on the vault core. 5.5s = the median
-     particle cycle (range 3.2–8s) so breath + traffic feel like
+  /* Slow inhale/exhale on the vault core. 9s = the median
+     particle cycle (range 6–12s) so breath + traffic feel like
      one tempo. */
   .cyber-section.active .hub-core {
-    animation: hub-core-breathe 5.5s ease-in-out infinite;
+    animation: hub-core-breathe 9s ease-in-out infinite;
   }
   @keyframes hub-core-breathe {
     0%, 100% { stroke-width: 1.5; stroke-opacity: 0.55; }
