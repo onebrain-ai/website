@@ -15,15 +15,16 @@ const beats = [
 //    (varied 2.6–4.6s) and direction. inbound=true → data flows
 //    outer→centre (project sending into vault); inbound=false →
 //    data flows centre→outer (vault dispatching to project).
+// 8 nodes evenly spaced at 45° intervals around the ring.
 const dispatches = [
   { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 3.4, inbound: false },
-  { angle: -52, label: 'WEBSITE',       anchor: 'start',  duration: 2.8, inbound: true  },
-  { angle: -16, label: 'CLOUD INFRA',   anchor: 'start',  duration: 4.2, inbound: false },
-  { angle:  22, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 3.0, inbound: true  },
-  { angle:  62, label: 'OFFICE DOCS',   anchor: 'start',  duration: 3.8, inbound: false },
-  { angle: 110, label: 'PROJECT NOTES', anchor: 'middle', duration: 2.6, inbound: true  },
-  { angle: 152, label: 'RESEARCH',      anchor: 'end',    duration: 4.6, inbound: false },
-  { angle: 200, label: 'MCP SERVER',    anchor: 'end',    duration: 3.2, inbound: true  },
+  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration: 2.8, inbound: true  },
+  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 4.2, inbound: false },
+  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 3.0, inbound: true  },
+  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration: 3.8, inbound: false },
+  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration: 2.6, inbound: true  },
+  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 4.6, inbound: false },
+  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration: 3.2, inbound: true  },
 ];
 ---
 
@@ -197,6 +198,15 @@ const dispatches = [
     stroke: color-mix(in srgb, var(--section-accent) 18%, transparent);
     stroke-width: 1;
     stroke-dasharray: 3 5;
+    /* Rotate around the ring's own centre regardless of layout. */
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .cyber-section.active .hub-ring {
+    animation: hub-ring-spin 60s linear infinite;
+  }
+  @keyframes hub-ring-spin {
+    to { transform: rotate(360deg); }
   }
   .hub-spoke {
     stroke: color-mix(in srgb, var(--section-accent) 35%, transparent);
@@ -215,6 +225,19 @@ const dispatches = [
     fill: rgba(2, 2, 4, 0.92);
     stroke: var(--section-accent);
     stroke-width: 1.5;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  /* Slow inhale/exhale on the vault core — breath that reads as "the
+     command center is alive". Stroke-opacity animates so the ring
+     glow ebbs without forcing a paint of the entire SVG. Gated to
+     active section, opacity-only = GPU friendly. */
+  .cyber-section.active .hub-core {
+    animation: hub-core-breathe 3.6s ease-in-out infinite;
+  }
+  @keyframes hub-core-breathe {
+    0%, 100% { stroke-opacity: 0.85; }
+    50%      { stroke-opacity: 1;    }
   }
   .hub-core-label {
     font-family: var(--font-mono);
@@ -272,6 +295,8 @@ const dispatches = [
   }
   @media (prefers-reduced-motion: reduce) {
     .cyber-section.active .hub-particle-in,
-    .cyber-section.active .hub-particle-out { animation: none; }
+    .cyber-section.active .hub-particle-out,
+    .cyber-section.active .hub-ring,
+    .cyber-section.active .hub-core { animation: none; }
   }
 </style>
