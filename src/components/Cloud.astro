@@ -2,6 +2,7 @@
 const tiers = [
   {
     name: 'FREE',
+    tagline: 'Always free & open source',
     desc: 'Local vault · OSS skills · BYOK',
     status: 'AVAILABLE_NOW',
     href: 'https://github.com/onebrain-ai/onebrain#installation',
@@ -44,6 +45,7 @@ const tiers = [
               <Tag class={`cyber-card tier-card ${t.href ? 'tier-card-live' : 'tier-card-soon'}`} {...props}>
                 <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
                 <h3 class="cyber-card-title tier-name">{t.name}</h3>
+                {t.tagline && <span class="tier-tagline">// {t.tagline}</span>}
                 <p class="cyber-card-desc">{t.desc}</p>
                 <span class="tier-status">
                   {t.href && <span class="tier-status-dot" aria-hidden="true"></span>}
@@ -192,6 +194,18 @@ const tiers = [
     letter-spacing: 0.08em;
     font-size: 1.05rem;
     margin: 0;
+  }
+  /* Small accent-tinted tagline that sits under the tier name —
+     reserved for messaging that needs to land before the dense
+     desc line (e.g. FREE's "always free & open source" promise). */
+  .tier-tagline {
+    display: block;
+    margin-top: -2px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--section-accent);
   }
   .tier-status {
     margin-top: auto;
