@@ -27,7 +27,7 @@ const commands = [
 ];
 ---
 
-<section id="commands" class="cyber-section reveal" style="--section-accent: #d946ef;">
+<section id="commands" class="cyber-section reveal" style="--section-accent: #ff5e3a;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -205,8 +205,8 @@ const commands = [
     margin: 0 1.5rem;
     padding: 2rem 2rem 2.2rem;
     background: rgba(8, 8, 14, 0.92);
-    border: 1px solid rgba(217, 70, 239, 0.35);
-    box-shadow: 0 0 80px rgba(217, 70, 239, 0.18), 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 35%, transparent);
+    box-shadow: 0 0 80px color-mix(in srgb, var(--section-accent) 18%, transparent), 0 30px 60px -20px rgba(0, 0, 0, 0.7);
     transform: scale(0.96);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -216,7 +216,7 @@ const commands = [
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid #d946ef;
+    border: 1px solid var(--section-accent);
   }
   .skill-modal-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
   .skill-modal-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
@@ -237,7 +237,7 @@ const commands = [
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #d946ef;
+    color: var(--section-accent);
     margin-bottom: 8px;
   }
   .skill-modal-cmd {
@@ -260,7 +260,7 @@ const commands = [
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
   }
-  .skill-modal-close:hover { color: #d946ef; border-color: #d946ef; }
+  .skill-modal-close:hover { color: var(--section-accent); border-color: var(--section-accent); }
 
   .skill-modal-section {
     margin-top: 1.4rem;
@@ -275,8 +275,8 @@ const commands = [
   .skill-modal-usecase {
     margin-top: 1.4rem;
     padding: 1.1rem 1.2rem;
-    border-left: 2px solid #d946ef;
-    background: rgba(217, 70, 239, 0.06);
+    border-left: 2px solid var(--section-accent);
+    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
   }
   .skill-modal-usecase p {
     font-family: var(--font-mono);
@@ -298,7 +298,7 @@ const commands = [
     gap: 1rem;
     margin-top: 0.9rem;
     padding: 10px 16px;
-    border: 1px dashed rgba(217, 70, 239, 0.28);
+    border: 1px dashed color-mix(in srgb, var(--section-accent) 28%, transparent);
     background: color-mix(in srgb, var(--section-accent) 4%, transparent);
     font-family: var(--font-mono);
     font-size: 11px;
