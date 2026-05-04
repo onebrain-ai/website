@@ -129,10 +129,9 @@ const dispatches = [
             );
           })}
 
-          <!-- Centre: Obsidian vault as command center. Halo circle
-               renders behind core and pulses outward like a sonar
-               ping; core has its own breath on stroke. -->
-          <circle cx="0" cy="0" r="52" class="hub-core-halo" />
+          <!-- Centre: Obsidian vault as command center. Breath
+               on the stroke is the only "alive" cue at the core —
+               the surrounding particle traffic carries the rest. -->
           <circle cx="0" cy="0" r="52" class="hub-core" />
           <text x="0" y="-3" text-anchor="middle" class="hub-core-label">OBSIDIAN</text>
           <text x="0" y="13" text-anchor="middle" class="hub-core-sub">vault</text>
@@ -246,7 +245,7 @@ const dispatches = [
     transform-origin: center;
   }
   .cyber-section.active .hub-ring {
-    animation: hub-ring-spin 60s linear infinite;
+    animation: hub-ring-spin 80s linear infinite;
   }
   @keyframes hub-ring-spin {
     to { transform: rotate(360deg); }
@@ -280,18 +279,19 @@ const dispatches = [
     animation-iteration-count: infinite;
     animation-timing-function: ease-out;
   }
-  /* Outbound: particle reaches outer node at 50% of cycle. Ping
-     fires there and decays to 78%. */
+  /* Outbound: particle arrives at outer node at 44% of cycle and
+     fades out by 52%. Ping fires at 44% (matching arrival) and
+     decays. */
   @keyframes hub-node-ping-out {
-    0%, 47%   { transform: scale(1);   opacity: 0;    stroke-width: 2; }
-    50%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    78%, 100% { transform: scale(2.6); opacity: 0;    stroke-width: 0.5; }
+    0%, 41%   { transform: scale(1);   opacity: 0;    stroke-width: 2; }
+    44%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
+    72%, 100% { transform: scale(2.6); opacity: 0;    stroke-width: 0.5; }
   }
-  /* Inbound: particle is at outer node at the start (and end) of
-     each cycle. Ping fires at 0% and decays. */
+  /* Inbound: particle is at outer node at start (returning from
+     centre) — fades in 0–8%. Ping fires at 0 and decays. */
   @keyframes hub-node-ping-in {
     0%        { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    30%, 100% { transform: scale(2.6); opacity: 0;    stroke-width: 0.5; }
+    28%, 100% { transform: scale(2.6); opacity: 0;    stroke-width: 0.5; }
   }
   .hub-node-label {
     font-family: var(--font-mono);
@@ -306,36 +306,16 @@ const dispatches = [
     transform-box: fill-box;
     transform-origin: center;
   }
-  /* Slow inhale/exhale on the vault core — breath that reads as "the
-     command center is alive". stroke-width + stroke-opacity together
-     so the change is visible (just opacity 0.85→1 was too subtle). */
+  /* Slow inhale/exhale on the vault core — the only "alive" cue at
+     the centre. 8s = the median particle cycle so breath + traffic
+     feel like one tempo. stroke-width + stroke-opacity together so
+     the change is visible. */
   .cyber-section.active .hub-core {
-    animation: hub-core-breathe 3.6s ease-in-out infinite;
+    animation: hub-core-breathe 8s ease-in-out infinite;
   }
   @keyframes hub-core-breathe {
     0%, 100% { stroke-width: 1.5; stroke-opacity: 0.55; }
     50%      { stroke-width: 3;   stroke-opacity: 1;    }
-  }
-
-  /* Sonar-ping halo — a second circle outside the core that scales
-     out and fades on a 3.6s loop, half-cycle offset from the core
-     breath. Reads as a pulse emanating from the vault. Pure SVG
-     transform + opacity = GPU friendly. */
-  .hub-core-halo {
-    fill: none;
-    stroke: var(--section-accent);
-    stroke-width: 1;
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  .cyber-section.active .hub-core-halo {
-    animation: hub-core-ping 3.6s ease-out infinite;
-  }
-  @keyframes hub-core-ping {
-    0%   { transform: scale(0.8); opacity: 0.55; }
-    80%  { transform: scale(1.6); opacity: 0;    }
-    100% { transform: scale(1.6); opacity: 0;    }
   }
   .hub-core-label {
     font-family: var(--font-mono);
@@ -351,20 +331,22 @@ const dispatches = [
     fill: var(--section-accent);
   }
 
-  /* Data-flow particles. White dots so they read clearly against
-     the accent-coloured spokes — they're "data packets in transit",
-     not part of the structure. Each particle has its own direction
-     (in or out), duration, and stagger delay (set inline) so the
-     eight pulses feel like asynchronous traffic, not a strobe.
-     Always visible while the section is active — the previous
-     fade-in/fade-out at cycle boundaries was reading as flicker on
-     short random cycles. Animation gated to .cyber-section.active. */
+  /* Data-flow particles. White dots = "data packets in transit",
+     visually distinct from the coral structure (spokes, nodes,
+     ring). Each particle has its own direction, duration, and
+     stagger delay (set inline) so the eight pulses feel like
+     asynchronous traffic, not a strobe.
+
+     Lifecycle (per cycle): fade in at origin → travel to
+     destination → fade out at destination → brief pause invisible
+     → fade in at destination → travel home → fade out at origin.
+     ease-in-out timing function carries the deceleration so the
+     keyframe stays at the minimum number of stops. */
   .hub-particle {
     fill: #ffffff;
     opacity: 0;
-    will-change: transform;
+    will-change: transform, opacity;
   }
-  .cyber-section.active .hub-particle { opacity: 1; }
   .cyber-section.active .hub-particle-out {
     animation-name: hub-particle-flow-out;
     animation-timing-function: ease-in-out;
@@ -375,32 +357,33 @@ const dispatches = [
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
   }
-  /* Outbound: vault dispatches to project — centre → outer node →
-     centre. Intermediate keyframes at 42% / 58% explicitly slow
-     the particle as it nears the destination (covers 92% of the
-     distance by 42%, the last 8% drags from 42–50%). Same on the
-     return. Pure transform — no opacity in the keyframe so the
-     particle never flashes at cycle boundaries. */
+  /* Outbound: vault dispatches to project — centre → outer → pause
+     at outer → fade back in → centre. */
   @keyframes hub-particle-flow-out {
-    0%, 100% { transform: translate(0, 0); }
-    42%      { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
-    50%      { transform: translate(var(--tx), var(--ty)); }
-    58%      { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
+    0%   { transform: translate(0, 0);                 opacity: 0; }
+    8%   { transform: translate(0, 0);                 opacity: 1; }
+    44%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    52%  { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    66%  { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    74%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    100% { transform: translate(0, 0);                 opacity: 0; }
   }
-  /* Inbound: project pushes data to vault — outer → centre → outer.
-     Same approach + decelerate near the centre. */
+  /* Inbound: project pushes data to vault — outer → centre → pause
+     at centre → fade back in → outer. Same shape, mirrored. */
   @keyframes hub-particle-flow-in {
-    0%, 100% { transform: translate(var(--tx), var(--ty)); }
-    42%      { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
-    50%      { transform: translate(0, 0); }
-    58%      { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
+    0%   { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    8%   { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+    44%  { transform: translate(0, 0);                 opacity: 1; }
+    52%  { transform: translate(0, 0);                 opacity: 0; }
+    66%  { transform: translate(0, 0);                 opacity: 0; }
+    74%  { transform: translate(0, 0);                 opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .cyber-section.active .hub-particle-in,
     .cyber-section.active .hub-particle-out,
     .cyber-section.active .hub-ring,
     .cyber-section.active .hub-core,
-    .cyber-section.active .hub-core-halo,
     .cyber-section.active .hub-node-ping-in,
     .cyber-section.active .hub-node-ping-out { animation: none; }
   }
