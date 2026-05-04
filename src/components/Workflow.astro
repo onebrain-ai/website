@@ -153,10 +153,9 @@ const dispatches = [
   (function () {
     const particles = document.querySelectorAll('.hub-particle');
     if (!particles.length) return;
-    /* Slowed range — was 2.4–5.8s which sometimes flashed.
-       4.5–8.5s reads as deliberate data flow you can follow with
-       the eye, never strobes. */
-    function randomDur() { return (4.5 + Math.random() * 4).toFixed(2); }
+    /* Slow enough that even the fastest re-roll reads as a packet
+     you can follow with the eye, not a flash. Range 6–10s. */
+    function randomDur() { return (6 + Math.random() * 4).toFixed(2); }
     particles.forEach((p) => {
       const idx = p.dataset.spoke;
       const ping = document.querySelector(`.hub-node-ping[data-spoke="${idx}"]`);
@@ -357,13 +356,15 @@ const dispatches = [
      not part of the structure. Each particle has its own direction
      (in or out), duration, and stagger delay (set inline) so the
      eight pulses feel like asynchronous traffic, not a strobe.
-     Animation gated to .cyber-section.active so off-screen workflow
-     doesn't leak paint cost onto scroll-snap glides. */
+     Always visible while the section is active — the previous
+     fade-in/fade-out at cycle boundaries was reading as flicker on
+     short random cycles. Animation gated to .cyber-section.active. */
   .hub-particle {
     fill: #ffffff;
     opacity: 0;
-    will-change: transform, opacity;
+    will-change: transform;
   }
+  .cyber-section.active .hub-particle { opacity: 1; }
   .cyber-section.active .hub-particle-out {
     animation-name: hub-particle-flow-out;
     animation-timing-function: ease-in-out;
@@ -378,28 +379,21 @@ const dispatches = [
      centre. Intermediate keyframes at 42% / 58% explicitly slow
      the particle as it nears the destination (covers 92% of the
      distance by 42%, the last 8% drags from 42–50%). Same on the
-     return so it eases back into the vault. Combined with the
-     ease-in-out animation-timing-function, the effect reads as
-     data approaching, landing, and being pulled back. */
+     return. Pure transform — no opacity in the keyframe so the
+     particle never flashes at cycle boundaries. */
   @keyframes hub-particle-flow-out {
-    0%   { transform: translate(0, 0);                                          opacity: 0; }
-    8%   {                                                                       opacity: 1; }
-    42%  { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
-    50%  { transform: translate(var(--tx), var(--ty));                          opacity: 1; }
-    58%  { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
-    92%  {                                                                       opacity: 1; }
-    100% { transform: translate(0, 0);                                          opacity: 0; }
+    0%, 100% { transform: translate(0, 0); }
+    42%      { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
+    50%      { transform: translate(var(--tx), var(--ty)); }
+    58%      { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
   }
   /* Inbound: project pushes data to vault — outer → centre → outer.
      Same approach + decelerate near the centre. */
   @keyframes hub-particle-flow-in {
-    0%   { transform: translate(var(--tx), var(--ty));                          opacity: 0; }
-    8%   {                                                                       opacity: 1; }
-    42%  { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
-    50%  { transform: translate(0, 0);                                          opacity: 1; }
-    58%  { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
-    92%  {                                                                       opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty));                          opacity: 0; }
+    0%, 100% { transform: translate(var(--tx), var(--ty)); }
+    42%      { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
+    50%      { transform: translate(0, 0); }
+    58%      { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .cyber-section.active .hub-particle-in,
