@@ -280,19 +280,33 @@ const dispatches = [
     animation-iteration-count: infinite;
     animation-timing-function: ease-out;
   }
-  /* Outbound: particle arrives at outer at 37% of cycle. Ping
-     fires there and decays by 65%. */
+  /* Outbound: TWO pulses per cycle.
+       1. Arrival pulse at 37% — when the particle reaches the
+          outer node (fade-out begins right after).
+       2. Release pulse at 57% — when the node is about to send
+          the particle back (fade-in for return).
+     Between the two, the ring transform "resets" from scale 2.4
+     back to scale 1 while opacity is 0 — invisible reset so the
+     second pulse looks fresh, not a continuation of the first. */
   @keyframes hub-node-ping-out {
     0%, 34%   { transform: scale(1);   opacity: 0;    stroke-width: 2; }
     37%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    65%, 100% { transform: scale(2.6); opacity: 0;    stroke-width: 0.5; }
+    52%       { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
+    54%       { transform: scale(1);   opacity: 0;    stroke-width: 2; }
+    57%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
+    72%, 100% { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
   }
-  /* Inbound: particle is at outer at start of each cycle (just
-     returning from centre — fades in 0–6%). Ping fires at 0 and
-     decays by 28%. */
+  /* Inbound: TWO pulses per cycle, mirrored.
+       1. Release pulse at 0% — outer node releases the particle
+          toward the vault (particle fades in 0–6%).
+       2. Arrival pulse at 94% — particle arrives back at the
+          outer node (fade-out 94–100%). */
   @keyframes hub-node-ping-in {
     0%        { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
-    28%, 100% { transform: scale(2.6); opacity: 0;    stroke-width: 0.5; }
+    15%       { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
+    91%       { transform: scale(1);   opacity: 0;    stroke-width: 2; }
+    94%       { transform: scale(1);   opacity: 0.95; stroke-width: 2; }
+    100%      { transform: scale(2.4); opacity: 0;    stroke-width: 0.5; }
   }
   .hub-node-label {
     font-family: var(--font-mono);
