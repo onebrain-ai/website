@@ -18,6 +18,22 @@
   --color-accent-4: #ffb000;
 }
 
+/* Visually hide content while keeping it readable to screen readers and
+   search engines. Used inside the Hero h1 so Google indexes a keyword-
+   rich version (`OneBrain — AI thinking partner for Obsidian`) while
+   the visible h1 keeps the cinematic "UNIFIED INTELLIGENCE" phrase. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @layer base {
   html {
     background: var(--color-bg);
@@ -25,8 +41,17 @@
     font-family: var(--font-sans);
     font-size: 16px; /* Balanced font size */
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
+    /* Note: deliberately NOT scroll-behavior: smooth.
+       smooth + scroll-snap-type: mandatory has a known browser quirk
+       — during the smooth transition after a click, the mouse pointer
+       hangs at its old screen position while the page moves under it,
+       so the cursor reverts to default until the user nudges the mouse.
+       Instant snap eliminates the lag entirely. Programmatic smooth
+       scroll (e.g. spine-dot clicks) still opts in via scrollIntoView. */
+    scroll-snap-type: y mandatory;
+    /* Reserve the sticky nav's height so a snapped section's top edge
+       lands just below the nav, not behind it. */
+    scroll-padding-top: 64px;
   }
 
   body {
@@ -36,13 +61,272 @@
     line-height: 1.5;
   }
 
+  /* Just pin pointer on the interactive elements themselves; let
+     descendants inherit naturally. The `cursor: inherit` on every
+     descendant rule was overly broad and could collide with form
+     widgets or focus styles. */
+  a[href],
+  button:not([disabled]) {
+    cursor: pointer;
+  }
+
   main > section {
     scroll-snap-align: start;
+  }
+  /* Hero opts out of scroll-padding-top: its layout is designed for the
+     full viewport with the sticky nav overlapping the top 64px (the HUD
+     corners sit at top:80 to clear the nav). A negative scroll-margin
+     cancels the padding for this single section so it snaps at y=0 and
+     the empty padding band above the HUD disappears. */
+  main > section#top {
+    scroll-margin-top: -64px;
   }
 
   footer {
     scroll-snap-align: end;
   }
+}
+
+/* ── Section spine (right-edge HUD / scroll progress) ────────────────
+   Fixed to the viewport. Hidden on narrow screens. The colored track
+   shows the full palette as a single gradient — visually wires every
+   section together. The animated head dot slides with scroll. */
+.page-spine {
+  position: fixed;
+  top: 50%;
+  right: 22px;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+.page-spine-track {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  /* Neutral muted track. The colored gradient was bleeding through behind
+     the small grey inactive dots and making them look section-tinted —
+     defeating the 'inactive=grey, active=colored' contrast user wants. */
+  background: rgba(255, 255, 255, 0.08);
+}
+.page-spine-dots {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  pointer-events: auto;
+}
+.page-spine-dots li {
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.page-spine-dots li > span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  /* Faint grey — present enough to mark the snap point without
+     competing with the active dot. */
+  background: rgba(180, 180, 195, 0.25);
+  border: 1px solid rgba(180, 180, 195, 0.18);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.page-spine-dots li:hover > span {
+  background: var(--dot-accent);
+  border-color: var(--dot-accent);
+  box-shadow: 0 0 12px var(--dot-accent);
+}
+.page-spine-dots li.active > span {
+  width: 9px;
+  height: 9px;
+  background: var(--dot-accent);
+  border-color: var(--dot-accent);
+  box-shadow:
+    0 0 10px var(--dot-accent),
+    0 0 22px var(--dot-accent);
+}
+
+/* Hide the spine on narrow viewports — it would crowd the mobile drawer. */
+@media (max-width: 1023px) {
+  .page-spine { display: none; }
+}
+
+/* ── Warp overlay ──
+   Fullscreen scanline that sweeps bottom → top to clear the current
+   section before a hash jump teleports to the target. The new section's
+   own boot-sequence scanline (already wired in cyber-section ::after)
+   handles the top → bottom reveal on arrival. */
+/* Single thin band, mirrors the cyber-section boot scanline style but
+   travels bottom → top and is monochrome (warp is a transition between
+   sections — neutral, not section-tinted). Animates transform + opacity
+   only, no TV-static, no chromatic shift — keeps the sweep readable as
+   the same scanline language as the section reveal. */
+/* Both warp layers start *below* the 64px sticky nav so the header bar
+   stays visible throughout the transition — the warp clears section
+   content, not chrome. */
+.warp-overlay {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 45;
+  pointer-events: none;
+  /* Sweep-up uses the *current* section's accent (carried on body
+     via --page-accent set by spine-dot IntersectionObserver), so the
+     band reads as the section's own light departing. The new section
+     reveals with its own boot scanline using its own --section-accent
+     — sweep-up is "old colour", sweep-down is "new colour". */
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 48%,
+    color-mix(in srgb, var(--page-accent, #ffffff) 55%, transparent) 50%,
+    transparent 52%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(100%);
+}
+.warp-overlay.warp-out {
+  animation: warp-sweep-up 0.8s ease-in forwards;
+}
+
+/* Blackout layer — grows in lockstep with the sweep (so the section
+   clears as the band rises), holds opaque for ~700ms (the requested
+   pause), then fades on the new section's boot scanline. Sits below
+   nav (z:50) so the header keeps painting on top throughout. */
+.warp-blackout {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 44;
+  pointer-events: none;
+  background: #000;
+  opacity: 0;
+}
+.warp-blackout.warp-on {
+  animation: warp-blackout 1.7s ease forwards;
+}
+
+/* Gridline backdrop inside the blackout — same 56px × 56px pattern as
+   .cyber-section-grid, with the same radial-ellipse mask so it fades to
+   pure black at the edges. Sits behind .warp-mark and inherits the
+   blackout's opacity animation, so the held beat reads as the same
+   visual language as every other section instead of a flat void. */
+.warp-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+          mask-image: radial-gradient(ellipse 75% 60% at 50% 50%, black 30%, transparent 100%);
+}
+
+/* Brand mark at the centre of the blackout — surfaces during the held
+   beat so the transition reads as a deliberate hand-off rather than a
+   void. Inherits the blackout layer's opacity animation; the inner
+   breathe gives the held moment a heartbeat without needing extra JS
+   timing. Reads as Operator-Console HUD: mono status line + dot, all
+   tied together with a brand-glow under the brain mark. */
+.warp-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  opacity: 0.7;
+}
+.warp-mark-brain {
+  filter: drop-shadow(0 0 32px rgba(255, 45, 146, 0.45))
+          drop-shadow(0 0 70px rgba(0, 243, 255, 0.18));
+}
+/* Gate the breathe animation to .warp-on — without this, the fixed
+   #warp-blackout layer ticks a transform animation forever (its
+   opacity is 0, but the compositor still schedules the animation),
+   leaking paint cost onto every scroll-snap glide. */
+.warp-blackout.warp-on .warp-mark-brain {
+  animation: warp-mark-breathe 2.6s ease-in-out infinite;
+}
+.warp-mark-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  margin-top: 4px;
+}
+.warp-mark-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+}
+.warp-mark-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff2d92;
+  box-shadow: 0 0 8px rgba(255, 45, 146, 0.85);
+}
+/* Same gating as .warp-mark-brain — only blink while the warp is on. */
+.warp-blackout.warp-on .warp-mark-dot {
+  animation: warp-mark-dot 0.9s steps(2, jump-none) infinite;
+}
+@keyframes warp-mark-breathe {
+  0%, 100% { transform: scale(1);    }
+  50%      { transform: scale(1.04); }
+}
+@keyframes warp-mark-dot {
+  50% { opacity: 0.25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .warp-blackout.warp-on .warp-mark-brain,
+  .warp-blackout.warp-on .warp-mark-dot { animation: none; }
+}
+
+@keyframes warp-sweep-up {
+  0%   { opacity: 0;    transform: translateY(100%); }
+  18%  { opacity: 0.85; }
+  100% { opacity: 0.85; transform: translateY(-100%); }
+}
+@keyframes warp-blackout {
+  0%   { opacity: 0; }
+  47%  { opacity: 1; }   /* sweep up just finished (~0.8s) */
+  88%  { opacity: 1; }   /* held opaque ~700ms — section boot begins under cover */
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .warp-overlay.warp-out,
+  .warp-blackout.warp-on { animation: none; }
 }
 
 /* Background Neural Network */
@@ -54,33 +338,50 @@
   opacity: 0.3;
 }
 
-/* Navigation */
+/* Navigation. The 92%-opaque background already hides everything behind
+   it — the prior blur(8px) added nothing visually but kept Safari
+   composing a filtered layer for the sticky element on every scroll/
+   click frame, which delayed hit-test response on header link clicks
+   (mousedown was perceptibly slower than the spine-dot <li> path).
+   Drop the filter; the background colour carries the glass feel. */
 .nav-glass {
-  background: rgba(2, 2, 4, 0.85);
-  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(2, 2, 4, 0.92);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Tech Elements */
-.ui-bracket {
-  position: relative;
+/* Click-responsiveness on header nav links. Two specifics here:
+   1. Inner spans (the [ ] hover brackets) get pointer-events:none so
+      clicks always land on the <a> directly — Safari's hit-test does
+      not bubble through transitioning child elements.
+   2. :active cancels every transition on the link tree so any in-
+      flight hover color/opacity transition is dropped instantly when
+      the click commits, freeing the compositor to paint the warp's
+      first frame without contention. */
+.nav-glass a > span { pointer-events: none; }
+.nav-glass a:active,
+.nav-glass a:active * {
+  transition: none !important;
 }
-.ui-bracket::before, .ui-bracket::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border: 1px solid var(--color-accent-2);
-  opacity: 0.5;
+
+/* Active-section highlight on header nav links. Toggled by the
+   spine-dot IntersectionObserver in Layout.astro so the menu shows
+   which section the user is on for any nav method (scroll, spine-
+   dot click, or header-link click). Mirrors the :hover treatment —
+   white link colour + reveal the [ ] bracket spans. !important
+   beats Tailwind's `opacity-0` utility on the bracket spans. */
+.nav-glass a.is-active {
+  color: #fff !important;
 }
-.ui-bracket::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
-.ui-bracket::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+.nav-glass a.is-active > span {
+  opacity: 1 !important;
+}
 
 .btn-tech {
   position: relative;
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
   padding: 1.5px;
+  transition: box-shadow 0.2s ease;
 }
 .btn-tech-inner {
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
@@ -89,27 +390,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: background 0.2s ease;
 }
-
-@keyframes cyber-flicker {
-  0% { opacity: 0.8; }
-  5% { opacity: 0.4; }
-  10% { opacity: 0.9; }
-  100% { opacity: 1; }
-}
-.animate-flicker {
-  animation: cyber-flicker 4s infinite step-end;
-}
+/* Hover: swap inner to white so the group-hover:text-black inside reads,
+   and add a soft brand glow on the gradient frame. Use box-shadow not
+   drop-shadow filter — animating filter on the sticky-nav CTA is a
+   Safari paint hot path. */
+.btn-tech:hover .btn-tech-inner { background: #ffffff; }
+.btn-tech:hover { box-shadow: 0 0 14px rgba(255, 45, 146, 0.5); }
 
 .reveal {
   opacity: 0;
   transform: translateY(20px);
-  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reveal.active {
   opacity: 1;
   transform: translateY(0);
+}
+/* Sections opt out of the wrapper-level reveal animation: the transform on
+   the section box breaks scroll-snap (the snap target's visual top drifts
+   from its layout top, so 'scroll up' doesn't latch). The per-element
+   boot sequence below already handles the visual reveal of pill, H2,
+   sub, and content for sections. */
+.cyber-section.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 /* Shared utility: text with stroke first, fill second (used by all section headlines) */
@@ -128,13 +436,100 @@
 
 .cyber-section {
   position: relative;
-  min-height: 100vh;
-  padding: 5rem 1.5rem 3rem;
+  /* Fill the visible viewport below the sticky nav (64px tall) so flex
+     centring lines up with visible centre, not full-viewport centre.
+     100dvh handles mobile chrome that grows/shrinks the address bar. */
+  min-height: calc(100dvh - 64px);
+  /* Trim vertical padding so dense sections (Features 6-card grid,
+     Commands 12-card grid) don't overflow the 836px content area on
+     standard 900px laptop viewports. */
+  padding: 2.5rem 1.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   --section-accent: #00f3ff;
+}
+
+/* ── Section initialization sequence ──
+   Two CSS keyframes total drive the whole "section boots and reveals
+   itself" effect: a one-shot scanline sweep, plus a single shared
+   fade-up that every other element borrows with a different delay.
+   Animations only touch opacity + transform — both GPU-composited, no
+   filter / blur / text-shadow keyframes — so it runs the same on a
+   passively-cooled MacBook as on a top-spec workstation. */
+
+/* The scanline band itself — only renders when .active fires.
+   Sits above .cyber-section-shell (z:10) so the sweep visually crosses
+   *over* every piece of content during the boot sequence — including
+   the synergy nebula canvas, which previously appeared to float above
+   the scanline because the shell's stacking context outranked it. */
+.cyber-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 48%,
+    color-mix(in srgb, var(--section-accent) 35%, transparent) 50%,
+    transparent 52%,
+    transparent 100%
+  );
+  opacity: 0;
+}
+.cyber-section.active::after {
+  animation: section-scanline 1.1s ease-out;
+}
+
+/* Every revealed element rides the same shared fade-up keyframe.
+   Pill, sub paragraph, cards, stack rows, waitlist console, even the H2
+   stroke — same opacity-+-translateY recipe, only the delay changes so
+   the page reads as content lighting up in the scanline's wake. */
+.cyber-section.active .cyber-pill,
+.cyber-section.active .cyber-h2-stroke,
+.cyber-section.active .cyber-sub,
+.cyber-section.active .cyber-card,
+.cyber-section.active .stack-row,
+.cyber-section.active .waitlist-shell {
+  animation: section-content-rise 0.55s ease-out backwards;
+}
+
+/* Anchor delays to scanline travel: at t=0.25s the band is at the top
+   of the section and pill region; at t=0.55s it's at the H2/sub area;
+   from t=0.7s through ~1.2s it sweeps the card grid. Cards are grouped
+   in rows of three so each row lights up together. */
+.cyber-section.active .cyber-pill        { animation-delay: 0.25s; }
+.cyber-section.active .cyber-h2-stroke   { animation-delay: 0.4s; }
+.cyber-section.active .cyber-sub         { animation-delay: 0.55s; }
+.cyber-section.active .cyber-card,
+.cyber-section.active .stack-row,
+.cyber-section.active .waitlist-shell    { animation-delay: 0.7s; }
+.cyber-section.active .cyber-card:nth-child(n+4):nth-child(-n+6),
+.cyber-section.active .stack-row:nth-child(n+4):nth-child(-n+6)  { animation-delay: 0.85s; }
+.cyber-section.active .cyber-card:nth-child(n+7):nth-child(-n+9)  { animation-delay: 1.0s; }
+.cyber-section.active .cyber-card:nth-child(n+10):nth-child(-n+12) { animation-delay: 1.15s; }
+
+@keyframes section-scanline {
+  0%   { opacity: 0; transform: translateY(-100%); }
+  20%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translateY(100%); }
+}
+@keyframes section-content-rise {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cyber-section.active::after,
+  .cyber-section.active .cyber-pill,
+  .cyber-section.active .cyber-h2-stroke,
+  .cyber-section.active .cyber-sub,
+  .cyber-section.active .cyber-card,
+  .cyber-section.active .stack-row,
+  .cyber-section.active .waitlist-shell { animation: none; }
 }
 @media (min-width: 1024px) {
   .cyber-section { padding: 4rem 4rem 3rem; }
@@ -148,7 +543,11 @@
   height: 60vh;
   transform: translate(-50%, -50%);
   background: color-mix(in srgb, var(--section-accent) 9%, transparent);
-  filter: blur(180px);
+  /* 100px instead of 180px: a Gaussian blur's GPU cost is roughly
+     quadratic in the radius, so 180→100 cuts the orb's per-frame
+     compositing work by ~3×. The visual softness is indistinguishable
+     at this size + 9% accent opacity. */
+  filter: blur(100px);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -176,10 +575,10 @@
 }
 
 .cyber-section-head {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.75rem;
 }
 @media (min-width: 1024px) {
-  .cyber-section-head { margin-bottom: 3rem; }
+  .cyber-section-head { margin-bottom: 2rem; }
 }
 
 .cyber-pill {
@@ -244,11 +643,14 @@
 
 .cyber-card {
   position: relative;
-  background: rgba(8, 8, 14, 0.55);
+  /* Solid-enough background instead of backdrop-filter blur. Cards multiply
+     across grids (12+ on Commands, 6 on Features) — every blurred surface
+     forces its own compositor layer, which is what makes Safari/older Macs
+     drop hover events on busy pages. */
+  background: rgba(8, 8, 14, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 1.4rem 1.5rem;
   transition: border-color 0.25s ease, background 0.25s ease;
-  backdrop-filter: blur(6px);
 }
 .cyber-card:hover {
   border-color: color-mix(in srgb, var(--section-accent) 35%, transparent);
@@ -297,8 +699,31 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* Off-screen unload — every <section> gets data-vis="off" via the
+   IntersectionObserver in Layout.astro while it sits outside the
+   viewport (rootMargin 200px on each side). Dropping animation-name
+   to none releases the entire animation pipeline for that element:
+   no compositor work, no keyframe interpolation, no animation
+   object held in memory. When the section scrolls back into view,
+   data-vis flips to "on", this rule no longer matches, and the
+   original animation property re-applies — animations restart from
+   0% on the next paint.
+   * matches descendants only; ::before/::after pseudos and the
+   section element itself are listed explicitly so e.g. cyber-
+   section::after's scanline keyframe is also released.
+   The user will not see a "boot" lag because rootMargin gives
+   ~200px of preroll; animations are already running by the time
+   the section's leading edge enters the viewport. */
+section[data-vis="off"],
+section[data-vis="off"]::before,
+section[data-vis="off"]::after,
+section[data-vis="off"] *,
+section[data-vis="off"] *::before,
+section[data-vis="off"] *::after {
+  animation-name: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { transition: opacity 0.4s ease; transform: none; }
-  .animate-flicker { animation: none; }
 }

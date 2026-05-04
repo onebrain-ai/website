@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Brain from "../components/Brain.astro";
 
 interface Props {
   title?: string;
@@ -8,10 +9,12 @@ interface Props {
 }
 
 const {
-  title = "OneBrain — Your AI Thinking Partner",
-  description = "OneBrain — your AI thinking partner. A unified intelligence where human and AI agent co-evolve inside your Obsidian vault, learning from you as you learn from it.",
-  image = "/og.png",
+  title = "OneBrain — AI Thinking Partner for Obsidian",
+  description = "OneBrain is a living intelligence layer inside your Obsidian vault — you teach the agent, the agent extends you, both evolve.",
+  image = "/og.jpg",
 } = Astro.props;
+const canonical = "https://onebrain.run/";
+const ogImageUrl = `https://onebrain.run${image}`;
 ---
 
 <!doctype html>
@@ -19,50 +22,153 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/brain.svg" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://onebrain.run" />
-    <meta property="og:image" content={new URL(image, Astro.url)} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@onebrain_run" />
+    <meta name="twitter:creator" content="@onebrain_run" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, Astro.url)} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://onebrain.run/#organization",
+          "name": "OneBrain",
+          "url": canonical,
+          "logo": "https://onebrain.run/brain.svg",
+          "sameAs": [
+            "https://github.com/onebrain-ai",
+            "https://x.com/onebrain_run",
+            "https://www.npmjs.com/package/@onebrain-ai/cli"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://onebrain.run/#website",
+          "url": canonical,
+          "name": "OneBrain",
+          "description": description,
+          "publisher": { "@id": "https://onebrain.run/#organization" },
+          "inLanguage": "en"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "OneBrain",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "macOS, Linux, Windows",
+          "url": canonical,
+          "description": description,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "publisher": { "@id": "https://onebrain.run/#organization" }
+        }
+      ]
+    })} />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Non-blocking font load: media="print" makes the browser fetch
+         the stylesheet without applying or blocking, then onload swaps
+         media to "all" so the styles take effect. The hero h1 (LCP
+         candidate) paints with the system fallback first, swaps to
+         Chakra Petch on load. `display=swap` keeps the swap painless.
+         <noscript> falls back to a regular blocking link for JS-off
+         users so they still get the brand fonts. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+    </noscript>
+
+    <!-- Stash any incoming hash before the browser performs its default scroll-to-id.
+         The main script will replay it as a warp on load. Has to live in <head>
+         so it runs before paint. -->
+    <script is:inline>
+      (function () {
+        if (location.hash && location.hash.length > 1) {
+          window.__obPendingHash = location.hash;
+          history.replaceState(null, '', location.pathname + location.search);
+        }
+      })();
+    </script>
   </head>
   <body>
     <!-- Neutral background base -->
     <div class="fixed inset-0 bg-[#020204] -z-[10]"></div>
     <canvas id="neural-canvas"></canvas>
+
+    <!-- Section spine — fixed right-edge HUD that visualizes scroll position
+         and ties every section together with a gradient through their accents. -->
+    <aside id="page-spine" class="page-spine" aria-hidden="true">
+      <div class="page-spine-track"></div>
+      <ol class="page-spine-dots">
+        <li data-target="#top"      style="--dot-accent: #ff2d92;"><span></span></li>
+        <li data-target="#features" style="--dot-accent: #00ff9d;"><span></span></li>
+        <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><span></span></li>
+        <li data-target="#stack"    style="--dot-accent: #c8ff00;"><span></span></li>
+        <li data-target="#workflow" style="--dot-accent: #7c3aed;"><span></span></li>
+        <li data-target="#how"      style="--dot-accent: #ffb000;"><span></span></li>
+        <li data-target="#commands" style="--dot-accent: #ff5e3a;"><span></span></li>
+        <li data-target="#cloud"    style="--dot-accent: #00bfff;"><span></span></li>
+      </ol>
+    </aside>
+
+    <!-- Warp overlay — fullscreen scanline that sweeps up to clear the current
+         section, then a hash jump teleports to the target. The new section's
+         own boot-sequence scanline sweeps down on arrival. -->
+    <div id="warp-overlay" class="warp-overlay" aria-hidden="true"></div>
+    <div id="warp-blackout" class="warp-blackout" aria-hidden="true">
+      <div class="warp-grid" aria-hidden="true"></div>
+      <div class="warp-mark">
+        <div class="warp-mark-brain"><Brain size={108} /></div>
+        <span class="warp-mark-text">OneBrain</span>
+        <span class="warp-mark-status">
+          <span class="warp-mark-dot"></span>
+          <span>WARP // SECTION_TRANSFER</span>
+        </span>
+      </div>
+    </div>
+
     <slot />
 
     <script is:inline>
+      // Site-wide neural canvas. Tuned for Safari: pauses when tab hidden,
+      // pauses when canvas is offscreen, throttles mousemove, and skips frames
+      // on slow devices. Nothing else on this canvas — keep it cheap.
       (function() {
         const canvas = document.getElementById('neural-canvas');
         if (!canvas) return;
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
         const ctx = canvas.getContext('2d', { alpha: true });
         let width, height, dpr;
         let nodes = [];
-        const nodeCount = 50;
-        const maxDistance = 200;
+        const nodeCount = 28;
+        const maxDistanceSq = 200 * 200;
         const mouse = { x: null, y: null, radius: 150 };
+        let running = true;
+        let visible = true;
+        let rafId = 0;
 
         function init() {
-          dpr = window.devicePixelRatio || 1;
+          dpr = Math.min(window.devicePixelRatio || 1, 1.5);
           width = window.innerWidth;
           height = window.innerHeight;
           canvas.width = width * dpr;
           canvas.height = height * dpr;
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
           ctx.scale(dpr, dpr);
           canvas.style.width = width + 'px';
           canvas.style.height = height + 'px';
@@ -73,21 +179,30 @@ const {
               y: Math.random() * height,
               vx: (Math.random() - 0.5) * 0.4,
               vy: (Math.random() - 0.5) * 0.4,
-              baseRadius: 1.5
             });
           }
         }
 
-        function draw() {
+        // Throttle to ~30 fps. Background ambience doesn't need 60.
+        let lastFrame = 0;
+        function draw(now) {
+          rafId = 0;
+          if (!running || !visible || reduced) return;
+          if (now && now - lastFrame < 33) {
+            rafId = requestAnimationFrame(draw);
+            return;
+          }
+          lastFrame = now || 0;
           ctx.clearRect(0, 0, width, height);
-          nodes.forEach(node => {
+          for (const node of nodes) {
             node.x += node.vx;
             node.y += node.vy;
             if (mouse.x !== null) {
               const dx = node.x - mouse.x;
               const dy = node.y - mouse.y;
-              const dist = Math.sqrt(dx * dx + dy * dy);
-              if (dist < mouse.radius) {
+              const distSq = dx * dx + dy * dy;
+              if (distSq < mouse.radius * mouse.radius) {
+                const dist = Math.sqrt(distSq);
                 const force = (mouse.radius - dist) / mouse.radius;
                 node.x += (dx / dist) * force * 2;
                 node.y += (dy / dist) * force * 2;
@@ -96,34 +211,65 @@ const {
             if (node.x < 0 || node.x > width) node.vx *= -1;
             if (node.y < 0 || node.y > height) node.vy *= -1;
             ctx.beginPath();
-            ctx.arc(node.x, node.y, node.baseRadius, 0, Math.PI * 2);
+            ctx.arc(node.x, node.y, 1.5, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
             ctx.fill();
-          });
+          }
           ctx.lineWidth = 0.5;
           for (let i = 0; i < nodes.length; i++) {
+            const ni = nodes[i];
             for (let j = i + 1; j < nodes.length; j++) {
-              const dx = nodes[i].x - nodes[j].x;
-              const dy = nodes[i].y - nodes[j].y;
+              const nj = nodes[j];
+              const dx = ni.x - nj.x;
+              const dy = ni.y - nj.y;
               const distSq = dx * dx + dy * dy;
-              if (distSq < maxDistance * maxDistance) {
-                const dist = Math.sqrt(distSq);
-                const opacity = (1 - dist / maxDistance) * 0.1;
+              if (distSq < maxDistanceSq) {
+                const opacity = (1 - Math.sqrt(distSq) / 200) * 0.1;
                 ctx.beginPath();
-                ctx.moveTo(nodes[i].x, nodes[i].y);
-                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.moveTo(ni.x, ni.y);
+                ctx.lineTo(nj.x, nj.y);
                 ctx.strokeStyle = 'rgba(255, 255, 255, ' + opacity + ')';
                 ctx.stroke();
               }
             }
           }
-          requestAnimationFrame(draw);
+          rafId = requestAnimationFrame(draw);
         }
 
+        function start() {
+          if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw);
+        }
+
+        // Pause when tab is hidden — Safari especially benefits.
+        document.addEventListener('visibilitychange', () => {
+          visible = !document.hidden;
+          if (visible) start();
+        });
+        // The canvas itself is fixed/viewport-sized so it would always be
+        // "intersecting" — observe the hero element instead. Once the user
+        // scrolls past the hero, the background ambience is no longer
+        // visible (other sections have their own grid/orb bg) so we stop
+        // running entirely. Massive main-thread win on long scrolls.
+        if ('IntersectionObserver' in window) {
+          const heroEl = document.getElementById('top') || canvas;
+          const io = new IntersectionObserver((entries) => {
+            running = entries[0].isIntersecting;
+            if (running) start();
+          }, { rootMargin: '0px' });
+          io.observe(heroEl);
+        }
+        // Throttle mousemove to ~30Hz so Safari isn't burning a full frame on each input event.
+        let mouseTick = 0;
+        window.addEventListener('mousemove', (e) => {
+          const now = performance.now();
+          if (now - mouseTick < 32) return;
+          mouseTick = now;
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        }, { passive: true });
         window.addEventListener('resize', init);
-        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
         init();
-        draw();
+        start();
       })();
 
       (function() {
@@ -133,6 +279,206 @@ const {
           });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      })();
+
+      // Section visibility: tag every <section> with data-vis="off" while it
+      // is outside the viewport, and "on" while it is intersecting. CSS rules
+      // in global.css use this attribute to drop animation-name to none on
+      // every continuous CSS animation in that section, releasing the
+      // animation pipeline (no compositor work, no keyframe interpolation,
+      // no memory) while the user is reading another part of the page.
+      // rootMargin:200px so animations spin up just before the section
+      // scrolls into view — no visible "boot" lag.
+      (function() {
+        const sections = document.querySelectorAll('section[id]');
+        if (!sections.length) return;
+        sections.forEach((s) => { s.dataset.vis = 'off'; });
+        const visObs = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            e.target.dataset.vis = e.isIntersecting ? 'on' : 'off';
+          });
+        }, { rootMargin: '200px 0px', threshold: 0 });
+        sections.forEach((s) => visObs.observe(s));
+      })();
+
+      // Section spine: highlight the active dot via IntersectionObserver.
+      // The active dot itself is the indicator — it grows + glows in the
+      // section's accent and stays snapped to the section it represents.
+      (function () {
+        const spine = document.getElementById('page-spine');
+        if (!spine) return;
+        const dots = Array.from(spine.querySelectorAll('.page-spine-dots li'));
+        const sections = dots.map((d) => document.querySelector(d.dataset.target)).filter(Boolean);
+        if (!sections.length) return;
+
+        // Every header nav link (desktop + mobile drawer) tagged with
+        // its href, so the active-section observer can highlight the
+        // matching links as the user scrolls (or after a spine-dot
+        // click). Both copies of each link get the class — Map-by-
+        // href would have collapsed the desktop+drawer pair into one
+        // and missed the visible desktop link. Hero (#top) has no
+        // header link — when hero is active every link clears.
+        const navLinks = Array.from(
+          document.querySelectorAll('header a[href^="#"]')
+        ).map((a) => ({ el: a, href: a.getAttribute('href') }));
+
+        let activeIdx = -1;
+        function setActive(i) {
+          if (i === activeIdx) return;
+          activeIdx = i;
+          dots.forEach((d, j) => d.classList.toggle('active', j === i));
+          // Body tint: lets future global accents (e.g. cursor glow) follow current section.
+          document.body.style.setProperty('--page-accent', dots[i].style.getPropertyValue('--dot-accent'));
+          // Mirror active state on the header nav so scroll + spine-
+          // dot clicks (not just header clicks) highlight the right
+          // menu item.
+          const activeHref = dots[i].dataset.target;
+          navLinksByHref.forEach((link, href) => {
+            link.classList.toggle('is-active', href === activeHref);
+          });
+        }
+
+        const io = new IntersectionObserver((entries) => {
+          // Pick the entry with the largest intersection ratio.
+          let best = null;
+          for (const e of entries) {
+            if (e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) best = e;
+          }
+          if (best) {
+            const idx = sections.indexOf(best.target);
+            if (idx >= 0) setActive(idx);
+          }
+        }, { threshold: [0.25, 0.5, 0.75] });
+        sections.forEach((s) => io.observe(s));
+
+        // Click-to-jump uses the warp transition.
+        dots.forEach((d) => {
+          d.addEventListener('click', () => warpTo(d.dataset.target));
+        });
+      })();
+
+      // Warp transition — bottom→top scanline clears the current section,
+      // page jumps instantly, the new section's own boot-sequence handles
+      // the top→bottom reveal. Used by header nav links, spine dots, and
+      // any external/initial hash navigation.
+      let warpInFlight = false;
+      // Hero uses scroll-margin-top:-64px so it underlaps the sticky nav by
+      // design — but scrollIntoView in Safari mishandles negative scroll-
+      // margins together with scroll-snap mandatory, leaving content tucked
+      // partly under the nav after a warp. Force an explicit scroll-to-top
+      // for #top instead; every other section uses scrollIntoView with the
+      // standard scroll-padding-top:64 baseline.
+      function jumpTo(t, targetSel) {
+        if (targetSel === '#top') {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        } else {
+          t.scrollIntoView({ block: 'start', behavior: 'instant' });
+        }
+      }
+      // Cache once at script init so the click → warp hot path does
+      // zero DOM lookups. Saves a getElementById × 2, a querySelector,
+      // and a matchMedia query per click — small in absolute time but
+      // measurable on Safari's main thread when other animations are
+      // already contending for the paint slot.
+      const _warpOverlay = document.getElementById('warp-overlay');
+      const _warpBlackout = document.getElementById('warp-blackout');
+      const _reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      function warpTo(targetSel) {
+        if (warpInFlight) return;
+        const t = document.querySelector(targetSel);
+        if (!t) return;
+        if (_reducedMotion.matches) {
+          jumpTo(t, targetSel);
+          return;
+        }
+        warpInFlight = true;
+        if (_warpOverlay) _warpOverlay.classList.add('warp-out');
+        if (_warpBlackout) _warpBlackout.classList.add('warp-on');
+        // Jump mid-hold (sweep up done at ~0.8s, blackout fully opaque
+        // 0.8–1.5s). Hash jump + boot replay happen at 1.2s so the new
+        // section's scanline starts under cover and emerges as the
+        // blackout fades — sweep-down + content-rise read as one beat.
+        setTimeout(() => {
+          jumpTo(t, targetSel);
+          // Always replay the boot scanline on arrival — strip + reflow
+          // + add. Hero gets .active here too (it never had .active
+          // applied otherwise, since hero relies on its own intro
+          // animations on initial load), which fires its own ::after
+          // scanline and makes the warp arrival read identically across
+          // every section.
+          t.classList.remove('active');
+          void t.offsetWidth;
+          t.classList.add('active');
+        }, 1200);
+        setTimeout(() => {
+          if (_warpOverlay) _warpOverlay.classList.remove('warp-out');
+          if (_warpBlackout) _warpBlackout.classList.remove('warp-on');
+          warpInFlight = false;
+        }, 1720);
+      }
+
+      // Pre-resolve every header link's hash target into a WeakMap so
+      // the click hot path is just one Map.get + one warpTo call —
+      // no closest() walk, no getAttribute, no querySelector.
+      const _headerLinks = new WeakMap();
+      document.querySelectorAll('header a[href^="#"]').forEach((a) => {
+        const href = a.getAttribute('href');
+        if (!href || href === '#') return;
+        if (!document.querySelector(href)) return;
+        _headerLinks.set(a, href);
+      });
+      // Document-level mousedown at the capture phase — fires before
+      // any per-element handler in the entire DOM tree. Crucially we
+      // do NOT call e.preventDefault(): preventDefault on a mousedown
+      // that lands on an <a> makes Safari run extra link-activation
+      // gating before the handler is allowed to do anything else.
+      // Navigation is suppressed by the click handler below where it
+      // actually matters; warpInFlight absorbs the click re-fire.
+      document.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        // parentElement walk is faster than closest() with a CSS
+        // selector — header is shallow (4–5 levels max), and we only
+        // accept exact <a> hits that are pre-registered in the map.
+        let n = e.target;
+        while (n && n.tagName !== 'A') n = n.parentElement;
+        if (!n) return;
+        const href = _headerLinks.get(n);
+        if (!href) return;
+        warpTo(href);
+      }, { capture: true });
+      // Click runs after release; warpInFlight has already latched,
+      // so this is here to suppress the native hash navigation that
+      // mousedown deliberately didn't prevent. Keyboard activation
+      // (Enter/Space on a focused link) lands here too — keyboard
+      // users get warpTo from this path.
+      document.addEventListener('click', (e) => {
+        let n = e.target;
+        while (n && n.tagName !== 'A') n = n.parentElement;
+        if (!n) return;
+        const href = _headerLinks.get(n);
+        if (!href) return;
+        e.preventDefault();
+        warpTo(href);
+      });
+
+      // External / initial hash navigation also plays the warp:
+      //   - URL with a hash on first load (stashed in <head>, replayed here)
+      //   - browser back/forward across hashes
+      //   - cross-tab links / pasted URLs
+      // Internal nav (header links + spine dots) uses preventDefault and
+      // doesn't update location.hash, so it never reaches this listener.
+      (function () {
+        const pending = window.__obPendingHash;
+        if (pending && document.querySelector(pending)) {
+          // Hero is the natural starting frame for the warp-in.
+          window.scrollTo(0, 0);
+          requestAnimationFrame(() => warpTo(pending));
+        }
+        window.addEventListener('hashchange', () => {
+          if (location.hash && document.querySelector(location.hash)) {
+            warpTo(location.hash);
+          }
+        });
       })();
     </script>
   </body>

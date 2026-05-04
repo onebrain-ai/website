@@ -1,14 +1,14 @@
 ---
 const layers = [
-  { name: 'OBSIDIAN',      role: 'COGNITIVE_INTERFACE', desc: 'Local-first markdown environment. Your single source of truth.' },
-  { name: 'CLAUDE_CODE',   role: 'NEURAL_ENGINE',       desc: 'High-performance agentic runtime for extreme reasoning.' },
-  { name: 'ONEBRAIN_OS',   role: 'LOGIC_LAYER',         desc: 'Unified memory + workflow orchestration layer.' },
-  { name: 'ONEBRAIN_CLI',  role: 'BRIDGE_PROTOCOL',     desc: 'Indexing, sync, and autonomous automation.' },
-  { name: 'QMD_SEARCH',    role: 'SEMANTIC_MATRIX',     desc: 'Local hybrid keyword + vector search engine.' },
+  { name: 'OBSIDIAN',         role: 'COGNITIVE_INTERFACE', desc: 'Local-first markdown environment. Your single source of truth.' },
+  { name: 'HARNESS',          role: 'NEURAL_ENGINE',       desc: 'Bring your own agentic harness — Claude Code, Gemini CLI, Codex, or any tool that speaks the agent contract.' },
+  { name: 'ONEBRAIN PLUGIN',  role: 'LOGIC_LAYER',         desc: 'Unified memory layer + skill orchestration that turns the harness into a personal AI OS.' },
+  { name: 'ONEBRAIN CLI',     role: 'BRIDGE_PROTOCOL',     desc: 'Indexing, vault sync, and autonomous automation for the plugin.' },
+  { name: 'QMD SEARCH',       role: 'SEMANTIC_MATRIX',     desc: 'Local hybrid keyword + vector search engine.' },
 ];
 ---
 
-<section id="stack" class="cyber-section reveal" style="--section-accent: #00d4ff;">
+<section id="stack" class="cyber-section reveal" style="--section-accent: #c8ff00;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -21,10 +21,10 @@ const layers = [
         </div>
         <h2 class="cyber-h2">
           The Core<br/>
-          <span class="cyber-h2-stroke" data-text="Intelligence Stack.">Intelligence Stack.</span>
+          <span class="cyber-h2-stroke">Intelligence Stack.</span>
         </h2>
         <p class="cyber-sub">
-          Five layers that fuse human cognition with agentic execution — every layer open, local, and inspectable.
+          Five components that fuse human cognition with agentic execution — every layer open, local, and inspectable.
         </p>
       </header>
 
@@ -85,7 +85,7 @@ const layers = [
     border-radius: 50%;
     background: rgba(0, 0, 0, 1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
   .stack-row:hover .stack-dot {
     background: var(--section-accent);

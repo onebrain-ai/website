@@ -1,17 +1,23 @@
 ---
 const tiers = [
-  { name: 'FREE', desc: 'Local vault · OSS skills · BYOK',           status: 'AVAILABLE_NOW' },
-  { name: 'PRO',  desc: 'Sync · mobile · hosted runtime',            status: 'RESERVED' },
-  { name: 'TEAM', desc: 'Shared intelligence · team mesh',           status: 'RESERVED' },
+  {
+    name: 'FREE',
+    tagline: 'Always free & open source',
+    desc: 'Local vault · OSS skills · BYOK',
+    status: 'AVAILABLE_NOW',
+    href: 'https://github.com/onebrain-ai/onebrain#installation',
+  },
+  { name: 'PRO',  desc: 'Sync · mobile · hosted runtime',  status: 'COMING_SOON' },
+  { name: 'TEAM', desc: 'Shared intelligence · team mesh', status: 'COMING_SOON' },
 ];
 ---
 
-<section id="cloud" class="cyber-section reveal" style="--section-accent: #38bdf8;">
+<section id="cloud" class="cyber-section reveal" style="--section-accent: #00bfff;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-16 items-center">
+    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-start">
 
       <!-- LEFT: heading + tiers -->
       <div>
@@ -22,7 +28,7 @@ const tiers = [
           </div>
           <h2 class="cyber-h2">
             OneBrain<br/>
-            <span class="cyber-h2-stroke" data-text="Cloud.">Cloud.</span>
+            <span class="cyber-h2-stroke">Cloud.</span>
           </h2>
           <p class="cyber-sub">
             Multi-device sync and hosted agent runtimes. Your unified intelligence travels with you.
@@ -30,14 +36,25 @@ const tiers = [
         </header>
 
         <div class="tiers">
-          {tiers.map((t, i) => (
-            <div class="cyber-card tier-card">
-              <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
-              <h3 class="cyber-card-title tier-name">{t.name}</h3>
-              <p class="cyber-card-desc">{t.desc}</p>
-              <span class="tier-status">[ {t.status} ]</span>
-            </div>
-          ))}
+          {tiers.map((t, i) => {
+            const Tag = t.href ? 'a' : 'div';
+            const props = t.href
+              ? { href: t.href, target: '_blank', rel: 'noopener noreferrer' }
+              : { 'aria-disabled': 'true' };
+            return (
+              <Tag class={`cyber-card tier-card ${t.href ? 'tier-card-live' : 'tier-card-soon'}`} {...props}>
+                <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="cyber-card-title tier-name">{t.name}</h3>
+                {t.tagline && <span class="tier-tagline">// {t.tagline}</span>}
+                <p class="cyber-card-desc">{t.desc}</p>
+                <span class="tier-status">
+                  {t.href && <span class="tier-status-dot" aria-hidden="true"></span>}
+                  [ {t.status} ]
+                  {t.href && <span class="tier-arrow" aria-hidden="true">→</span>}
+                </span>
+              </Tag>
+            );
+          })}
         </div>
       </div>
 
@@ -50,12 +67,18 @@ const tiers = [
 
         <div class="waitlist-head">
           <span class="waitlist-rec-dot"></span>
-          <span>WAITLIST :: ACCEPTING_PAIRINGS</span>
+          <span>CLOUD WAITLIST :: OPEN</span>
         </div>
+
+        <h3 class="waitlist-title">Lock in early access to <strong>PRO + TEAM</strong>.</h3>
+        <p class="waitlist-blurb">
+          Drop your email and we'll let you know the moment sync, hosted runtime,
+          and team mesh ship — no spam, just the launch notice.
+        </p>
 
         <form id="waitlist-form" class="waitlist-form">
           <label class="waitlist-label">
-            <span>NEURAL_ID // EMAIL</span>
+            <span>YOUR EMAIL</span>
             <input
               type="email"
               required
@@ -66,7 +89,7 @@ const tiers = [
           </label>
 
           <button type="submit" class="waitlist-btn">
-            <span>REQUEST_ACCESS</span>
+            <span>NOTIFY ME AT LAUNCH</span>
             <span class="waitlist-btn-arrow">→</span>
           </button>
         </form>
@@ -76,15 +99,10 @@ const tiers = [
           role="status"
           aria-live="polite"
           class="waitlist-banner"
-        >
-          <span class="waitlist-banner-arrow">→</span>
-          Waitlist coming soon. Follow
-          <a href="https://x.com/onebrain_run" target="_blank" rel="noopener noreferrer" class="waitlist-link">@onebrain_run</a>
-          for the launch ping.
-        </div>
+        ></div>
 
         <p class="waitlist-foot">
-          // join the network · early operators get priority pairing
+          // early signups get priority access when PRO + TEAM go live
         </p>
       </div>
 
@@ -136,7 +154,7 @@ const tiers = [
         showBanner('error', '✗ Network error. Try again.');
       } finally {
         button.disabled = false;
-        if (labelEl) labelEl.textContent = 'REQUEST_ACCESS';
+        if (labelEl) labelEl.textContent = 'NOTIFY ME AT LAUNCH';
         else button.textContent = originalLabel;
       }
     });
@@ -144,42 +162,153 @@ const tiers = [
 </script>
 
 <style>
+  /* Vertical card style: 3 tiers laid out side-by-side, each card
+     orientates vertically (meta + name → desc → status). On mobile
+     they stack to a single column. */
   .tiers {
     margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   .tier-card {
-    padding: 1rem 1.2rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px 14px;
-    align-items: baseline;
+    padding: 1.25rem 1.25rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    min-height: 170px;
+    position: relative;
   }
-  .tier-card .cyber-card-desc { grid-column: 1 / -1; margin-top: 0; }
-  .tier-name { letter-spacing: 0.06em; font-size: 0.95rem; }
+  .tier-card .cyber-card-meta {
+    position: absolute;
+    top: 0.85rem;
+    right: 1rem;
+  }
+  .tier-card .cyber-card-desc { margin-top: 0; }
+  .tier-name {
+    letter-spacing: 0.08em;
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  /* Small accent-tinted tagline that sits under the tier name —
+     reserved for messaging that needs to land before the dense
+     desc line (e.g. FREE's "always free & open source" promise). */
+  .tier-tagline {
+    display: block;
+    margin-top: -2px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--section-accent);
+  }
   .tier-status {
+    margin-top: auto;
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.3em;
     color: var(--section-accent);
-    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* ── FREE: live, clickable, brand-glow border ── */
+  a.tier-card.tier-card-live {
+    position: relative;
+    cursor: pointer;
+    border-color: color-mix(in srgb, var(--section-accent) 55%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--section-accent) 25%, transparent),
+      0 0 30px -8px color-mix(in srgb, var(--section-accent) 60%, transparent);
+    /* Animate transform + border-color only — the 50px-spread box-shadow
+       on hover is a Safari paint hot path; switch it as a static :hover
+       value so the transition doesn't repaint the whole card every frame. */
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  a.tier-card.tier-card-live::before {
+    /* Left edge accent rail — same vocabulary as the hero cmd-box. */
+    content: '';
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    width: 3px;
+    background: var(--section-accent);
+    box-shadow: 0 0 12px var(--section-accent);
+  }
+  a.tier-card.tier-card-live:hover {
+    transform: translateY(-2px);
+    border-color: var(--section-accent);
+    box-shadow:
+      0 0 0 1px var(--section-accent),
+      0 0 50px -6px color-mix(in srgb, var(--section-accent) 75%, transparent);
+  }
+  a.tier-card.tier-card-live .tier-name {
+    color: #fff;
+  }
+  .tier-status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--section-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--section-accent);
+    animation: cyber-pulse 1.5s ease-in-out infinite;
+  }
+  .tier-arrow {
+    color: var(--section-accent);
+    transition: transform 0.25s ease;
+    margin-left: 4px;
+  }
+  a.tier-card.tier-card-live:hover .tier-arrow { transform: translateX(4px); }
+
+  /* ── PRO / TEAM: dimmed, "coming soon" ── */
+  .tier-card.tier-card-soon {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .tier-card.tier-card-soon .tier-status {
+    color: var(--section-accent);
+    letter-spacing: 0.32em;
+    animation: tier-soon-blink 2.4s ease-in-out infinite;
+  }
+  .tier-card.tier-card-soon .cyber-card-desc {
+    color: rgba(255, 255, 255, 0.32);
+  }
+  /* Stagger TEAM relative to PRO so they pulse out of sync — feels like
+     two independent "incoming" signals rather than one synchronized banner. */
+  .tier-card.tier-card-soon:nth-of-type(3) .tier-status {
+    animation-delay: 1.2s;
+  }
+  @keyframes tier-soon-blink {
+    0%, 100% { opacity: 1; }
+    48%      { opacity: 0.25; }
+    52%      { opacity: 0.25; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tier-card.tier-card-soon .tier-status { animation: none; }
   }
 
   /* Waitlist console */
   .waitlist-shell {
     position: relative;
     padding: 2rem 2rem 1.6rem;
-    background: rgba(8, 8, 14, 0.55);
-    border: 1px solid rgba(56, 189, 248, 0.22);
-    backdrop-filter: blur(20px);
+    background: rgba(8, 8, 14, 0.82);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
+    /* drop heavy backdrop-filter — solid bg keeps the look, frees the compositor */
   }
   .waitlist-frame {
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid #00f3ff;
+    border: 1px solid var(--section-accent);
   }
   .waitlist-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
   .waitlist-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
@@ -193,19 +322,44 @@ const tiers = [
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.3em;
-    color: #38bdf8;
+    color: var(--section-accent);
     text-transform: uppercase;
     margin-bottom: 1.4rem;
   }
   .waitlist-rec-dot {
     width: 6px;
     height: 6px;
-    background: #38bdf8;
+    background: var(--section-accent);
     border-radius: 50%;
-    box-shadow: 0 0 10px #38bdf8;
+    box-shadow: 0 0 10px var(--section-accent);
     animation: cyber-pulse 1.5s ease-in-out infinite;
   }
 
+  .waitlist-title {
+    margin: 0 0 0.7rem;
+    /* Match site H2 vocabulary — Chakra Petch italic, just smaller. */
+    font-family: 'Chakra Petch', var(--font-display), sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.25;
+    color: #fff;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+  .waitlist-title strong {
+    color: var(--section-accent);
+    font-weight: 700;
+  }
+  .waitlist-blurb {
+    /* Match .cyber-sub vocabulary — JetBrains Mono body. */
+    margin: 0 0 2rem;
+    font-family: 'JetBrains Mono', var(--font-mono), monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 44ch;
+  }
   .waitlist-form {
     display: flex;
     flex-direction: column;
@@ -236,33 +390,41 @@ const tiers = [
   }
   .waitlist-input:focus {
     outline: none;
-    border-color: #38bdf8;
+    border-color: var(--section-accent);
   }
   .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.22); }
 
+  /* Matches Hero's btn-cyber-primary so the waitlist CTA reads as the
+     same button family — clip-path bevels, mono caps, accent fill on
+     dark text, white-flip on hover. align-self:flex-start drops the
+     full-width stretch the form's column flex was forcing — auto-
+     width feels less "marketing landing page" and more operator HUD. */
   .waitlist-btn {
+    align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 12px;
-    padding: 14px 24px;
-    background: #38bdf8;
+    padding: 18px 30px;
+    background: var(--section-accent);
     color: #050507;
     font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    border: 1px solid #38bdf8;
+    border: 1px solid var(--section-accent);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%);
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--section-accent) 35%, transparent);
   }
   .waitlist-btn:hover {
     background: #fff;
-    color: #38bdf8;
-    box-shadow: 0 0 50px rgba(56, 189, 248, 0.55);
+    color: var(--section-accent);
+    box-shadow: 0 0 70px color-mix(in srgb, var(--section-accent) 60%, transparent);
   }
   .waitlist-btn-arrow { transition: transform 0.3s ease; }
   .waitlist-btn:hover .waitlist-btn-arrow { transform: translateX(4px); }
@@ -271,12 +433,12 @@ const tiers = [
     display: none;
     margin-top: 1rem;
     padding: 12px 16px;
-    border: 1px solid rgba(56, 189, 248, 0.4);
-    background: rgba(56, 189, 248, 0.06);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
     font-family: var(--font-mono);
     font-size: 11px;
     line-height: 1.6;
-    color: #7dd3fc;
+    color: color-mix(in srgb, var(--section-accent) 70%, white);
     letter-spacing: 0.04em;
   }
   .waitlist-banner.show { display: block; }
@@ -290,9 +452,7 @@ const tiers = [
     background: rgba(255, 95, 87, 0.06);
     color: #ff8b85;
   }
-  .waitlist-banner-arrow { color: #38bdf8; margin-right: 6px; }
-  .waitlist-link { color: #fff; text-decoration: underline; }
-  .waitlist-link:hover { color: #38bdf8; }
+  .waitlist-link:hover { color: var(--section-accent); }
   .waitlist-btn:disabled { opacity: 0.5; cursor: wait; }
 
   .waitlist-foot {

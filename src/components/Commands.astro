@@ -1,33 +1,33 @@
 ---
+// 9 signature skills, ordered as a capture → organise → compound journey.
+// Cut from 12: dropped /bookmark (overlaps with /capture), /summarize
+// (overlaps with /research), and /daily (overlaps with /weekly).
 const commands = [
+  // Row 1 — CAPTURE
   { cmd: '/braindump',     desc: 'Capture raw thoughts; agent splits threads and files them.',
     usecase: "You just finished a meeting and have 10 random notes. Use /braindump to feed them all at once; OneBrain will extract tasks and file them into separate project notes automatically." },
   { cmd: '/capture',       desc: 'Quick titled note with auto-linking to related ideas.',
     usecase: 'Reading an interesting article? Use /capture to save a thought about it. OneBrain will automatically link it to your existing research notes on the same topic.' },
-  { cmd: '/bookmark',      desc: 'Save a URL with AI-generated name, description, and category.',
-    usecase: 'Found a library on GitHub. /bookmark it to keep your resources organized without manually filling in metadata.' },
   { cmd: '/research',      desc: 'Web research synthesized into a vault note with citations.',
     usecase: "Need to understand 'Large World Models'? Run /research. The agent fetches the latest papers and blog posts, then writes a comprehensive report in your vault." },
-  { cmd: '/summarize',     desc: 'URL → deep summary note. Checks bookmarks for cleanup.',
-    usecase: "A long whitepaper you don't have time to read. /summarize it to get the core insights and actionable takeaways instantly." },
+  // Row 2 — ORGANISE
   { cmd: '/consolidate',   desc: 'Process inbox into Projects / Areas / Knowledge with one pass.',
     usecase: 'Your inbox is full after a week of work. /consolidate reviews every note and moves them to the correct PARA folders.' },
   { cmd: '/connect',       desc: 'Find unlinked notes that should be connected; propose wikilinks.',
     usecase: "Building a knowledge base? /connect reveals 'hidden' relationships between notes you wrote months apart, creating a dense neural web." },
   { cmd: '/distill',       desc: 'Aggregate sessions on a topic into a structured digest.',
     usecase: "After 5 days of research on a project, /distill synthesizes all session logs into a single 'Source of Truth' knowledge note." },
-  { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
-    usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
-  { cmd: '/daily',         desc: 'Daily briefing: tasks due + open threads from last session.',
-    usecase: "Start your morning with /daily. The agent reminds you what you left unfinished yesterday and highlights today's high-priority tasks." },
+  // Row 3 — COMPOUND
   { cmd: '/learn',         desc: 'Teach the agent a fact or preference; persists to memory.',
     usecase: "Tell the agent: '/learn I prefer my research reports in bullet points.' It will follow this for all future /research tasks." },
+  { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
+    usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
   { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
-    usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair your entire knowledge system.' },
+    usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair stale confidence scores and broken wikilinks.' },
 ];
 ---
 
-<section id="commands" class="cyber-section reveal" style="--section-accent: #a855f7;">
+<section id="commands" class="cyber-section reveal" style="--section-accent: #ff5e3a;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -35,15 +35,15 @@ const commands = [
     <header class="cyber-section-head">
       <div class="cyber-pill">
         <span class="cyber-pill-dot"></span>
-        <span>ONEBRAIN // SKILLS</span>
+        <span>ONEBRAIN // COMMANDS</span>
       </div>
       <h2 class="cyber-h2">
-        Skills<br/>
-        <span class="cyber-h2-stroke" data-text="That Think.">That Think.</span>
+        20+ Commands<br/>
+        <span class="cyber-h2-stroke">That Think.</span>
       </h2>
     </header>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {commands.map((c) => (
         <button
           type="button"
@@ -60,9 +60,18 @@ const commands = [
         </button>
       ))}
     </div>
+
+    <a
+      class="cmd-more"
+      href="https://github.com/onebrain-ai/onebrain#commands"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="cmd-more-cta">See full list <span class="cmd-more-arrow">↗</span></span>
+    </a>
   </div>
 
-  <!-- Skill detail modal -->
+  <!-- Command detail modal -->
   <div id="skill-modal" class="skill-modal" aria-hidden="true">
     <div class="skill-modal-overlay" id="modal-overlay"></div>
     <div class="skill-modal-card" id="modal-content">
@@ -73,8 +82,8 @@ const commands = [
 
       <div class="skill-modal-head">
         <div>
-          <span class="skill-modal-eyebrow">SKILL_DETAIL</span>
-          <h3 id="modal-cmd" class="skill-modal-cmd"></h3>
+          <span class="skill-modal-eyebrow">COMMAND_DETAIL</span>
+          <h3 id="modal-cmd" class="skill-modal-cmd">Command detail</h3>
         </div>
         <button id="close-modal" type="button" class="skill-modal-close" aria-label="Close">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -124,8 +133,16 @@ const commands = [
 </script>
 
 <style>
+  /* Section-scoped tightening so the 9-card grid + signpost row fits
+     a single viewport on laptop heights, mirroring the Features/
+     Workflow pattern. */
+  #commands .cyber-h2           { font-size: clamp(2rem, 4.6vw, 4rem); }
+  #commands .cyber-section-head { margin-bottom: 1.25rem; }
+  #commands .cyber-pill         { margin-bottom: 18px; }
+  #commands .grid               { gap: 0.65rem; }
+
   .cmd-card {
-    padding: 1.1rem 1.2rem 1.2rem;
+    padding: 0.85rem 1rem 0.95rem;
     text-align: left;
     cursor: pointer;
     background: rgba(8, 8, 14, 0.5);
@@ -175,8 +192,11 @@ const commands = [
   .skill-modal-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(2, 2, 4, 0.78);
-    backdrop-filter: blur(10px);
+    /* Drop the backdrop-filter blur — opening a fullscreen filter
+       layer over a 12-card grid with each card's own hover transitions
+       running was a Safari composite hot path. Lift bg alpha 0.78 →
+       0.92 so the grid still drops out cleanly behind the modal. */
+    background: rgba(2, 2, 4, 0.92);
   }
   .skill-modal-card {
     position: relative;
@@ -185,8 +205,8 @@ const commands = [
     margin: 0 1.5rem;
     padding: 2rem 2rem 2.2rem;
     background: rgba(8, 8, 14, 0.92);
-    border: 1px solid rgba(168, 85, 247, 0.3);
-    box-shadow: 0 0 80px rgba(168, 85, 247, 0.15), 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 35%, transparent);
+    box-shadow: 0 0 80px color-mix(in srgb, var(--section-accent) 18%, transparent), 0 30px 60px -20px rgba(0, 0, 0, 0.7);
     transform: scale(0.96);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -196,7 +216,7 @@ const commands = [
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid #00f3ff;
+    border: 1px solid var(--section-accent);
   }
   .skill-modal-frame-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
   .skill-modal-frame-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
@@ -217,13 +237,16 @@ const commands = [
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #a855f7;
+    color: var(--section-accent);
     margin-bottom: 8px;
   }
   .skill-modal-cmd {
-    font-family: var(--font-mono);
+    /* Match every other section title — display font italic, not mono.
+       Mono italic 900 was reading like a bug rather than a deliberate
+       contrast. */
+    font-family: var(--font-display);
     font-style: italic;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 1.8rem;
     color: #fff;
     margin: 0;
@@ -235,9 +258,9 @@ const commands = [
     color: rgba(255, 255, 255, 0.5);
     padding: 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
   }
-  .skill-modal-close:hover { color: #00f3ff; border-color: #00f3ff; }
+  .skill-modal-close:hover { color: var(--section-accent); border-color: var(--section-accent); }
 
   .skill-modal-section {
     margin-top: 1.4rem;
@@ -252,8 +275,8 @@ const commands = [
   .skill-modal-usecase {
     margin-top: 1.4rem;
     padding: 1.1rem 1.2rem;
-    border-left: 2px solid #a855f7;
-    background: rgba(168, 85, 247, 0.05);
+    border-left: 2px solid var(--section-accent);
+    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
   }
   .skill-modal-usecase p {
     font-family: var(--font-mono);
@@ -262,5 +285,47 @@ const commands = [
     line-height: 1.7;
     font-style: italic;
     margin: 0;
+  }
+
+  /* Footer link below the 9-card grid that signals "this is a curated
+     subset, full list lives in the repo." Mirrors the HUD pattern of
+     the cyber-pill (mono caps, tracked, dim) without re-using the pill
+     styling — it's a signpost, not another section header. */
+  .cmd-more {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.9rem;
+    padding: 10px 16px;
+    border: 1px dashed color-mix(in srgb, var(--section-accent) 28%, transparent);
+    background: color-mix(in srgb, var(--section-accent) 4%, transparent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.55);
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .cmd-more:hover {
+    color: #fff;
+    border-color: var(--section-accent);
+    background: color-mix(in srgb, var(--section-accent) 10%, transparent);
+  }
+  .cmd-more-meta { color: var(--section-accent); }
+  .cmd-more-cta { display: inline-flex; align-items: center; gap: 8px; }
+  .cmd-more-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+  .cmd-more:hover .cmd-more-arrow { transform: translateX(3px); }
+
+  @media (max-width: 640px) {
+    .cmd-more {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
   }
 </style>

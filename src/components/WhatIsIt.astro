@@ -1,7 +1,7 @@
 ---
 ---
 
-<section id="synergy" class="cyber-section reveal" style="--section-accent: #bc13fe;">
+<section id="synergy" class="cyber-section reveal" style="--section-accent: #ff2d92;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -17,7 +17,7 @@
           </div>
           <h2 class="cyber-h2">
             Beyond a<br/>
-            <span class="cyber-h2-stroke" data-text="Second Brain.">Second Brain.</span>
+            <span class="cyber-h2-stroke">Second Brain.</span>
           </h2>
           <p class="cyber-sub">
             Most tools ask you to query an AI. OneBrain co-evolves with you — every preference you teach sharpens the agent, every link it surfaces sharpens you.
@@ -28,7 +28,7 @@
           <div class="cyber-card">
             <span class="cyber-card-meta">01</span>
             <h3 class="cyber-card-title">HUMAN → AGENT</h3>
-            <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent gets sharper at being yours.</p>
+            <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent calibrates to you with every interaction.</p>
           </div>
           <div class="cyber-card">
             <span class="cyber-card-meta">02</span>
@@ -73,6 +73,17 @@
     let nodes = [];
     const maxNodes = 150;          // denser graph
     const maxDist = 85;            // longer connection range → more cluster overlap
+    // Tonal magenta palette so the nebula reads as the Synergy section's
+    // accent (#ff2d92) rather than a rainbow that competes with every
+    // other section's colour. White synapse sparks stay for contrast and
+    // depth so the graph still feels alive, not monochrome.
+    const SECTION_PALETTE = [
+      '#ff2d92', // synergy core (brand magenta)
+      '#ff5fad', // lighter magenta (soft tone)
+      '#d6217a', // darker magenta (deep tone)
+      '#ff85c1', // pink wash
+      '#ffffff', // white synapse spark
+    ];
     const seedCount = 26;          // pre-seed (staggered, not instant)
     const seedInterval = 60;       // gentler cadence for seed phase
     const pulseDecay = 0.022;      // ~750ms full decay
@@ -83,6 +94,11 @@
     const mouse = { x: null, y: null, radius: 110 };
     let spawnTimer = null;
     let isResetting = false;
+
+    // Visibility/lifecycle state — declared up-front so draw()/start() never hit a TDZ.
+    let rafId = 0;
+    let running = true;
+    let visible = true;
 
     function init() {
       dpr = window.devicePixelRatio || 1;
@@ -114,10 +130,12 @@
         x: cx + Math.cos(angle) * (radius + 18),
         y: cy + Math.sin(angle) * (radius + 18),
         angle,
-        orbitSpeed: 0.001 + Math.random() * 0.0028,
+        orbitSpeed: 0.00064 + Math.random() * 0.00179,
         orbitRadius: radius,
         size: Math.random() * 1.4 + 1.1,
-        color: Math.random() > 0.6 ? '#bc13fe' : (Math.random() > 0.5 ? '#ff2d92' : '#00f3ff'),
+        // Random pick from the full section-accent palette — so the synergy
+        // nebula visually echoes every section's identity at once.
+        color: SECTION_PALETTE[Math.floor(Math.random() * SECTION_PALETTE.length)],
         opacity: 0,                             // always fade in — never pop
         targetOpacity: 0.55 + Math.random() * 0.4,
         pulse: withPulse ? 1 : 0,               // synapse fire — decays over ~750ms
@@ -234,7 +252,42 @@
       ctx.globalAlpha = 1;
 
       if (edgesEl) edgesEl.textContent = String(edgeCount).padStart(3, '0');
-      if (!reduced) requestAnimationFrame(draw);
+      if (running && visible && !reduced) rafId = requestAnimationFrame(draw);
+      else rafId = 0;
+    }
+    function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
+    function clearSpawnTimers() {
+      if (spawnTimer)   { clearInterval(spawnTimer);   spawnTimer = null; }
+      if (spawnTimeout) { clearTimeout(spawnTimeout);  spawnTimeout = null; }
+    }
+    // Tear down the spawn lifecycle when the section leaves the
+    // viewport / tab is hidden, then restart it on re-show. The user
+    // sees the network bloom from scratch each time they scroll back —
+    // matches the "load + run again on screen" model the user asked
+    // for. Restarting is cheap (init() resets nodes + reseeds).
+    document.addEventListener('visibilitychange', () => {
+      visible = !document.hidden;
+      if (visible && running) {
+        if (!spawnTimer && !spawnTimeout) init();
+        start();
+      } else {
+        clearSpawnTimers();
+      }
+    });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        const wasRunning = running;
+        running = entries[0].isIntersecting;
+        if (running && !wasRunning) {
+          if (visible) {
+            if (!spawnTimer && !spawnTimeout) init();
+            start();
+          }
+        } else if (!running) {
+          clearSpawnTimers();
+        }
+      }, { rootMargin: '0px' });
+      io.observe(canvas);
     }
     window.addEventListener('resize', init);
     canvas.addEventListener('mousemove', (e) => {
@@ -244,7 +297,7 @@
     });
     canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
     init();
-    draw();
+    start();
   })();
 </script>
 
@@ -252,16 +305,15 @@
   .nebula-frame {
     position: relative;
     aspect-ratio: 1 / 1;
-    background: rgba(8, 8, 14, 0.55);
-    border: 1px solid rgba(188, 19, 254, 0.22);
-    backdrop-filter: blur(20px);
+    background: rgba(8, 8, 14, 0.82);
+    border: 1px solid rgba(255, 45, 146, 0.25);
     overflow: hidden;
   }
   .nebula-corner {
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid #00f3ff;
+    border: 1px solid var(--section-accent);
     z-index: 3;
   }
   .nebula-corner-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
@@ -285,22 +337,26 @@
     justify-content: center;
     pointer-events: none;
   }
-  /* Breathing orb — slow inhale/exhale that suggests a living core
-     pulse without any logo or label competing with the network graph */
+  /* Breathing orb — soft inhale/exhale behind the network graph. The
+     `filter: blur(32px)` is baked in via a wider radial-gradient so we
+     can drop the runtime CSS filter, and the animation moves to
+     opacity-only — animating transform on a filter:blur surface forces
+     WebKit to re-rasterise the blur kernel every frame, leaking paint
+     cost onto scroll-snap glides. */
   .nebula-breath {
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     background: radial-gradient(circle,
-      rgba(0, 243, 255, 0.55) 0%,
-      rgba(188, 19, 254, 0.22) 45%,
-      transparent 75%);
-    filter: blur(32px);
+      rgba(255, 45, 146, 0.4) 0%,
+      rgba(255, 133, 193, 0.18) 28%,
+      rgba(255, 45, 146, 0.06) 55%,
+      transparent 80%);
     animation: nebula-breathe 5s ease-in-out infinite;
   }
   @keyframes nebula-breathe {
-    0%, 100% { transform: scale(0.85); opacity: 0.6; }
-    50%      { transform: scale(1.25); opacity: 1;   }
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1;    }
   }
   @media (prefers-reduced-motion: reduce) {
     .nebula-breath { animation: none; opacity: 0.7; }
