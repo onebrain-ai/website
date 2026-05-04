@@ -17,14 +17,14 @@ const beats = [
 //    data flows centre→outer (vault dispatching to project).
 // 8 nodes evenly spaced at 45° intervals around the ring.
 const dispatches = [
-  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 3.4, inbound: false },
-  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration: 2.8, inbound: true  },
-  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 4.2, inbound: false },
-  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 3.0, inbound: true  },
-  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration: 3.8, inbound: false },
-  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration: 2.6, inbound: true  },
-  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 4.6, inbound: false },
-  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration: 3.2, inbound: true  },
+  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration: 5.4, inbound: false },
+  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration: 4.6, inbound: true  },
+  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration: 6.4, inbound: false },
+  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 5.0, inbound: true  },
+  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration: 5.8, inbound: false },
+  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration: 4.4, inbound: true  },
+  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 6.8, inbound: false },
+  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration: 5.2, inbound: true  },
 ];
 ---
 
@@ -153,7 +153,10 @@ const dispatches = [
   (function () {
     const particles = document.querySelectorAll('.hub-particle');
     if (!particles.length) return;
-    function randomDur() { return (2.4 + Math.random() * 3.4).toFixed(2); }
+    /* Slowed range — was 2.4–5.8s which sometimes flashed.
+       4.5–8.5s reads as deliberate data flow you can follow with
+       the eye, never strobes. */
+    function randomDur() { return (4.5 + Math.random() * 4).toFixed(2); }
     particles.forEach((p) => {
       const idx = p.dataset.spoke;
       const ping = document.querySelector(`.hub-node-ping[data-spoke="${idx}"]`);
@@ -371,23 +374,32 @@ const dispatches = [
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
   }
-  /* Outbound: vault dispatches to project — start at centre,
-     travel to outer node, return. */
+  /* Outbound: vault dispatches to project — centre → outer node →
+     centre. Intermediate keyframes at 42% / 58% explicitly slow
+     the particle as it nears the destination (covers 92% of the
+     distance by 42%, the last 8% drags from 42–50%). Same on the
+     return so it eases back into the vault. Combined with the
+     ease-in-out animation-timing-function, the effect reads as
+     data approaching, landing, and being pulled back. */
   @keyframes hub-particle-flow-out {
-    0%   { transform: translate(0, 0);                 opacity: 0; }
-    8%   {                                             opacity: 1; }
-    50%  { transform: translate(var(--tx), var(--ty)); opacity: 1; }
-    92%  {                                             opacity: 1; }
-    100% { transform: translate(0, 0);                 opacity: 0; }
+    0%   { transform: translate(0, 0);                                          opacity: 0; }
+    8%   {                                                                       opacity: 1; }
+    42%  { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
+    50%  { transform: translate(var(--tx), var(--ty));                          opacity: 1; }
+    58%  { transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92)); }
+    92%  {                                                                       opacity: 1; }
+    100% { transform: translate(0, 0);                                          opacity: 0; }
   }
-  /* Inbound: project pushes data to vault — start at outer, travel
-     to centre, return. */
+  /* Inbound: project pushes data to vault — outer → centre → outer.
+     Same approach + decelerate near the centre. */
   @keyframes hub-particle-flow-in {
-    0%   { transform: translate(var(--tx), var(--ty)); opacity: 0; }
-    8%   {                                             opacity: 1; }
-    50%  { transform: translate(0, 0);                 opacity: 1; }
-    92%  {                                             opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+    0%   { transform: translate(var(--tx), var(--ty));                          opacity: 0; }
+    8%   {                                                                       opacity: 1; }
+    42%  { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
+    50%  { transform: translate(0, 0);                                          opacity: 1; }
+    58%  { transform: translate(calc(var(--tx) * 0.08), calc(var(--ty) * 0.08)); }
+    92%  {                                                                       opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty));                          opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .cyber-section.active .hub-particle-in,
