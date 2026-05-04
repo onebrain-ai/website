@@ -114,7 +114,10 @@ const dispatches = [
             );
           })}
 
-          <!-- Centre: Obsidian vault as command center -->
+          <!-- Centre: Obsidian vault as command center. Halo circle
+               renders behind core and pulses outward like a sonar
+               ping; core has its own breath on stroke. -->
+          <circle cx="0" cy="0" r="52" class="hub-core-halo" />
           <circle cx="0" cy="0" r="52" class="hub-core" />
           <text x="0" y="-3" text-anchor="middle" class="hub-core-label">OBSIDIAN</text>
           <text x="0" y="13" text-anchor="middle" class="hub-core-sub">vault</text>
@@ -229,15 +232,35 @@ const dispatches = [
     transform-origin: center;
   }
   /* Slow inhale/exhale on the vault core — breath that reads as "the
-     command center is alive". Stroke-opacity animates so the ring
-     glow ebbs without forcing a paint of the entire SVG. Gated to
-     active section, opacity-only = GPU friendly. */
+     command center is alive". stroke-width + stroke-opacity together
+     so the change is visible (just opacity 0.85→1 was too subtle). */
   .cyber-section.active .hub-core {
     animation: hub-core-breathe 3.6s ease-in-out infinite;
   }
   @keyframes hub-core-breathe {
-    0%, 100% { stroke-opacity: 0.85; }
-    50%      { stroke-opacity: 1;    }
+    0%, 100% { stroke-width: 1.5; stroke-opacity: 0.55; }
+    50%      { stroke-width: 3;   stroke-opacity: 1;    }
+  }
+
+  /* Sonar-ping halo — a second circle outside the core that scales
+     out and fades on a 3.6s loop, half-cycle offset from the core
+     breath. Reads as a pulse emanating from the vault. Pure SVG
+     transform + opacity = GPU friendly. */
+  .hub-core-halo {
+    fill: none;
+    stroke: var(--section-accent);
+    stroke-width: 1;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .cyber-section.active .hub-core-halo {
+    animation: hub-core-ping 3.6s ease-out infinite;
+  }
+  @keyframes hub-core-ping {
+    0%   { transform: scale(0.8); opacity: 0.55; }
+    80%  { transform: scale(1.6); opacity: 0;    }
+    100% { transform: scale(1.6); opacity: 0;    }
   }
   .hub-core-label {
     font-family: var(--font-mono);
@@ -297,6 +320,7 @@ const dispatches = [
     .cyber-section.active .hub-particle-in,
     .cyber-section.active .hub-particle-out,
     .cyber-section.active .hub-ring,
-    .cyber-section.active .hub-core { animation: none; }
+    .cyber-section.active .hub-core,
+    .cyber-section.active .hub-core-halo { animation: none; }
   }
 </style>
