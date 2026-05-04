@@ -106,7 +106,9 @@ const cliVersion = await getCliVersion();
     width: 70vw;
     height: 50vh;
     background: rgba(255, 45, 146, 0.05);
-    filter: blur(180px);
+    /* 100px instead of 180px — see Hero/global cyber-section-orb
+       comments. Blur radius cost is ~quadratic on GPU. */
+    filter: blur(100px);
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;

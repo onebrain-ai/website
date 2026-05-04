@@ -605,7 +605,10 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     position: absolute;
     border-radius: 50%;
     pointer-events: none;
-    filter: blur(180px);
+    /* 100px instead of 180px: blur is ~quadratic in radius on GPU,
+       so 180→100 cuts compositing cost ~3× per orb (we render two).
+       Indistinguishable at the orb's size + low fill opacity. */
+    filter: blur(100px);
     z-index: 0;
   }
   .hero-orb-magenta {

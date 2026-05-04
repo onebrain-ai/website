@@ -543,7 +543,11 @@
   height: 60vh;
   transform: translate(-50%, -50%);
   background: color-mix(in srgb, var(--section-accent) 9%, transparent);
-  filter: blur(180px);
+  /* 100px instead of 180px: a Gaussian blur's GPU cost is roughly
+     quadratic in the radius, so 180→100 cuts the orb's per-frame
+     compositing work by ~3×. The visual softness is indistinguishable
+     at this size + 9% accent opacity. */
+  filter: blur(100px);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
