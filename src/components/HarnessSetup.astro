@@ -103,18 +103,23 @@ const llmRoutes = [
         </div>
       </div>
 
-      <!-- RIGHT: BYO LLM callout -->
-    <div class="byo-llm">
-      <span class="byo-corner byo-corner-tl" aria-hidden="true"></span>
-      <span class="byo-corner byo-corner-tr" aria-hidden="true"></span>
-      <span class="byo-corner byo-corner-bl" aria-hidden="true"></span>
-      <span class="byo-corner byo-corner-br" aria-hidden="true"></span>
+      <!-- RIGHT: BYO LLM — eyebrow OUTSIDE the box, mirroring left side;
+           HUD-corner frame (no full border) in cyan to break the
+           "everything's a bordered box" pattern. -->
+      <div class="hc-byo-side">
+        <div class="hc-side-eyebrow byo-side-eyebrow">// BYO_LLM_THROUGH_CLAUDE_CODE</div>
 
-      <div class="byo-stack">
-        <span class="byo-eyebrow">// BYO_LLM_THROUGH_CLAUDE_CODE</span>
-        <h3 class="byo-title">
-          One harness, <span class="byo-title-stroke">any LLM.</span>
-        </h3>
+        <div class="byo-llm">
+          <span class="byo-corner byo-corner-tl" aria-hidden="true"></span>
+          <span class="byo-corner byo-corner-tr" aria-hidden="true"></span>
+          <span class="byo-corner byo-corner-bl" aria-hidden="true"></span>
+          <span class="byo-corner byo-corner-br" aria-hidden="true"></span>
+          <span class="byo-edge byo-edge-l" aria-hidden="true"></span>
+
+          <div class="byo-stack">
+            <h3 class="byo-title">
+              One harness, <span class="byo-title-stroke">any LLM.</span>
+            </h3>
         <p class="byo-sub">
           Point <code>ANTHROPIC_BASE_URL</code> at a router or another provider — Claude stays the harness, the LLM behind swaps per task.
         </p>
@@ -141,9 +146,10 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
 <span class="cmt"># Or direct Anthropic-protocol endpoint</span>
 <span class="kw">export</span> ANTHROPIC_BASE_URL=<span class="str">https://your-router-host</span>
 <span class="kw">export</span> ANTHROPIC_API_KEY=<span class="str">sk-byok</span> &amp;&amp; <span class="kw">cd</span> vault &amp;&amp; claude</code></pre>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
     </div>
 
@@ -158,7 +164,13 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
     gap: 22px;
     align-items: stretch;
   }
-  .hc-cards-side { display: flex; flex-direction: column; gap: 8px; }
+  .hc-cards-side,
+  .hc-byo-side {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
   .hc-side-eyebrow {
     font-family: var(--font-mono);
     font-size: 9px;
@@ -166,6 +178,11 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
     color: var(--section-accent);
     text-transform: uppercase;
     margin-bottom: 2px;
+  }
+  /* Right side eyebrow uses cyan instead of the section's gold accent
+     so it doesn't read as the same "// PICK_BY_HARNESS" pill twice. */
+  .byo-side-eyebrow {
+    color: #00f3ff;
   }
   @media (max-width: 1023px) {
     .harness-content { grid-template-columns: 1fr; gap: 18px; }
@@ -298,12 +315,18 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
     padding: 2px 6px;
   }
 
-  /* ── BYO LLM callout (right column, stacked) ───────────────── */
+  /* ── BYO LLM callout — different visual language from the left
+     cards. Instead of a full bordered tile (which would make it read
+     as "another card"), this side uses a subtle dark fill, no full
+     border, four cyan HUD corner brackets, and a soft cyan left-edge
+     bar. Reads as "console panel" against the cards' "row of tiles". */
   .byo-llm {
+    --byo-accent: #00f3ff;
     position: relative;
-    padding: 12px 14px;
-    background: rgba(8, 8, 14, 0.7);
-    border: 1px solid rgba(255, 176, 0, 0.18);
+    padding: 14px 18px 14px 22px;
+    background:
+      linear-gradient(180deg, rgba(0, 243, 255, 0.05), rgba(8, 8, 14, 0.7) 35%, rgba(8, 8, 14, 0.55));
+    border: none;
     overflow: hidden;
     height: 100%;
   }
@@ -312,34 +335,31 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
     flex-direction: column;
     gap: 8px;
   }
-  .byo-llm::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 2px;
-    background: linear-gradient(90deg,
-      var(--section-accent) 0%,
-      transparent 65%);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--section-accent) 60%, transparent);
-  }
   .byo-corner {
     position: absolute;
-    width: 14px;
-    height: 14px;
-    border: 1px solid rgba(255, 176, 0, 0.55);
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--byo-accent);
+    opacity: 0.85;
   }
-  .byo-corner-tl { top: -1px;    left: -1px;    border-right: 0; border-bottom: 0; }
-  .byo-corner-tr { top: -1px;    right: -1px;   border-left: 0;  border-bottom: 0; }
-  .byo-corner-bl { bottom: -1px; left: -1px;    border-right: 0; border-top: 0; }
-  .byo-corner-br { bottom: -1px; right: -1px;   border-left: 0;  border-top: 0; }
-
-  .byo-eyebrow {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 8.5px;
-    letter-spacing: 0.28em;
-    color: var(--section-accent);
-    text-transform: uppercase;
+  .byo-corner-tl { top: 0;    left: 0;    border-right: 0; border-bottom: 0; }
+  .byo-corner-tr { top: 0;    right: 0;   border-left: 0;  border-bottom: 0; }
+  .byo-corner-bl { bottom: 0; left: 0;    border-right: 0; border-top: 0; }
+  .byo-corner-br { bottom: 0; right: 0;   border-left: 0;  border-top: 0; }
+  .byo-edge {
+    position: absolute;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      var(--byo-accent) 18%,
+      var(--byo-accent) 82%,
+      transparent 100%);
+    opacity: 0.6;
+  }
+  .byo-edge-l {
+    top: 12%;
+    bottom: 12%;
+    left: 0;
+    width: 1px;
   }
   .byo-title {
     font-family: var(--font-display);
@@ -353,7 +373,7 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
   }
   .byo-title-stroke {
     color: transparent;
-    -webkit-text-stroke: 1.4px var(--section-accent);
+    -webkit-text-stroke: 1.4px var(--byo-accent);
   }
   .byo-sub {
     font-family: var(--font-sans);
@@ -364,8 +384,8 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
   .byo-sub code {
     font-family: var(--font-mono);
     font-size: 0.82em;
-    color: var(--section-accent);
-    background: rgba(255, 176, 0, 0.08);
+    color: var(--byo-accent);
+    background: rgba(0, 243, 255, 0.08);
     padding: 1px 6px;
   }
 
@@ -389,7 +409,7 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
     font-size: 8.5px;
     font-weight: 700;
     letter-spacing: 0.26em;
-    color: var(--section-accent);
+    color: var(--byo-accent);
   }
   .byo-route-label {
     font-family: var(--font-mono);
@@ -438,8 +458,8 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
     overflow-x: auto;
   }
   .byo-cmd-body .cmt { color: rgba(255, 255, 255, 0.35); }
-  .byo-cmd-body .kw  { color: var(--section-accent); }
-  .byo-cmd-body .str { color: #00f3ff; }
+  .byo-cmd-body .kw  { color: var(--byo-accent); }
+  .byo-cmd-body .str { color: #ff8a3c; }
 
   .byo-foot {
     margin-top: 10px;
