@@ -219,6 +219,10 @@ const demos = [
     padding: 14px 18px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(255, 255, 255, 0.02);
+    /* Lift the head above any positioned content in the demo stage so
+       the replay button always wins clicks. */
+    position: relative;
+    z-index: 5;
   }
   .prev-card-id {
     font-family: var(--font-mono);
@@ -249,6 +253,9 @@ const demos = [
     cursor: pointer;
     text-transform: uppercase;
     transition: background 0.2s, color 0.2s;
+    /* Always on top — never blocked by any animation overlay. */
+    position: relative;
+    z-index: 6;
   }
   .prev-replay:hover {
     background: rgba(0, 243, 255, 0.12);
@@ -262,9 +269,15 @@ const demos = [
     padding: 12px 18px 0;
   }
   .prev-stage {
-    padding: 28px 22px 32px;
-    /* Shared mock content sizing — close to a real cyber-section but
-       boxed so we can run 4 of them on one page. */
+    padding: 36px 22px 36px;
+    /* Equal min-height across all 4 demos so the cards line up and
+       each demo has the same vertical breathing room. */
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
   }
   .prev-stage .mock-h2 {
     font-family: var(--font-display);
@@ -375,6 +388,9 @@ const demos = [
     -webkit-text-stroke: 0;
     /* clip-path inset(top right bottom left) */
     clip-path: inset(0 0 0 0);
+    /* Decorative overlay only — never block pointer events on
+       elements above this in the stacking order. */
+    pointer-events: none;
   }
   .demo-b .mock-h2-stroke-fill {
     color: var(--demo-accent);
