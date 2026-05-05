@@ -474,7 +474,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           document.body.appendChild(ta);
           ta.select();
           let ok = false;
-          try { ok = document.execCommand('copy'); } catch { ok = false; }
+          try { ok = document.execCommand('copy'); } catch (_e) { ok = false; }
           document.body.removeChild(ta);
           return ok;
         }

@@ -874,6 +874,18 @@ section[data-vis="off"] *::before,
 section[data-vis="off"] *::after {
   animation-name: none !important;
 }
+/* Section scanline fix: the `.cyber-section::after` is the horizontal
+   sweep that fires once when the section becomes `.active`. If the
+   user scrolls past it mid-animation, the data-vis="off" rule above
+   freezes `animation-name` at whatever frame it's currently on — the
+   keyframe at 20% has opacity:0.85, so the scanline band stays
+   visible as a static green line behind the section title until the
+   user scrolls back AND the animation completes. Force opacity 0
+   while the section is offscreen, so the scanline can't get stuck
+   visible. */
+section[data-vis="off"]::after {
+  opacity: 0 !important;
+}
 /* SVG SMIL <animateMotion> is browser-driven and ignores CSS
    animation-name overrides — the only portable way to suspend it is
    `display: none` on the carrier. This kills SMIL playback in every
