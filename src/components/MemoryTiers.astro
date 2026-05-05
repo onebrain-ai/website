@@ -95,12 +95,16 @@ const tiers = [
             <span class="bidir-core-name">HUMAN</span>
           </div>
 
-          <!-- Vertical bidirectional arcs SVG -->
-          <svg class="bidir-arcs" viewBox="-130 0 260 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <!-- Vertical bidirectional arcs SVG. Each path has straight
+               vertical sub-segments at the endpoints (the `v 12` /
+               `v 14` ticks before and after the curve) so the arrow
+               markers — which inherit the direction of the LAST drawn
+               segment — point cleanly DOWN into the agent core (pink
+               marker-end) and UP into the human core (cyan
+               marker-start with auto-start-reverse). The bow lives
+               only in the middle cubic between the ticks. -->
+          <svg class="bidir-arcs" viewBox="-100 0 200 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
             <defs>
-              <!-- Arrows orient along the path tangent at marker location.
-                   With orient="auto-start-reverse" + marker-end, the arrow
-                   points in the direction the path is travelling. -->
               <marker id="bidir-ah-pink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff2d92"/>
               </marker>
@@ -109,11 +113,11 @@ const tiers = [
               </marker>
             </defs>
 
-            <!-- HUMAN → AGENT — pink arc, sweeps right and down -->
+            <!-- HUMAN → AGENT — pink ribbon, bows right -->
             <g class="bidir-arc bidir-arc-down">
               <path
                 id="bidir-path-down"
-                d="M 0 4 C 130 50 130 170 0 216"
+                d="M 0 4 v 12 C 75 50 75 170 0 204 v 12"
                 fill="none"
                 stroke="#ff2d92"
                 stroke-width="1.6"
@@ -143,18 +147,18 @@ const tiers = [
               </circle>
             </g>
 
-            <!-- AGENT → HUMAN — cyan arc, geometry sweeps left.
-                 Path is authored top→bottom (so textPath glyphs render
-                 the right way up), but the dots flow REVERSE via
+            <!-- AGENT → HUMAN — cyan ribbon, bows left. Path is
+                 authored top→bottom (so textPath glyphs render the
+                 right way up), but the dots flow REVERSE via
                  keyPoints="1;0" so the visible motion is bottom→top —
                  matching the "agent recalls upward" semantic. The
-                 arrowhead is placed at the path start (top, near human
-                 core) via marker-start with orient="auto-start-reverse"
-                 so it points up toward the receiver. -->
+                 vertical tick at the start gives marker-start a clean
+                 vertical tangent so the arrow points UP into the human
+                 core. -->
             <g class="bidir-arc bidir-arc-up">
               <path
                 id="bidir-path-up"
-                d="M 0 4 C -130 50 -130 170 0 216"
+                d="M 0 4 v 12 C -75 50 -75 170 0 204 v 12"
                 fill="none"
                 stroke="#00f3ff"
                 stroke-width="1.6"
@@ -347,13 +351,15 @@ const tiers = [
     justify-content: space-between;
     gap: 0;
     flex: 1;
-    min-height: 380px;
+    min-height: 320px;
   }
 
   .bidir-core {
     position: relative;
-    width: 116px;
-    height: 116px;
+    /* Smaller cores so the bidir card fits inside the section without
+       pushing content past the scroll-snap viewport. */
+    width: 100px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -410,26 +416,23 @@ const tiers = [
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     letter-spacing: 0.04em;
     color: #fff;
     text-transform: uppercase;
   }
 
   .bidir-arcs {
-    /* Cap the SVG footprint so a wide column doesn't blow up the arcs
-       to 400px+ tall. Aspect-ratio derives the height from the capped
-       width (260:220 → 280×237). The stage's `justify-content:
-       space-between` handles any slack vertical space around it. */
+    /* Tight viewBox 200×220 + capped width keeps the ribbons compact;
+       overlap into the cores by 18px so the arrow tips visually land
+       INSIDE each core border, not floating in the gap between SVG
+       and the HTML core div. */
     width: 100%;
-    max-width: 280px;
-    aspect-ratio: 260 / 220;
+    max-width: 200px;
+    aspect-ratio: 200 / 220;
     align-self: center;
     overflow: visible;
-    /* Pull the arcs slightly into the cores so the path tangents read
-       as continuous flow — the cores draw their own border, the arcs
-       end inside them visually. */
-    margin: -8px 0;
+    margin: -18px 0;
   }
   .bidir-arc-label {
     font-family: var(--font-mono);

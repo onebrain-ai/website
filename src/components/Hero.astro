@@ -1105,6 +1105,15 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     .hud { display: none; }
     .hero-h1 { font-size: clamp(2.8rem, 12vw, 4.8rem); }
     .op-body { height: 240px; }
+    /* HUD corners are hidden on mobile, so the 9rem top padding that
+       was reserving clearance for them just leaves a big blank band
+       between the nav and the hero pill. Trim padding and anchor
+       content to the top of the viewport instead of vertically
+       centring inside 100vh. */
+    .hero-shell {
+      padding: 4rem 1.5rem 3rem;
+      align-items: flex-start;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

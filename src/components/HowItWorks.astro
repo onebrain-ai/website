@@ -165,9 +165,11 @@ const steps = [
 </section>
 
 <style>
-  /* ── Step list (left) ─────────────────────────────────── */
+  /* ── Step list (left) — compact density so all 3 steps + header
+        + sub fit inside the section's scroll-snap viewport without the
+        last code line being clipped at the bottom edge. */
   .how-steps {
-    margin-top: 1.25rem;
+    margin-top: 0.75rem;
     list-style: none;
     padding: 0;
     display: flex;
@@ -176,42 +178,42 @@ const steps = [
   }
   .how-step {
     display: grid;
-    grid-template-columns: 56px 1fr;
-    gap: 14px;
-    padding: 14px 0;
+    grid-template-columns: 44px 1fr;
+    gap: 12px;
+    padding: 10px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     align-items: flex-start;
   }
-  .how-step:first-child { border-top: 0; }
+  .how-step:first-child { border-top: 0; padding-top: 4px; }
   .how-step-num {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 2.4rem;
+    font-size: 1.9rem;
     line-height: 1;
     color: var(--step-accent);
-    text-shadow: 0 0 30px color-mix(in srgb, var(--step-accent) 50%, transparent);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--step-accent) 45%, transparent);
   }
   .how-step-title {
     font-family: var(--font-mono);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #fff;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin: 0 0 6px;
+    margin: 0 0 4px;
   }
   .how-step-desc {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     font-family: var(--font-mono);
-    font-size: 11.5px;
-    line-height: 1.55;
+    font-size: 11px;
+    line-height: 1.5;
     color: rgba(255, 255, 255, 0.62);
   }
   .how-step-code {
     display: block;
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: 10px;
     letter-spacing: 0.04em;
     color: var(--step-accent);
     opacity: 0.85;
@@ -336,6 +338,14 @@ const steps = [
   }
 
   /* ── Responsive ───────────────────────────────────────── */
+  /* Tighten desktop section padding so 3 steps + the loop diagram fit
+     comfortably inside the scroll-snap viewport on shorter laptop
+     screens (~700–800px tall). */
+  @media (min-width: 1024px) {
+    #how { padding: 2.25rem 3rem 1.75rem; }
+    #how .cyber-section-head { margin-bottom: 0.75rem; }
+  }
+
   @media (max-width: 1024px) {
     .how-grid { grid-template-columns: 1fr; }
     .how-loop-svg { max-height: 320px; }
