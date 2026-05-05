@@ -123,7 +123,13 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   </div>
 
   <script is:inline>
-    (function () {
+    // Defer the entire hero JS init (particle canvas, scramble loop,
+    // op-console scenarios, copy button, HUD telemetry) until the
+    // browser is idle. Hero h1 + sub + CTAs render with CSS only —
+    // none of this JS is on the LCP critical path. Pushing it past
+    // requestIdleCallback frees the main thread for layout + paint
+    // and trims the Lighthouse "TBT / forced reflow" budget.
+    function __obHeroBoot() {
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // 1. Particle field — pauses when tab hidden or hero scrolls offscreen.
@@ -544,7 +550,12 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           document.hidden ? stopHud() : startHud();
         });
       })();
-    })();
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(__obHeroBoot, { timeout: 1500 });
+    } else {
+      setTimeout(__obHeroBoot, 200);
+    }
   </script>
 </section>
 

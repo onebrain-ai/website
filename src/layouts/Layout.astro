@@ -158,7 +158,9 @@ const ogImageUrl = `https://onebrain.run${image}`;
       // Site-wide neural canvas. Tuned for Safari: pauses when tab hidden,
       // pauses when canvas is offscreen, throttles mousemove, and skips frames
       // on slow devices. Nothing else on this canvas — keep it cheap.
-      (function() {
+      // Whole boot is deferred to requestIdleCallback so canvas init +
+      // particle alloc don't compete with the LCP h1 paint.
+      function __obNeuralBoot() {
         const canvas = document.getElementById('neural-canvas');
         if (!canvas) return;
         const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -280,7 +282,12 @@ const ogImageUrl = `https://onebrain.run${image}`;
         window.addEventListener('resize', init);
         init();
         start();
-      })();
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(__obNeuralBoot, { timeout: 1500 });
+      } else {
+        setTimeout(__obNeuralBoot, 200);
+      }
 
       (function() {
         const observer = new IntersectionObserver((entries) => {
