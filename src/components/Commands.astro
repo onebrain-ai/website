@@ -139,13 +139,20 @@ const commands = [
   /* Section-scoped tightening so the 9-card grid + signpost row fits
      a single viewport on laptop heights, mirroring the Features/
      Workflow pattern. */
-  #commands .cyber-h2           { font-size: clamp(2rem, 4.6vw, 4rem); }
-  #commands .cyber-section-head { margin-bottom: 1.25rem; }
-  #commands .cyber-pill         { margin-bottom: 18px; }
-  #commands .grid               { gap: 0.65rem; }
+  /* Tightened to fit head (pill + h2 + sub) + 9-card grid + signpost
+     row inside one scroll-snap viewport on laptop heights now that a
+     sub paragraph was added below the H2. */
+  #commands .cyber-h2           { font-size: clamp(1.75rem, 4vw, 3.4rem); line-height: 1.05; }
+  #commands .cyber-section-head { margin-bottom: 0.6rem; }
+  #commands .cyber-pill         { margin-bottom: 14px; }
+  #commands .cyber-sub          { font-size: 12px; margin-top: 0.5rem; max-width: 60ch; }
+  #commands .grid               { gap: 0.55rem; }
+  @media (min-width: 1024px) {
+    #commands { padding: 1.75rem 3rem 1.5rem; }
+  }
 
   .cmd-card {
-    padding: 0.85rem 1rem 0.95rem;
+    padding: 0.7rem 0.95rem 0.8rem;
     text-align: left;
     cursor: pointer;
     background: rgba(8, 8, 14, 0.5);
