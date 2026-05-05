@@ -1,0 +1,477 @@
+---
+const harnesses = [
+  {
+    name: 'Claude Code',
+    glyph: '◉',
+    bestFor: 'Deep reasoning · long-running agents · skill plugins',
+    install: 'npm install -g @anthropic-ai/claude-code',
+    runCmd: 'claude',
+    instr: 'CLAUDE.md',
+    badge: 'RECOMMENDED',
+    accent: '#ffb000',
+  },
+  {
+    name: 'Gemini CLI',
+    glyph: '◈',
+    bestFor: 'Web-grounded research · multimodal · long context',
+    install: 'npm install -g @google/gemini-cli',
+    runCmd: 'gemini',
+    instr: 'GEMINI.md',
+    badge: 'NATIVE',
+    accent: '#00f3ff',
+  },
+  {
+    name: 'OpenAI Codex',
+    glyph: '⌘',
+    bestFor: 'Fast loops · code refactor · sandboxed exec',
+    install: 'npm install -g @openai/codex',
+    runCmd: 'codex',
+    instr: 'AGENTS.md',
+    badge: 'NATIVE',
+    accent: '#ff2d92',
+  },
+  {
+    name: 'Qwen Code',
+    glyph: '↯',
+    bestFor: 'Open-weights · cost-efficient · self-host',
+    install: 'npm install -g @qwen-code/qwen-code',
+    runCmd: 'qwen',
+    instr: 'AGENTS.md',
+    badge: 'NATIVE',
+    accent: '#bc13fe',
+  },
+];
+
+const llmRoutes = [
+  { tag: 'LOCAL',  label: 'mlx · ollama · llama.cpp',           desc: 'Run a local model via litellm / claude-code-router proxy.' },
+  { tag: 'CLOUD',  label: 'claude · gemini · gpt · groq',        desc: 'Bring your own API key. Switch providers without code changes.' },
+  { tag: 'HYBRID', label: 'route by task or by cost',             desc: 'Cheap models for routine, premium models when it counts.' },
+];
+---
+
+<section id="harness-setup" class="cyber-section reveal" style="--section-accent: #ffb000;">
+  <div class="cyber-section-orb" aria-hidden="true"></div>
+  <div class="cyber-section-grid" aria-hidden="true"></div>
+
+  <div class="cyber-section-shell">
+    <header class="cyber-section-head">
+      <div class="cyber-pill">
+        <span class="cyber-pill-dot"></span>
+        <span>ONEBRAIN // HARNESS_SETUP</span>
+      </div>
+      <h2 class="cyber-h2">
+        Pick Your <span class="cyber-h2-stroke">Harness.</span>
+      </h2>
+      <p class="cyber-sub">
+        Each harness reads OneBrain's instructions automatically — install, run inside your vault, the plugin loads on first prompt.
+      </p>
+    </header>
+
+    <!-- ════════ Side-by-side: Harness install grid (left) + BYO LLM callout (right) ════════ -->
+    <div class="harness-content">
+
+      <!-- LEFT: 4 harness install cards in 2×2 -->
+      <div class="hc-cards-side">
+        <div class="hc-side-eyebrow">// PICK_BY_HARNESS</div>
+        <div class="harness-grid">
+          {harnesses.map((h) => (
+            <article class="harness-card" style={`--card-accent: ${h.accent};`}>
+              <span class="hc-stripe" aria-hidden="true"></span>
+
+              <header class="hc-head">
+                <span class="hc-glyph" aria-hidden="true">{h.glyph}</span>
+                <div class="hc-name-wrap">
+                  <h3 class="hc-name">{h.name}</h3>
+                  <span class="hc-badge">{h.badge}</span>
+                </div>
+              </header>
+
+              <p class="hc-best">{h.bestFor}</p>
+
+              <div class="hc-cmd-block">
+                <span class="hc-cmd-line"><span class="hc-cmd-prompt">$</span> {h.install}</span>
+                <span class="hc-cmd-line"><span class="hc-cmd-prompt">$</span> cd vault &amp;&amp; {h.runCmd}</span>
+              </div>
+
+              <footer class="hc-foot">
+                <span class="hc-foot-label">READS</span>
+                <code class="hc-foot-file">{h.instr}</code>
+              </footer>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <!-- RIGHT: BYO LLM callout -->
+    <div class="byo-llm">
+      <span class="byo-corner byo-corner-tl" aria-hidden="true"></span>
+      <span class="byo-corner byo-corner-tr" aria-hidden="true"></span>
+      <span class="byo-corner byo-corner-bl" aria-hidden="true"></span>
+      <span class="byo-corner byo-corner-br" aria-hidden="true"></span>
+
+      <div class="byo-stack">
+        <span class="byo-eyebrow">// BYO_LLM_THROUGH_CLAUDE_CODE</span>
+        <h3 class="byo-title">
+          One harness,<br/>
+          <span class="byo-title-stroke">any LLM.</span>
+        </h3>
+        <p class="byo-sub">
+          Use Claude Code as a universal frontend. Point <code>ANTHROPIC_BASE_URL</code> at a router or another provider — Claude stays the harness, the LLM behind swaps per task.
+        </p>
+
+        <div class="byo-routes">
+          {llmRoutes.map((r) => (
+            <div class="byo-route">
+              <span class="byo-route-tag">{r.tag}</span>
+              <div class="byo-route-body">
+                <span class="byo-route-label">{r.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="byo-cmd">
+          <div class="byo-cmd-header">
+            <span class="byo-cmd-dot byo-cmd-dot-r"></span>
+            <span class="byo-cmd-dot byo-cmd-dot-y"></span>
+            <span class="byo-cmd-dot byo-cmd-dot-g"></span>
+            <span class="byo-cmd-title">~/vault · BYO_LLM</span>
+          </div>
+          <pre class="byo-cmd-body"><code><span class="cmt"># claude-code-router handles Anthropic ↔ provider translation</span>
+npx @musistudio/claude-code-router
+
+<span class="cmt"># Or direct against any Anthropic-protocol endpoint</span>
+<span class="kw">export</span> ANTHROPIC_BASE_URL=<span class="str">https://your-router-host</span>
+<span class="kw">export</span> ANTHROPIC_API_KEY=<span class="str">sk-byok</span>
+<span class="kw">cd</span> vault &amp;&amp; claude</code></pre>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ── Outer 2-column layout (cards left · BYO right) ────────── */
+  .harness-content {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 22px;
+    align-items: stretch;
+  }
+  .hc-cards-side { display: flex; flex-direction: column; gap: 8px; }
+  .hc-side-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--section-accent);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  @media (max-width: 1023px) {
+    .harness-content { grid-template-columns: 1fr; gap: 18px; }
+  }
+
+  /* ── Harness card grid (2×2 inside left column) ────────────── */
+  .harness-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 540px) {
+    .harness-grid { grid-template-columns: 1fr; }
+  }
+  .harness-card {
+    position: relative;
+    padding: 9px 12px 10px;
+    background: linear-gradient(180deg, rgba(12, 12, 24, 0.92), rgba(6, 6, 13, 0.92));
+    border: 1px solid color-mix(in srgb, var(--card-accent) 25%, rgba(255, 255, 255, 0.06));
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .harness-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--card-accent) 60%, transparent);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--card-accent) 18%, transparent);
+  }
+  .hc-stripe {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--card-accent) 0%,
+      color-mix(in srgb, var(--card-accent) 30%, transparent) 70%,
+      transparent 100%);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--card-accent) 60%, transparent);
+  }
+
+  .hc-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .hc-glyph {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    line-height: 1;
+    color: var(--card-accent);
+    text-shadow: 0 0 14px var(--card-accent);
+    flex-shrink: 0;
+  }
+  .hc-name-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hc-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+  .hc-badge {
+    font-family: var(--font-mono);
+    font-size: 7.5px;
+    letter-spacing: 0.28em;
+    color: var(--card-accent);
+    text-transform: uppercase;
+  }
+
+  .hc-best {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 7px;
+    /* clamp to single line so card stays predictable height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hc-cmd-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 9px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 2px solid var(--card-accent);
+    margin-bottom: 7px;
+  }
+  .hc-cmd-line {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.85);
+    word-break: break-all;
+  }
+  .hc-cmd-prompt {
+    color: var(--card-accent);
+    margin-right: 5px;
+  }
+
+  .hc-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .hc-foot-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+  }
+  .hc-foot-file {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--card-accent);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 6px;
+  }
+
+  /* ── BYO LLM callout (right column, stacked) ───────────────── */
+  .byo-llm {
+    position: relative;
+    padding: 16px 18px 16px;
+    background: rgba(8, 8, 14, 0.7);
+    border: 1px solid rgba(255, 176, 0, 0.18);
+    overflow: hidden;
+    height: 100%;
+  }
+  .byo-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .byo-llm::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--section-accent) 0%,
+      transparent 65%);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--section-accent) 60%, transparent);
+  }
+  .byo-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(255, 176, 0, 0.55);
+  }
+  .byo-corner-tl { top: -1px;    left: -1px;    border-right: 0; border-bottom: 0; }
+  .byo-corner-tr { top: -1px;    right: -1px;   border-left: 0;  border-bottom: 0; }
+  .byo-corner-bl { bottom: -1px; left: -1px;    border-right: 0; border-top: 0; }
+  .byo-corner-br { bottom: -1px; right: -1px;   border-left: 0;  border-top: 0; }
+
+  .byo-eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--section-accent);
+    text-transform: uppercase;
+  }
+  .byo-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    line-height: 1.05;
+    color: #fff;
+    letter-spacing: 0.01em;
+    margin-top: 2px;
+  }
+  .byo-title-stroke {
+    color: transparent;
+    -webkit-text-stroke: 1.4px var(--section-accent);
+  }
+  .byo-sub {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .byo-sub code {
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    color: var(--section-accent);
+    background: rgba(255, 176, 0, 0.08);
+    padding: 1px 6px;
+  }
+
+  .byo-routes {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .byo-route {
+    display: flex;
+    gap: 10px;
+    padding: 5px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .byo-route:first-child { border-top: 0; }
+  .byo-route-tag {
+    flex-shrink: 0;
+    width: 60px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    color: var(--section-accent);
+    padding-top: 2px;
+  }
+  .byo-route-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .byo-route-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .byo-route-desc {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.45;
+  }
+
+  /* Right side: terminal mockup */
+  .byo-cmd {
+    background: #06060c;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .byo-cmd-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .byo-cmd-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+  .byo-cmd-dot-r { background: #ff5f57; }
+  .byo-cmd-dot-y { background: #ffb000; }
+  .byo-cmd-dot-g { background: #28c840; }
+  .byo-cmd-title {
+    margin-left: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+  }
+  .byo-cmd-body {
+    margin: 0;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .byo-cmd-body .cmt { color: rgba(255, 255, 255, 0.35); }
+  .byo-cmd-body .kw  { color: var(--section-accent); }
+  .byo-cmd-body .str { color: #00f3ff; }
+
+  .byo-foot {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+  }
+
+  /* Section sizing tightening — fit in one viewport. Override default
+     desktop section padding (4rem/3rem) so the dense 4-card + BYO grid
+     fits below the nav on 700–800px laptop viewports. */
+  #harness-setup .cyber-section-head { margin-bottom: 0.6rem; }
+  #harness-setup .cyber-h2           { font-size: clamp(1.3rem, 2.6vw, 2rem); line-height: 1.05; }
+  #harness-setup .cyber-sub          { font-size: 0.84rem; max-width: 760px; line-height: 1.45; }
+  #harness-setup .cyber-pill         { margin-bottom: 10px; }
+  @media (min-width: 1024px) {
+    #harness-setup { padding: 2rem 3rem 1.75rem; }
+  }
+</style>

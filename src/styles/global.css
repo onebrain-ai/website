@@ -85,6 +85,25 @@
   footer {
     scroll-snap-align: end;
   }
+
+  /* Mobile / tablet — disable scroll-snap so the user can scroll freely
+     through tall sections (the lg+ side-by-side columns collapse into
+     stacked content below 1024px, making any single section taller than
+     the viewport). The IntersectionObserver-driven boot scanline on
+     `.cyber-section.active` is independent of scroll-snap, so each
+     section still flashes its scanline as it enters the viewport. */
+  @media (max-width: 1023px) {
+    html {
+      scroll-snap-type: none;
+    }
+    main > section,
+    footer {
+      scroll-snap-align: none;
+    }
+    main > section#top {
+      scroll-margin-top: 0;
+    }
+  }
 }
 
 /* ── Section spine (right-edge HUD / scroll progress) ────────────────
