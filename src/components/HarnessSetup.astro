@@ -113,20 +113,17 @@ const llmRoutes = [
       <div class="byo-stack">
         <span class="byo-eyebrow">// BYO_LLM_THROUGH_CLAUDE_CODE</span>
         <h3 class="byo-title">
-          One harness,<br/>
-          <span class="byo-title-stroke">any LLM.</span>
+          One harness, <span class="byo-title-stroke">any LLM.</span>
         </h3>
         <p class="byo-sub">
-          Use Claude Code as a universal frontend. Point <code>ANTHROPIC_BASE_URL</code> at a router or another provider — Claude stays the harness, the LLM behind swaps per task.
+          Point <code>ANTHROPIC_BASE_URL</code> at a router or another provider — Claude stays the harness, the LLM behind swaps per task.
         </p>
 
         <div class="byo-routes">
           {llmRoutes.map((r) => (
             <div class="byo-route">
               <span class="byo-route-tag">{r.tag}</span>
-              <div class="byo-route-body">
-                <span class="byo-route-label">{r.label}</span>
-              </div>
+              <span class="byo-route-label">{r.label}</span>
             </div>
           ))}
         </div>
@@ -138,14 +135,12 @@ const llmRoutes = [
             <span class="byo-cmd-dot byo-cmd-dot-g"></span>
             <span class="byo-cmd-title">~/vault · BYO_LLM</span>
           </div>
-          <pre class="byo-cmd-body"><code><span class="cmt"># claude-code-router routes Anthropic ↔ any provider</span>
-npm install -g @musistudio/claude-code-router
-ccr code           <span class="cmt"># config + launch Claude Code via the router</span>
+          <pre class="byo-cmd-body"><code><span class="cmt"># Via claude-code-router (recommended)</span>
+npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
 
-<span class="cmt"># Or direct: any Anthropic-protocol endpoint</span>
+<span class="cmt"># Or direct Anthropic-protocol endpoint</span>
 <span class="kw">export</span> ANTHROPIC_BASE_URL=<span class="str">https://your-router-host</span>
-<span class="kw">export</span> ANTHROPIC_API_KEY=<span class="str">sk-byok</span>
-<span class="kw">cd</span> vault &amp;&amp; claude</code></pre>
+<span class="kw">export</span> ANTHROPIC_API_KEY=<span class="str">sk-byok</span> &amp;&amp; <span class="kw">cd</span> vault &amp;&amp; claude</code></pre>
         </div>
       </div>
     </div>
@@ -306,7 +301,7 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
   /* ── BYO LLM callout (right column, stacked) ───────────────── */
   .byo-llm {
     position: relative;
-    padding: 16px 18px 16px;
+    padding: 12px 14px;
     background: rgba(8, 8, 14, 0.7);
     border: 1px solid rgba(255, 176, 0, 0.18);
     overflow: hidden;
@@ -315,7 +310,7 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
   .byo-stack {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
   .byo-llm::before {
     content: '';
@@ -341,8 +336,8 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
   .byo-eyebrow {
     display: inline-block;
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.3em;
+    font-size: 8.5px;
+    letter-spacing: 0.28em;
     color: var(--section-accent);
     text-transform: uppercase;
   }
@@ -350,11 +345,11 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
-    line-height: 1.05;
+    font-size: clamp(1rem, 1.7vw, 1.3rem);
+    line-height: 1.1;
     color: #fff;
     letter-spacing: 0.01em;
-    margin-top: 2px;
+    margin-top: 0;
   }
   .byo-title-stroke {
     color: transparent;
@@ -362,9 +357,9 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
   }
   .byo-sub {
     font-family: var(--font-sans);
-    font-size: 0.82rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.6);
   }
   .byo-sub code {
     font-family: var(--font-mono);
@@ -381,36 +376,25 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
   }
   .byo-route {
     display: flex;
+    align-items: baseline;
     gap: 10px;
-    padding: 5px 0;
+    padding: 4px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
   }
   .byo-route:first-child { border-top: 0; }
   .byo-route-tag {
     flex-shrink: 0;
-    width: 60px;
+    width: 52px;
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 700;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.26em;
     color: var(--section-accent);
-    padding-top: 2px;
-  }
-  .byo-route-body {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
   }
   .byo-route-label {
     font-family: var(--font-mono);
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.85);
-  }
-  .byo-route-desc {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.45);
-    line-height: 1.45;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.78);
   }
 
   /* Right side: terminal mockup */
@@ -423,32 +407,32 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 12px;
+    padding: 5px 10px;
     background: rgba(255, 255, 255, 0.03);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
   .byo-cmd-dot {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
   }
   .byo-cmd-dot-r { background: #ff5f57; }
   .byo-cmd-dot-y { background: #ffb000; }
   .byo-cmd-dot-g { background: #28c840; }
   .byo-cmd-title {
-    margin-left: 12px;
+    margin-left: 10px;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.18em;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.45);
     text-transform: uppercase;
   }
   .byo-cmd-body {
     margin: 0;
-    padding: 10px 14px;
+    padding: 8px 12px;
     font-family: var(--font-mono);
-    font-size: 10px;
-    line-height: 1.5;
+    font-size: 9.5px;
+    line-height: 1.45;
     color: rgba(255, 255, 255, 0.85);
     white-space: pre;
     overflow-x: auto;
