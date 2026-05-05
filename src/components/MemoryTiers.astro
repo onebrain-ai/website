@@ -49,7 +49,7 @@ const tiers = [
 ];
 ---
 
-<section id="memory" class="cyber-section reveal" style="--section-accent: #d946ef;">
+<section id="memory" class="cyber-section reveal" style="--section-accent: #ff66c4;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -179,7 +179,11 @@ const tiers = [
     </div>
 
     <!-- ════════ 2. Four-tier persistence stack — infrastructure ════════ -->
-    <div class="mt-stack" role="img" aria-label="Memory tiers — four-stage persistence: Working memory, Episodic logs, Semantic memory, Knowledge. Top to bottom.">
+    <!-- No role="img" here — each tier carries real text content (name,
+         location, description, promoters) that should land in the AT
+         tree naturally. Only the decorative spine + arrow column are
+         marked aria-hidden. -->
+    <div class="mt-stack">
       <span class="mt-corner mt-corner-tl" aria-hidden="true"></span>
       <span class="mt-corner mt-corner-tr" aria-hidden="true"></span>
       <span class="mt-corner mt-corner-bl" aria-hidden="true"></span>
@@ -321,17 +325,37 @@ const tiers = [
     inset: 8px;
     border-radius: 50%;
     border: 1.5px solid currentColor;
+    /* Static glow baked in once — animating box-shadow is a Safari
+       paint hot path, so the ring's pulse uses transform + opacity on
+       the ::after halo instead. */
     box-shadow: inset 0 0 24px color-mix(in srgb, currentColor 35%, transparent);
+  }
+  .bidir-core-ring::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, currentColor 30%, transparent) 0%, transparent 70%);
+    opacity: 0.55;
+    pointer-events: none;
   }
   .bidir-core-human { color: #00f3ff; }
   .bidir-core-agent { color: #ff2d92; }
   /* Stagger breathe — human inhales while agent exhales, sells the
-     reciprocal flow without needing the arcs to do all the work. */
+     reciprocal flow without needing the arcs to do all the work.
+     Compositor-only properties: transform on the ring + opacity on
+     the ::after halo. */
   .bidir-core-human .bidir-core-ring { animation: bidir-breathe 5.2s ease-in-out infinite; }
   .bidir-core-agent .bidir-core-ring { animation: bidir-breathe 5.2s ease-in-out infinite; animation-delay: 2.6s; }
+  .bidir-core-human .bidir-core-ring::after { animation: bidir-breathe-glow 5.2s ease-in-out infinite; }
+  .bidir-core-agent .bidir-core-ring::after { animation: bidir-breathe-glow 5.2s ease-in-out infinite; animation-delay: 2.6s; }
   @keyframes bidir-breathe {
-    0%, 100% { transform: scale(1);    box-shadow: inset 0 0 24px color-mix(in srgb, currentColor 25%, transparent); }
-    50%      { transform: scale(1.06); box-shadow: inset 0 0 36px color-mix(in srgb, currentColor 55%, transparent), 0 0 22px color-mix(in srgb, currentColor 35%, transparent); }
+    0%, 100% { transform: scale(1);    }
+    50%      { transform: scale(1.06); }
+  }
+  @keyframes bidir-breathe-glow {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1;   }
   }
   .bidir-core-eyebrow {
     font-family: var(--font-mono);
@@ -366,9 +390,10 @@ const tiers = [
   .bidir-arc-label-down { fill: rgba(255, 45, 146, 0.85); }
   .bidir-arc-label-up   { fill: rgba(0, 243, 255, 0.85); }
 
-  .bidir-flow-dot {
-    filter: drop-shadow(0 0 6px currentColor);
-  }
+  /* No filter on the moving dots — `filter: drop-shadow` on a
+     transform/SMIL-animated SVG element forces Safari to re-rasterise
+     the layer every frame. The dots ride the dashed arc and the arc
+     itself carries the visible "flow" — solid dots are enough. */
   .bidir-flow-dot-down { color: #ff2d92; }
   .bidir-flow-dot-up   { color: #00f3ff; }
 
@@ -457,7 +482,9 @@ const tiers = [
     height: 6px;
     border-radius: 50%;
     background: #fff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 18px rgba(217, 70, 239, 0.55);
+    /* Glow grounded in the bottom-tier cyan accent — same pattern as
+       Stack.astro's hs-particle, so both spines feel like siblings. */
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 18px rgba(0, 243, 255, 0.6);
   }
   .mt-particle-down { animation: mt-travel-down 4.4s linear infinite; }
   .mt-particle-up   { animation: mt-travel-up   5.6s linear infinite; }
@@ -477,7 +504,9 @@ const tiers = [
   .mt-tier {
     position: relative;
     display: grid;
-    grid-template-columns: 36px 200px 1fr auto;
+    /* Left col width matches Stack's hs-layer (170px on tablet, ~158px
+       on desktop) so the two spine diagrams scan as siblings. */
+    grid-template-columns: 36px 170px 1fr auto;
     gap: 14px;
     padding: 10px 14px 10px 30px;
     background: linear-gradient(180deg, rgba(12, 12, 24, 0.92), rgba(6, 6, 13, 0.92));
@@ -644,8 +673,9 @@ const tiers = [
 
   /* ─────────────── Responsive ─────────────── */
   @media (max-width: 1024px) {
-    .mt-tier { grid-template-columns: 32px 170px 1fr; }
+    .mt-tier { grid-template-columns: 32px 1fr; }
     .mt-tier-right { display: none; }
+    .mt-tier-mid { grid-column: 1 / -1; }
   }
 
   @media (max-width: 720px) {
@@ -660,6 +690,14 @@ const tiers = [
     }
     .bidir-core-name { font-size: 1.15rem; }
     .bidir-arcs { height: 160px; }
+    /* Suspend ring breathing on phones — two simultaneous keyframes
+       compositing magenta + cyan halos isn't worth the per-frame paint
+       cost on small viewports. The static glow + flowing arc dots
+       still carry the "alive" signal. */
+    .bidir-core-human .bidir-core-ring,
+    .bidir-core-agent .bidir-core-ring,
+    .bidir-core-human .bidir-core-ring::after,
+    .bidir-core-agent .bidir-core-ring::after { animation: none; }
 
     .mt-stack { padding: 14px 12px 12px; }
     .mt-tier {

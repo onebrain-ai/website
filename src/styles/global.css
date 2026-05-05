@@ -537,13 +537,11 @@
   animation: section-sub-rise 0.45s 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 .cyber-section.active .cyber-card,
-.cyber-section.active .stack-row,
 .cyber-section.active .waitlist-shell {
   animation: section-content-rise 0.55s 0.75s ease-out backwards;
 }
 /* Card grid stagger — rows of three light up together */
-.cyber-section.active .cyber-card:nth-child(n+4):nth-child(-n+6),
-.cyber-section.active .stack-row:nth-child(n+4):nth-child(-n+6)  { animation-delay: 0.9s; }
+.cyber-section.active .cyber-card:nth-child(n+4):nth-child(-n+6) { animation-delay: 0.9s; }
 .cyber-section.active .cyber-card:nth-child(n+7):nth-child(-n+9)  { animation-delay: 1.05s; }
 .cyber-section.active .cyber-card:nth-child(n+10):nth-child(-n+12) { animation-delay: 1.2s; }
 
@@ -814,6 +812,15 @@ section[data-vis="off"] *,
 section[data-vis="off"] *::before,
 section[data-vis="off"] *::after {
   animation-name: none !important;
+}
+/* SVG SMIL <animateMotion> is browser-driven and ignores CSS
+   animation-name overrides — the only portable way to suspend it is
+   `display: none` on the carrier. This kills SMIL playback in every
+   engine the moment the section scrolls offscreen, and it restarts
+   from t=0 when data-vis flips back to "on". */
+section[data-vis="off"] .bidir-arcs,
+section[data-vis="off"] .how-loop-svg {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

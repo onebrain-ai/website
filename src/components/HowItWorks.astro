@@ -284,9 +284,10 @@ const steps = [
     10%           { stroke-opacity: 1;    }
   }
 
-  .how-flow-dot {
-    filter: drop-shadow(0 0 6px currentColor);
-  }
+  /* No filter on the moving dots — `filter: drop-shadow` on a
+     transform/SMIL-animated SVG element triggers per-frame
+     re-rasterisation in Safari. The pulsing leg stroke + flowing dot
+     are enough motion signal. */
   .how-flow-dot-1 { color: #ff2d92; }
   .how-flow-dot-2 { color: #bc13fe; }
   .how-flow-dot-3 { color: #00f3ff; }
