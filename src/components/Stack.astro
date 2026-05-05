@@ -1,49 +1,48 @@
 ---
+// 4-layer architecture mirroring the README harness-os-stack diagram.
+// Top → bottom: OneBrain (plugin + CLI combined) → Harness → LLM → Obsidian Vault.
+// Vault sits at the BASE as the durable source of truth that everything
+// above ultimately reads from and writes to.
 const layers = [
   {
     idx: '01',
-    name: 'OBSIDIAN VAULT',
-    role: 'COGNITIVE_INTERFACE',
-    desc: 'Plain Markdown — your single source of truth.',
-    sub: 'Notes · memory · decisions · knowledge graph',
-    tag: 'USER_FACING',
-    accent: '#00f3ff',
-  },
-  {
-    idx: '02',
-    name: 'ONEBRAIN PLUGIN',
-    role: 'SKILLS_AND_HOOKS',
-    desc: '24+ skills + lifecycle hooks. Loaded into any harness.',
-    sub: 'braindump · capture · research · distill · doctor · ...',
-    tag: 'BEHAVIOR_DEF',
+    glyph: '🧠',
+    name: 'ONEBRAIN',
+    role: 'OS_LAYER',
+    desc: '24+ skills · lifecycle hooks · vault sync · indexing · checkpoints · harness routing.',
+    sub: 'plugin + CLI — the OS that keeps every harness on the same page.',
+    tag: 'PLUGIN+CLI',
     accent: '#ff2d92',
   },
   {
-    idx: '03',
-    name: 'ONEBRAIN CLI',
-    role: 'HARNESS_ORCHESTRATOR',
-    desc: 'Vault sync · indexing · checkpoints · routing.',
-    sub: 'The OS layer that keeps every harness on the same page.',
-    tag: 'CONTEXT_BRIDGE',
-    accent: '#ffb000',
-  },
-  {
-    idx: '04',
+    idx: '02',
+    glyph: '🤖',
     name: 'HARNESS',
     role: 'AGENTIC_RUNTIME',
-    desc: 'Bring your own. Pick by task, by skill, by cost.',
-    sub: 'claude code · gemini cli · codex · qwen · cursor · ...',
+    desc: 'Bring your own. Pick by familiarity, by task, or by cost.',
+    sub: 'claude code · gemini cli · codex · qwen · ...',
     tag: 'BYO_HARNESS',
     accent: '#bc13fe',
   },
   {
-    idx: '05',
+    idx: '03',
+    glyph: '✨',
     name: 'LLM',
     role: 'INTELLIGENCE_SOURCE',
-    desc: 'Whatever powers the harness — OneBrain stays consistent.',
+    desc: 'Whatever powers the harness — OneBrain stays consistent across swaps.',
     sub: 'local (mlx · ollama) · cloud (claude · gemini · gpt) · raw api',
     tag: 'RAW_TOKENS',
     accent: '#c8ff00',
+  },
+  {
+    idx: '04',
+    glyph: '💎',
+    name: 'OBSIDIAN VAULT',
+    role: 'SOURCE_OF_TRUTH',
+    desc: 'Plain Markdown — notes, memory, decisions, knowledge graph.',
+    sub: 'lives forever · agent-readable · version-controlled · yours.',
+    tag: 'FOUNDATION',
+    accent: '#00f3ff',
   },
 ];
 ---
@@ -66,7 +65,7 @@ const layers = [
           <span class="cyber-h2-stroke">Orchestration.</span>
         </h2>
         <p class="cyber-sub">
-          We don't build a harness. We orchestrate them. Bring Claude Code, Gemini CLI, Codex, Qwen — or a raw API key — and switch any time. Your vault is the constant; the harness is the variable.
+          <strong class="brand">OneBrain</strong> doesn't build harnesses — it orchestrates them. Bring Claude Code, Gemini CLI, Codex, Qwen — or a raw API key — and switch any time. Your vault stays the constant; the harness is the variable.
         </p>
 
         <div class="manifesto">
@@ -89,8 +88,8 @@ const layers = [
         </div>
       </header>
 
-      <!-- RIGHT: Animated 5-layer architecture diagram -->
-      <div class="harness-stack" role="img" aria-label="Five-layer architecture: Obsidian Vault, OneBrain Plugin, OneBrain CLI, Harness, LLM — top to bottom.">
+      <!-- RIGHT: Animated 4-layer architecture diagram -->
+      <div class="harness-stack" role="img" aria-label="Four-layer architecture: OneBrain (plugin and CLI), Harness, LLM, Obsidian Vault — top to bottom.">
         <span class="hs-corner hs-corner-tl" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-tr" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-bl" aria-hidden="true"></span>
@@ -99,7 +98,7 @@ const layers = [
         <div class="hs-band hs-band-top" aria-hidden="true">
           <span class="hs-band-dot"></span>
           <span class="hs-band-label">HARNESS_OS_STACK · ↑ INTERFACE</span>
-          <span class="hs-band-meta">ARCH_v1.0 · 05_LAYERS</span>
+          <span class="hs-band-meta">ARCH_v1.0 · 04_LAYERS</span>
         </div>
 
         <div class="hs-layers">
@@ -120,6 +119,8 @@ const layers = [
               <span class="hs-edge hs-edge-tl" aria-hidden="true"></span>
               <span class="hs-edge hs-edge-br" aria-hidden="true"></span>
 
+              <div class="hs-layer-glyph" aria-hidden="true">{l.glyph}</div>
+
               <div class="hs-layer-left">
                 <div class="hs-layer-idx">LAYER_{l.idx}</div>
                 <div class="hs-layer-name">{l.name}</div>
@@ -139,7 +140,7 @@ const layers = [
         </div>
 
         <div class="hs-band hs-band-bottom" aria-hidden="true">
-          <span class="hs-band-meta-mute">↓ INTELLIGENCE</span>
+          <span class="hs-band-meta-mute">↓ FOUNDATION</span>
           <span class="hs-band-meta-mute">CONTEXT_FLOWS_BOTH_WAYS · VAULT_AGNOSTIC</span>
         </div>
       </div>
@@ -245,7 +246,9 @@ const layers = [
     gap: 6px;
   }
 
-  /* Animated spine (vertical with travelling particles) */
+  /* Animated spine (vertical with travelling particles).
+     Gradient stops match the 4 layer accents top→bottom:
+     OneBrain magenta → Harness violet → LLM lime → Vault cyan. */
   .hs-spine {
     position: absolute;
     left: 14px;
@@ -254,11 +257,10 @@ const layers = [
     width: 2px;
     pointer-events: none;
     background: linear-gradient(180deg,
-      rgba(0, 243, 255, 0.5) 0%,
-      rgba(255, 45, 146, 0.5) 25%,
-      rgba(255, 176, 0, 0.5) 50%,
-      rgba(188, 19, 254, 0.5) 75%,
-      rgba(200, 255, 0, 0.5) 100%);
+      rgba(255, 45, 146, 0.5) 0%,
+      rgba(188, 19, 254, 0.5) 33%,
+      rgba(200, 255, 0, 0.5) 66%,
+      rgba(0, 243, 255, 0.5) 100%);
     mask-image: repeating-linear-gradient(180deg, #000 0 4px, transparent 4px 9px);
     -webkit-mask-image: repeating-linear-gradient(180deg, #000 0 4px, transparent 4px 9px);
   }
@@ -290,7 +292,8 @@ const layers = [
   .hs-layer {
     position: relative;
     display: grid;
-    grid-template-columns: 158px 1fr auto;
+    /* glyph col + name col + desc col + chip col */
+    grid-template-columns: 32px 158px 1fr auto;
     gap: 14px;
     padding: 9px 14px 9px 30px;
     background: linear-gradient(180deg, rgba(12, 12, 24, 0.92), rgba(6, 6, 13, 0.92));
@@ -353,6 +356,15 @@ const layers = [
       inset 0 0 0 1px color-mix(in srgb, var(--layer-accent) 30%, transparent);
   }
 
+  .hs-layer-glyph {
+    font-size: 22px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--layer-accent) 55%, transparent));
+  }
+
   .hs-layer-idx {
     font-family: var(--font-mono);
     font-size: 9.5px;
@@ -405,21 +417,36 @@ const layers = [
 
   /* Tablet — drop the right chip column to give middle column more room */
   @media (max-width: 1024px) {
-    .hs-layer { grid-template-columns: 150px 1fr; }
+    .hs-layer { grid-template-columns: 32px 150px 1fr; }
     .hs-layer-right { display: none; }
   }
 
-  /* Mobile — collapse to single column inside layer */
+  /* Mobile — collapse to a 2-col layout (glyph + content) so each layer
+     renders as `glyph · LAYER_NN / NAME / ROLE / DESC` for fast scan.
+     Sub line + bottom HUD band are dropped, manifesto trims to 2 rows.
+     Explicit grid placement: glyph sits row-1 col-1, the LAYER head
+     (idx/name/role) sits row-1 col-2, and the description spans both
+     columns on row-2 so it can use the full card width — without this
+     the auto-placement algorithm parked `.hs-layer-mid` into col-1
+     (28px wide) and the desc text wrapped one word per line. */
   @media (max-width: 720px) {
     .harness-stack { padding: 14px 12px 12px; }
     .hs-layer {
-      grid-template-columns: 1fr;
-      gap: 6px;
+      grid-template-columns: 28px 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 10px;
+      row-gap: 6px;
       padding: 10px 14px 10px 26px;
     }
+    .hs-layer-glyph { font-size: 18px; grid-column: 1; grid-row: 1; }
+    .hs-layer-left  { grid-column: 2; grid-row: 1; }
+    .hs-layer-mid   { grid-column: 1 / -1; grid-row: 2; }
+    .hs-layer-sub { display: none; }
     .hs-band-meta-mute:last-child { display: none; }
     .hs-band-bottom { justify-content: flex-start; }
     .manifesto-tag { width: 48px; font-size: 8px; }
+    .manifesto-row:nth-child(1),
+    .manifesto-row:nth-child(3) { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -45,7 +45,7 @@ const dispatches = [
             <span class="cyber-h2-stroke">All Projects.</span>
           </h2>
           <p class="cyber-sub">
-            Obsidian becomes your <strong>command center</strong> — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
+            <strong class="brand">OneBrain</strong> turns Obsidian into your command center — research, planning, agent memory, project state, all in one place. No tab juggling. No tool sprawl.
           </p>
         </header>
 
@@ -372,5 +372,12 @@ const dispatches = [
     .cyber-section.active .hub-spoke-set { animation: none; }
     .hub-spoke-set { opacity: 1; }
     .hub-particle { display: none; }
+  }
+
+  /* Mobile: trim the third recap beat so the section settles in fewer
+     screens — first 2 beats already carry the "vault as command center"
+     idea. */
+  @media (max-width: 720px) {
+    .workflow-recap li:nth-child(3) { display: none; }
   }
 </style>

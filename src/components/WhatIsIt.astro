@@ -20,18 +20,20 @@
             <span class="cyber-h2-stroke">Second Brain.</span>
           </h2>
           <p class="cyber-sub">
-            Most tools ask you to query an AI. OneBrain co-evolves with you — every preference you teach sharpens the agent, every link it surfaces sharpens you.
+            <strong class="brand">OneBrain</strong> doesn't ask you to query an AI — it co-evolves with you. Every preference you teach sharpens the agent, every link it surfaces sharpens you.
           </p>
         </header>
 
         <div class="mt-10 grid sm:grid-cols-2 gap-4">
-          <div class="cyber-card">
+          <div class="cyber-card synergy-card">
             <span class="cyber-card-meta">01</span>
+            <div class="synergy-icon" aria-hidden="true">🎓</div>
             <h3 class="cyber-card-title">HUMAN → AGENT</h3>
             <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent calibrates to you with every interaction.</p>
           </div>
-          <div class="cyber-card">
+          <div class="cyber-card synergy-card">
             <span class="cyber-card-meta">02</span>
+            <div class="synergy-icon" aria-hidden="true">⚡</div>
             <h3 class="cyber-card-title">AGENT → HUMAN</h3>
             <p class="cyber-card-desc">Captures, classifies, links, and synthesizes the noise of your day — so your attention stays on what only you can do.</p>
           </div>
@@ -302,6 +304,20 @@
 </script>
 
 <style>
+  /* Synergy cards — emoji icon sits between the meta number and the
+     title so the box reads `01 // 🎓 // HUMAN → AGENT // desc` rather
+     than the previous `01 // HUMAN → ... // desc`. The icon glows
+     soft magenta to align with the section accent. */
+  .synergy-card {
+    position: relative;
+  }
+  .synergy-icon {
+    font-size: 26px;
+    line-height: 1;
+    margin: 8px 0 14px;
+    filter: drop-shadow(0 0 12px rgba(255, 45, 146, 0.45));
+  }
+
   .nebula-frame {
     position: relative;
     aspect-ratio: 1 / 1;

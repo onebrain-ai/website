@@ -32,43 +32,55 @@ const commands = [
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <header class="cyber-section-head">
-      <div class="cyber-pill">
-        <span class="cyber-pill-dot"></span>
-        <span>ONEBRAIN // COMMANDS</span>
-      </div>
-      <h2 class="cyber-h2">
-        20+ Commands<br/>
-        <span class="cyber-h2-stroke">That Think.</span>
-      </h2>
-    </header>
+    <div class="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center cmd-grid">
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {commands.map((c) => (
-        <button
-          type="button"
-          class="cyber-card cmd-card skill-trigger"
-          data-cmd={c.cmd}
-          data-desc={c.desc}
-          data-usecase={c.usecase}
-        >
-          <div class="cmd-row">
-            <span class="cmd-prompt">»</span>
-            <code class="cmd-name">{c.cmd}</code>
+      <!-- LEFT: header + sub + signpost -->
+      <div class="cmd-left">
+        <header class="cyber-section-head">
+          <div class="cyber-pill">
+            <span class="cyber-pill-dot"></span>
+            <span>ONEBRAIN // COMMANDS</span>
           </div>
-          <p class="cyber-card-desc cmd-desc">{c.desc}</p>
-        </button>
-      ))}
-    </div>
+          <h2 class="cyber-h2">
+            24+ Commands<br/>
+            <span class="cyber-h2-stroke">That Think.</span>
+          </h2>
+          <p class="cyber-sub">
+            <strong class="brand">OneBrain</strong> ships 24+ slash commands — vault-aware verbs that wrap deep workflows like research, distill, and weekly review. Tap any card to see what it does.
+          </p>
+        </header>
 
-    <a
-      class="cmd-more"
-      href="https://github.com/onebrain-ai/onebrain#commands"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span class="cmd-more-cta">See full list <span class="cmd-more-arrow">↗</span></span>
-    </a>
+        <a
+          class="cmd-more"
+          href="https://github.com/onebrain-ai/onebrain#commands"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="cmd-more-cta">See full list <span class="cmd-more-arrow">↗</span></span>
+        </a>
+      </div>
+
+      <!-- RIGHT: 3×3 square card grid -->
+      <div class="cmd-grid-cards" role="list">
+        {commands.map((c) => (
+          <button
+            type="button"
+            class="cyber-card cmd-card skill-trigger"
+            role="listitem"
+            data-cmd={c.cmd}
+            data-desc={c.desc}
+            data-usecase={c.usecase}
+          >
+            <div class="cmd-row">
+              <span class="cmd-prompt">»</span>
+              <code class="cmd-name">{c.cmd}</code>
+            </div>
+            <p class="cyber-card-desc cmd-desc">{c.desc}</p>
+          </button>
+        ))}
+      </div>
+
+    </div>
   </div>
 
   <!-- Command detail modal -->
@@ -136,23 +148,42 @@ const commands = [
   /* Section-scoped tightening so the 9-card grid + signpost row fits
      a single viewport on laptop heights, mirroring the Features/
      Workflow pattern. */
-  #commands .cyber-h2           { font-size: clamp(2rem, 4.6vw, 4rem); }
-  #commands .cyber-section-head { margin-bottom: 1.25rem; }
-  #commands .cyber-pill         { margin-bottom: 18px; }
-  #commands .grid               { gap: 0.65rem; }
+  /* Section now uses a 50:50 grid (header left, 3×3 square card grid
+     right). Sub copy uses the standard cyber-sub size — no longer
+     compressed since the cards moved out of the same column. */
+  @media (min-width: 1024px) {
+    #commands { padding: 2.25rem 3rem 1.75rem; }
+  }
+  #commands .cyber-section-head { margin-bottom: 1rem; }
+
+  .cmd-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 3×3 square grid — each card maintains a 1:1 aspect ratio so the
+     right column reads as a 3×3 control panel rather than a list. */
+  .cmd-grid-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
 
   .cmd-card {
-    padding: 0.85rem 1rem 0.95rem;
+    aspect-ratio: 1 / 1;
+    padding: 0.85rem 0.95rem;
     text-align: left;
     cursor: pointer;
     background: rgba(8, 8, 14, 0.5);
     color: inherit;
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }
   .cmd-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
   .cmd-prompt {
     font-family: var(--font-mono);
@@ -163,14 +194,25 @@ const commands = [
   .cmd-name {
     font-family: var(--font-mono);
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--section-accent);
     letter-spacing: 0.02em;
   }
   .cmd-desc {
     margin-top: 8px;
-    font-size: 11px;
-    line-height: 1.55;
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+
+  /* Mobile / tablet — drop the 50:50 split and the aspect-ratio. The
+     cards revert to the original 2/3-col rows-of-rectangles flow. */
+  @media (max-width: 1023px) {
+    .cmd-grid-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .cmd-card { aspect-ratio: auto; padding: 0.85rem 1rem 0.95rem; }
+    .cmd-desc { font-size: 11px; }
+  }
+  @media (max-width: 540px) {
+    .cmd-grid-cards { grid-template-columns: 1fr; }
   }
 
   /* ── Skill Modal ───────────────────────── */
@@ -291,21 +333,25 @@ const commands = [
      subset, full list lives in the repo." Mirrors the HUD pattern of
      the cyber-pill (mono caps, tracked, dim) without re-using the pill
      styling — it's a signpost, not another section header. */
+  /* Small inline signpost link sitting under the sub paragraph in the
+     left column. Was previously a full-width dashed row at the bottom
+     of the 9-card grid; the 50:50 layout made that row redundant, so
+     we shrink to an inline link. */
   .cmd-more {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 0.9rem;
-    padding: 10px 16px;
-    border: 1px dashed color-mix(in srgb, var(--section-accent) 28%, transparent);
-    background: color-mix(in srgb, var(--section-accent) 4%, transparent);
+    align-self: flex-start;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    padding: 8px 14px;
+    border: 1px dashed color-mix(in srgb, var(--section-accent) 35%, transparent);
+    background: color-mix(in srgb, var(--section-accent) 5%, transparent);
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.6);
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
   }
   .cmd-more:hover {

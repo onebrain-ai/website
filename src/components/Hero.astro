@@ -53,7 +53,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         </h1>
 
         <p class="hero-sub reveal" style="transition-delay: 250ms;">
-          Not another second brain. <strong>OneBrain</strong> is a living intelligence layer where you teach the agent and the agent extends you — both evolving inside your Obsidian vault.
+          <strong class="brand">OneBrain</strong> isn't another second brain — it's a living intelligence layer where you teach the agent and the agent extends you, both evolving inside your Obsidian vault.
         </p>
 
         <div class="cmd-box reveal" style="transition-delay: 400ms;">
@@ -123,7 +123,13 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   </div>
 
   <script is:inline>
-    (function () {
+    // Defer the entire hero JS init (particle canvas, scramble loop,
+    // op-console scenarios, copy button, HUD telemetry) until the
+    // browser is idle. Hero h1 + sub + CTAs render with CSS only —
+    // none of this JS is on the LCP critical path. Pushing it past
+    // requestIdleCallback frees the main thread for layout + paint
+    // and trims the Lighthouse "TBT / forced reflow" budget.
+    function __obHeroBoot() {
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // 1. Particle field — pauses when tab hidden or hero scrolls offscreen.
@@ -231,10 +237,14 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           io.observe(heroEl);
         }
 
-        // UNIFIED — initial scramble + rare loop (every 12-20s).
+        // UNIFIED — periodic scramble loop only (every 12-20s). The
+        // initial scramble pass is removed: the hero h1 is the LCP
+        // element, and rolling characters across the first 1.1s of
+        // page life made Chrome wait for the text to stabilise before
+        // it would mark LCP. The loop still fires later for the
+        // cinematic flicker.
         document.querySelectorAll('[data-scramble]').forEach((el) => {
           const t = el.dataset.scramble;
-          setTimeout(() => scramble(el, t, 1100), 280);
           function loop() {
             if (heroVisible) scramble(el, t, 600);
             setTimeout(loop, 12000 + Math.random() * 8000);
@@ -470,7 +480,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           document.body.appendChild(ta);
           ta.select();
           let ok = false;
-          try { ok = document.execCommand('copy'); } catch { ok = false; }
+          try { ok = document.execCommand('copy'); } catch (_e) { ok = false; }
           document.body.removeChild(ta);
           return ok;
         }
@@ -540,7 +550,12 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           document.hidden ? stopHud() : startHud();
         });
       })();
-    })();
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(__obHeroBoot, { timeout: 1500 });
+    } else {
+      setTimeout(__obHeroBoot, 200);
+    }
   </script>
 </section>
 
@@ -1105,6 +1120,37 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     .hud { display: none; }
     .hero-h1 { font-size: clamp(2.8rem, 12vw, 4.8rem); }
     .op-body { height: 240px; }
+    /* HUD corners are hidden on mobile, so the 9rem top padding that
+       was reserving clearance for them just leaves a big blank band
+       between the nav and the hero pill. Trim padding and anchor
+       content to the top of the viewport instead of vertically
+       centring inside 100vh. The remaining padding-top is now just
+       enough to clear the sticky nav (64px) plus a small breathing
+       gap; the section also drops min-height: 100vh so it sizes to
+       its content rather than reserving the full screen. */
+    .hero-shell {
+      padding: 1.25rem 1.5rem 2.5rem;
+      align-items: flex-start;
+      min-height: 0;
+    }
+    .hero { min-height: 0; }
+    /* Date inside the pill must stay on a single line — the wide
+       letter-spacing inherited from .hero-pill (0.4em) blows the
+       date string up to ~150px which wraps on a 390px viewport. */
+    .hero-pill-meta { white-space: nowrap; letter-spacing: 0.18em; }
+    .hero-pill { letter-spacing: 0.28em; gap: 10px; padding: 8px 14px; }
+    /* CTAs: keep the two buttons on one row. Shrink padding +
+       letter-spacing so both fit a 390px viewport side-by-side. */
+    .cta-row { gap: 10px; flex-wrap: nowrap; margin-top: 32px; }
+    .btn-cyber {
+      padding: 14px 16px;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      flex: 1 1 0;
+      min-width: 0;
+      justify-content: center;
+      gap: 8px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

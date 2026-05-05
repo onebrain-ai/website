@@ -395,6 +395,28 @@
   opacity: 1 !important;
 }
 
+/* Safari sticky-hover fix. After clicking a nav link, Safari (macOS
+   + iOS) keeps `:hover` state on the just-clicked element until the
+   pointer moves — which never happens if the user scrolls via
+   arrow/Page keys. Result: the clicked link's `[ ]` brackets stay
+   on while the IntersectionObserver flips `.is-active` to a new
+   link, and the user sees TWO active-looking items at once.
+
+   The fix: when `body.suppress-hover` is set (toggled by the click
+   handler in Layout.astro and cleared on the first mousemove),
+   force-hide every non-active link's bracket spans and mute the
+   white hover colour — independent of the lingering :hover pseudo
+   state. We don't gate this on `:hover` because Safari's stuck
+   hover state is exactly what we're trying to override; the rule
+   has to apply unconditionally to non-active links until mousemove
+   releases the gate. */
+body.suppress-hover .nav-glass a:not(.is-active) {
+  color: var(--color-muted) !important;
+}
+body.suppress-hover .nav-glass a:not(.is-active) > span {
+  opacity: 0 !important;
+}
+
 .btn-tech {
   position: relative;
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
@@ -427,6 +449,18 @@
 .reveal.active {
   opacity: 1;
   transform: translateY(0);
+}
+/* LCP fix: the hero h1 is the LCP element. Skip the .reveal opacity-0
+   initial state and 1.2s fade-in for it specifically — Chrome can't
+   mark LCP until the element is visible, so the fade was adding
+   ~1.2s to LCP for no actual UX gain (the scroll-driven boot
+   choreography around it still fires). The h1 paints immediately at
+   full opacity with whatever font is currently available
+   (`display: swap` handles the swap to Chakra Petch later). */
+.hero-h1.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 /* Sections opt out of the wrapper-level reveal animation: the transform on
    the section box breaks scroll-snap (the snap target's visual top drifts
@@ -502,6 +536,40 @@
 .cyber-section.active::after {
   animation: section-scanline 1.1s ease-out;
 }
+/* Mobile: skip the per-section scanline sweep — repeated reveals as the
+   user scrolls through every section reads as visual noise on small
+   viewports. Boot-fade choreography on text/cards is kept; only the
+   horizontal scan band is suppressed. */
+@media (max-width: 1023px) {
+  .cyber-section.active::after { animation: none; opacity: 0; }
+}
+
+/* Mobile: scroll-snap is disabled below 1023px so sections flow into
+   each other continuously. Drop a thin horizontal divider at the bottom
+   of every section (and the hero) so the user gets a clear "section
+   ended" signal as they scroll. Desktop uses snap + the page-spine HUD
+   for the same purpose, so this rule is mobile-only. */
+@media (max-width: 1023px) {
+  main > section + section {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Brand emphasis — every prose mention of "OneBrain" in body copy
+   gets wrapped in <strong class="brand"> so the product name pops in
+   pure white against the surrounding muted body text (which sits at
+   ~rgba(255,255,255,0.6–0.7) inside .cyber-sub). Bold + 100% opacity
+   + a soft white halo lifts the mentions just enough to read as
+   "the brand" without competing with section accents.
+   `!important` is needed to win against component-scoped overrides
+   like `.hero-sub strong { color: #fff }` whose Astro auto-scoping
+   bumps selector specificity above a plain `.brand` class. */
+.brand {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.005em;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+}
 
 /* ─────────────────────────────────────────────────────────────────
    SECTION ENTRY CHOREOGRAPHY (Option D — combined cinematic)
@@ -509,7 +577,7 @@
    - h2 entire element: fade + slide from left (450ms, delay 250ms)
    - h2 stroke variant: COLOR DRAIN left → right (750ms, delay 700ms)
    - sub paragraph: fade + lift from below (450ms, delay 500ms)
-   - cards / stack-rows / waitlist: shared fade-rise stagger from 750ms
+   - cards / waitlist: shared fade-rise stagger from 750ms
    The drain is implemented via background-clip:text + background-position
    animation, so no DOM duplication needed — the existing
    <span class="cyber-h2-stroke">…</span> markup keeps working everywhere.
@@ -530,13 +598,11 @@
   animation: section-sub-rise 0.45s 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 .cyber-section.active .cyber-card,
-.cyber-section.active .stack-row,
 .cyber-section.active .waitlist-shell {
   animation: section-content-rise 0.55s 0.75s ease-out backwards;
 }
 /* Card grid stagger — rows of three light up together */
-.cyber-section.active .cyber-card:nth-child(n+4):nth-child(-n+6),
-.cyber-section.active .stack-row:nth-child(n+4):nth-child(-n+6)  { animation-delay: 0.9s; }
+.cyber-section.active .cyber-card:nth-child(n+4):nth-child(-n+6) { animation-delay: 0.9s; }
 .cyber-section.active .cyber-card:nth-child(n+7):nth-child(-n+9)  { animation-delay: 1.05s; }
 .cyber-section.active .cyber-card:nth-child(n+10):nth-child(-n+12) { animation-delay: 1.2s; }
 
@@ -807,6 +873,26 @@ section[data-vis="off"] *,
 section[data-vis="off"] *::before,
 section[data-vis="off"] *::after {
   animation-name: none !important;
+}
+/* Section scanline fix: the `.cyber-section::after` is the horizontal
+   sweep that fires once when the section becomes `.active`. If the
+   user scrolls past it mid-animation, the data-vis="off" rule above
+   freezes `animation-name` at whatever frame it's currently on — the
+   keyframe at 20% has opacity:0.85, so the scanline band stays
+   visible as a static green line behind the section title until the
+   user scrolls back AND the animation completes. Force opacity 0
+   while the section is offscreen, so the scanline can't get stuck
+   visible. */
+section[data-vis="off"]::after {
+  opacity: 0 !important;
+}
+/* SVG SMIL <animateMotion> is browser-driven and ignores CSS
+   animation-name overrides — the only portable way to suspend it is
+   `display: none` on the carrier. This kills SMIL playback in every
+   engine the moment the section scrolls offscreen, and it restarts
+   from t=0 when data-vis flips back to "on". */
+section[data-vis="off"] .how-loop-svg {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
