@@ -576,7 +576,6 @@
   .cyber-section.active .cyber-h2-stroke,
   .cyber-section.active .cyber-sub,
   .cyber-section.active .cyber-card,
-  .cyber-section.active .stack-row,
   .cyber-section.active .waitlist-shell { animation: none; }
 }
 @media (min-width: 1024px) {

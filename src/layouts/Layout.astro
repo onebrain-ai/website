@@ -289,9 +289,14 @@ const ogImageUrl = `https://onebrain.run${image}`;
       // Pre-clears every cyber-pill text span on load so it starts
       // blank, then types in once per section. The blinking caret
       // shows while data-typing="1" via CSS in global.css.
+      // Skipped entirely when prefers-reduced-motion is set or when
+      // the page has no cyber-pills (e.g. /404).
       // ────────────────────────────────────────────────────────────
       (function () {
-        document.querySelectorAll('.cyber-pill > span:not(.cyber-pill-dot)').forEach((span) => {
+        const pills = document.querySelectorAll('.cyber-pill > span:not(.cyber-pill-dot)');
+        if (!pills.length) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        pills.forEach((span) => {
           if (span.dataset.original != null) return;
           span.dataset.original = span.textContent || '';
           span.textContent = '';
@@ -393,8 +398,8 @@ const ogImageUrl = `https://onebrain.run${image}`;
           // dot clicks (not just header clicks) highlight the right
           // menu item.
           const activeHref = dots[i].dataset.target;
-          navLinksByHref.forEach((link, href) => {
-            link.classList.toggle('is-active', href === activeHref);
+          navLinks.forEach(({ el, href }) => {
+            el.classList.toggle('is-active', href === activeHref);
           });
         }
 

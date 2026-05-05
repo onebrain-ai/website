@@ -285,16 +285,19 @@ import Brain from "../components/Brain.astro";
     50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.08); }
   }
   @keyframes nf-beacon-ring-out {
-    0%   { transform: translate(-50%, -50%) scale(0.55); opacity: 0;    border-color: rgba(255, 45, 146, 0.85); }
+    /* Pure transform + opacity — composited every frame, no paint. */
+    0%   { transform: translate(-50%, -50%) scale(0.55); opacity: 0;   }
     20%  { opacity: 0.9; }
-    100% { transform: translate(-50%, -50%) scale(1.45); opacity: 0;    border-color: rgba(255, 45, 146, 0.1);  }
+    100% { transform: translate(-50%, -50%) scale(1.45); opacity: 0;   }
   }
 
-  /* Wordmark + tagline below the beacon */
+  /* Wordmark + tagline below the beacon — left-edge aligned so the
+     bold "OneBrain" sits flush with the first letter of "YOUR AI
+     THINKING PARTNER" rather than visually centred over it. */
   .nf-brand-text {
     display: inline-flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 1.5rem;
   }
   .nf-wordmark {

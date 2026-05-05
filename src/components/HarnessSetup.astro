@@ -43,9 +43,9 @@ const harnesses = [
 ];
 
 const llmRoutes = [
-  { tag: 'LOCAL',  label: 'mlx · ollama · llama.cpp',           desc: 'Run a local model via litellm / claude-code-router proxy.' },
-  { tag: 'CLOUD',  label: 'claude · gemini · gpt · groq',        desc: 'Bring your own API key. Switch providers without code changes.' },
-  { tag: 'HYBRID', label: 'route by task or by cost',             desc: 'Cheap models for routine, premium models when it counts.' },
+  { tag: 'LOCAL',  label: 'mlx · ollama · llama.cpp'    },
+  { tag: 'CLOUD',  label: 'claude · gemini · gpt · groq' },
+  { tag: 'HYBRID', label: 'route by task or by cost'     },
 ];
 ---
 
@@ -460,15 +460,6 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
   .byo-cmd-body .cmt { color: rgba(255, 255, 255, 0.35); }
   .byo-cmd-body .kw  { color: var(--byo-accent); }
   .byo-cmd-body .str { color: #ff8a3c; }
-
-  .byo-foot {
-    margin-top: 10px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.55);
-    text-align: center;
-  }
 
   /* Section sizing tightening — fit in one viewport. Override default
      desktop section padding (4rem/3rem) so the dense 4-card + BYO grid
