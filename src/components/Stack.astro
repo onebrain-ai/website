@@ -423,6 +423,12 @@ const layers = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    /* Belt-and-braces: skip the reveal keyframe AND set the visible
+       end-state directly, so any environment that suppresses keyframes
+       (reduced-motion, browser flags, reader mode) still shows the
+       diagram instead of a column of invisible layers. */
+    .hs-layer { opacity: 1; transform: none; }
+    .cyber-section.active .hs-layer { animation: none; }
     .hs-band-dot,
     .hs-particle,
     .hs-stripe::after { animation: none; }

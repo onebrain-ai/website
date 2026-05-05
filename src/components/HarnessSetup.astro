@@ -137,10 +137,11 @@ const llmRoutes = [
             <span class="byo-cmd-dot byo-cmd-dot-g"></span>
             <span class="byo-cmd-title">~/vault · BYO_LLM</span>
           </div>
-          <pre class="byo-cmd-body"><code><span class="cmt"># claude-code-router handles Anthropic ↔ provider translation</span>
-npx @musistudio/claude-code-router
+          <pre class="byo-cmd-body"><code><span class="cmt"># claude-code-router routes Anthropic ↔ any provider</span>
+npm install -g @musistudio/claude-code-router
+ccr code           <span class="cmt"># config + launch Claude Code via the router</span>
 
-<span class="cmt"># Or direct against any Anthropic-protocol endpoint</span>
+<span class="cmt"># Or direct: any Anthropic-protocol endpoint</span>
 <span class="kw">export</span> ANTHROPIC_BASE_URL=<span class="str">https://your-router-host</span>
 <span class="kw">export</span> ANTHROPIC_API_KEY=<span class="str">sk-byok</span>
 <span class="kw">cd</span> vault &amp;&amp; claude</code></pre>
