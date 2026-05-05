@@ -85,6 +85,25 @@
   footer {
     scroll-snap-align: end;
   }
+
+  /* Mobile / tablet — disable scroll-snap so the user can scroll freely
+     through tall sections (the lg+ side-by-side columns collapse into
+     stacked content below 1024px, making any single section taller than
+     the viewport). The IntersectionObserver-driven boot scanline on
+     `.cyber-section.active` is independent of scroll-snap, so each
+     section still flashes its scanline as it enters the viewport. */
+  @media (max-width: 1023px) {
+    html {
+      scroll-snap-type: none;
+    }
+    main > section,
+    footer {
+      scroll-snap-align: none;
+    }
+    main > section#top {
+      scroll-margin-top: 0;
+    }
+  }
 }
 
 /* ── Section spine (right-edge HUD / scroll progress) ────────────────
@@ -253,7 +272,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 4px;
   opacity: 0.7;
 }
 .warp-mark-brain {
@@ -274,7 +293,7 @@
   font-size: 2rem;
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.92);
-  margin-top: 4px;
+  margin-top: 0;
 }
 .warp-mark-status {
   display: inline-flex;
@@ -484,38 +503,66 @@
   animation: section-scanline 1.1s ease-out;
 }
 
-/* Every revealed element rides the same shared fade-up keyframe.
-   Pill, sub paragraph, cards, stack rows, waitlist console, even the H2
-   stroke — same opacity-+-translateY recipe, only the delay changes so
-   the page reads as content lighting up in the scanline's wake. */
-.cyber-section.active .cyber-pill,
-.cyber-section.active .cyber-h2-stroke,
-.cyber-section.active .cyber-sub,
+/* ─────────────────────────────────────────────────────────────────
+   SECTION ENTRY CHOREOGRAPHY (Option D — combined cinematic)
+   - pill: fade + tiny drop (250ms, delay 100ms)
+   - h2 entire element: fade + slide from left (450ms, delay 250ms)
+   - h2 stroke variant: COLOR DRAIN left → right (750ms, delay 700ms)
+   - sub paragraph: fade + lift from below (450ms, delay 500ms)
+   - cards / stack-rows / waitlist: shared fade-rise stagger from 750ms
+   The drain is implemented via background-clip:text + background-position
+   animation, so no DOM duplication needed — the existing
+   <span class="cyber-h2-stroke">…</span> markup keeps working everywhere.
+   ───────────────────────────────────────────────────────────────── */
+.cyber-section.active .cyber-pill {
+  animation: section-pill-rise 0.4s 0.1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.cyber-section.active .cyber-h2 {
+  animation: section-h2-rise 0.45s 0.25s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.cyber-section.active .cyber-h2-stroke {
+  /* The drain runs ON TOP of the parent h2 fade-slide. backwards holds
+     the filled (0%) state during delay so the stroke is visibly filled
+     when the h2 finishes fading in, then drains. */
+  animation: section-h2-drain 0.75s 0.7s cubic-bezier(0.55, 0, 0.45, 1) backwards;
+}
+.cyber-section.active .cyber-sub {
+  animation: section-sub-rise 0.45s 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
 .cyber-section.active .cyber-card,
 .cyber-section.active .stack-row,
 .cyber-section.active .waitlist-shell {
-  animation: section-content-rise 0.55s ease-out backwards;
+  animation: section-content-rise 0.55s 0.75s ease-out backwards;
 }
-
-/* Anchor delays to scanline travel: at t=0.25s the band is at the top
-   of the section and pill region; at t=0.55s it's at the H2/sub area;
-   from t=0.7s through ~1.2s it sweeps the card grid. Cards are grouped
-   in rows of three so each row lights up together. */
-.cyber-section.active .cyber-pill        { animation-delay: 0.25s; }
-.cyber-section.active .cyber-h2-stroke   { animation-delay: 0.4s; }
-.cyber-section.active .cyber-sub         { animation-delay: 0.55s; }
-.cyber-section.active .cyber-card,
-.cyber-section.active .stack-row,
-.cyber-section.active .waitlist-shell    { animation-delay: 0.7s; }
+/* Card grid stagger — rows of three light up together */
 .cyber-section.active .cyber-card:nth-child(n+4):nth-child(-n+6),
-.cyber-section.active .stack-row:nth-child(n+4):nth-child(-n+6)  { animation-delay: 0.85s; }
-.cyber-section.active .cyber-card:nth-child(n+7):nth-child(-n+9)  { animation-delay: 1.0s; }
-.cyber-section.active .cyber-card:nth-child(n+10):nth-child(-n+12) { animation-delay: 1.15s; }
+.cyber-section.active .stack-row:nth-child(n+4):nth-child(-n+6)  { animation-delay: 0.9s; }
+.cyber-section.active .cyber-card:nth-child(n+7):nth-child(-n+9)  { animation-delay: 1.05s; }
+.cyber-section.active .cyber-card:nth-child(n+10):nth-child(-n+12) { animation-delay: 1.2s; }
 
 @keyframes section-scanline {
   0%   { opacity: 0; transform: translateY(-100%); }
   20%  { opacity: 0.85; }
   100% { opacity: 0; transform: translateY(100%); }
+}
+@keyframes section-pill-rise {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes section-h2-rise {
+  0%   { opacity: 0; transform: translateX(-12px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes section-h2-drain {
+  /* From filled (accent half visible at right side of bg) to drained
+     (transparent half slid in from the left) — i.e. drain reads as
+     "wave moving left → right". */
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0 0;    }
+}
+@keyframes section-sub-rise {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes section-content-rise {
   0%   { opacity: 0; transform: translateY(12px); }
@@ -525,10 +572,10 @@
 @media (prefers-reduced-motion: reduce) {
   .cyber-section.active::after,
   .cyber-section.active .cyber-pill,
+  .cyber-section.active .cyber-h2,
   .cyber-section.active .cyber-h2-stroke,
   .cyber-section.active .cyber-sub,
   .cyber-section.active .cyber-card,
-  .cyber-section.active .stack-row,
   .cyber-section.active .waitlist-shell { animation: none; }
 }
 @media (min-width: 1024px) {
@@ -614,6 +661,28 @@
   animation: cyber-pulse 1.5s ease-in-out infinite;
 }
 
+/* Typewriter caret — appears as a small blinking block at the end of
+   the eyebrow pill text while data-typing="1" (set by the typewriter
+   IIFE in Layout.astro). Disappears the moment typing finishes. */
+.cyber-pill[data-typing="1"] > span:not(.cyber-pill-dot)::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 11px;
+  margin-left: 4px;
+  vertical-align: -1px;
+  background: currentColor;
+  animation: cyber-caret-blink 0.55s steps(2) infinite;
+}
+@keyframes cyber-caret-blink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cyber-pill[data-typing="1"] > span:not(.cyber-pill-dot)::after {
+    animation: none;
+  }
+}
+
 .cyber-h2 {
   font-family: var(--font-display);
   font-weight: 700;
@@ -630,6 +699,23 @@
   color: transparent;
   -webkit-text-stroke: 1.5px var(--section-accent);
   text-shadow: 0 0 50px color-mix(in srgb, var(--section-accent) 35%, transparent);
+  /* Color-drain effect support: a 200%-wide sharp gradient (transparent
+     on the left half, accent on the right) clipped to the text shape
+     via background-clip:text. Default state (background-position: 0 0)
+     shows the transparent half — i.e. stroke-only — so the element
+     looks identical to before for users without the active animation.
+     The section-h2-drain keyframe animates the position 100% → 0%,
+     which slides the transparent half across from LEFT to RIGHT —
+     so the accent fill drains starting at the left edge, with the
+     right side holding accent the longest. */
+  background-image: linear-gradient(90deg,
+    transparent 50%,
+    var(--section-accent) 50%);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+          background-clip: text;
 }
 
 .cyber-sub {

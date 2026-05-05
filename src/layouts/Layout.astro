@@ -118,7 +118,8 @@ const ogImageUrl = `https://onebrain.run${image}`;
         <li data-target="#top"      style="--dot-accent: #ff2d92;"><span></span></li>
         <li data-target="#features" style="--dot-accent: #00ff9d;"><span></span></li>
         <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><span></span></li>
-        <li data-target="#stack"    style="--dot-accent: #c8ff00;"><span></span></li>
+        <li data-target="#stack"    style="--dot-accent: #00f3ff;"><span></span></li>
+        <li data-target="#harness-setup" style="--dot-accent: #ffb000;"><span></span></li>
         <li data-target="#workflow" style="--dot-accent: #7c3aed;"><span></span></li>
         <li data-target="#how"      style="--dot-accent: #ffb000;"><span></span></li>
         <li data-target="#commands" style="--dot-accent: #ff5e3a;"><span></span></li>
@@ -281,6 +282,70 @@ const ogImageUrl = `https://onebrain.run${image}`;
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       })();
 
+      // ────────────────────────────────────────────────────────────
+      // Pill TYPEWRITER — types each section's eyebrow text in
+      // character-by-character when the section first scrolls into
+      // view (and again on warp arrival, see warpTo below).
+      // Pre-clears every cyber-pill text span on load so it starts
+      // blank, then types in once per section. The blinking caret
+      // shows while data-typing="1" via CSS in global.css.
+      // Skipped entirely when prefers-reduced-motion is set or when
+      // the page has no cyber-pills (e.g. /404).
+      // ────────────────────────────────────────────────────────────
+      (function () {
+        const pills = document.querySelectorAll('.cyber-pill > span:not(.cyber-pill-dot)');
+        if (!pills.length) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        pills.forEach((span) => {
+          if (span.dataset.original != null) return;
+          span.dataset.original = span.textContent || '';
+          span.textContent = '';
+        });
+
+        function typeInSection(section) {
+          const span = section.querySelector('.cyber-pill > span:not(.cyber-pill-dot)');
+          if (!span) return;
+          const target = span.dataset.original || '';
+          if (!target) return;
+          const pill = span.parentElement;
+          if (pill) pill.dataset.typing = '1';
+          span.textContent = '';
+          let i = 0;
+          // Match the pill fade-rise delay (0.1s) + a small buffer so
+          // the first character appears as the pill becomes visible.
+          setTimeout(function step() {
+            if (i <= target.length) {
+              span.textContent = target.slice(0, i);
+              i++;
+              setTimeout(step, 22);
+            } else {
+              if (pill) pill.dataset.typing = '0';
+            }
+          }, 220);
+        }
+
+        // Expose so warpTo can re-fire on warp arrival.
+        window.__obTypewriter = typeInSection;
+
+        // Each section types only once on first reveal — subsequent
+        // re-entries (scroll back) keep the already-typed text static.
+        const typed = new WeakSet();
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting && !typed.has(e.target)) {
+                typed.add(e.target);
+                typeInSection(e.target);
+              }
+            });
+          }, { threshold: 0.1 });
+          document.querySelectorAll('.cyber-section.reveal').forEach((s) => io.observe(s));
+        }
+        // Also expose the typed registry so warpTo can clear it for the
+        // target section, forcing a re-type on warp arrival.
+        window.__obTypedSet = typed;
+      })();
+
       // Section visibility: tag every <section> with data-vis="off" while it
       // is outside the viewport, and "on" while it is intersecting. CSS rules
       // in global.css use this attribute to drop animation-name to none on
@@ -333,8 +398,8 @@ const ogImageUrl = `https://onebrain.run${image}`;
           // dot clicks (not just header clicks) highlight the right
           // menu item.
           const activeHref = dots[i].dataset.target;
-          navLinksByHref.forEach((link, href) => {
-            link.classList.toggle('is-active', href === activeHref);
+          navLinks.forEach(({ el, href }) => {
+            el.classList.toggle('is-active', href === activeHref);
           });
         }
 
@@ -409,6 +474,14 @@ const ogImageUrl = `https://onebrain.run${image}`;
           t.classList.remove('active');
           void t.offsetWidth;
           t.classList.add('active');
+          // Re-fire the eyebrow typewriter on warp arrival. The
+          // intersection-driven observer only types each section once;
+          // a deliberate warp click is a "re-enter the section" gesture
+          // that should replay the choreography, including the type-in.
+          if (window.__obTypewriter && t.classList.contains('cyber-section')) {
+            if (window.__obTypedSet) window.__obTypedSet.delete(t);
+            window.__obTypewriter(t);
+          }
         }, 1200);
         setTimeout(() => {
           if (_warpOverlay) _warpOverlay.classList.remove('warp-out');

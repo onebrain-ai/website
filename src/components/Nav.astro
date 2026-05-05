@@ -5,6 +5,7 @@ const navLinks = [
   { href: '#features', label: 'Features' },
   { href: '#synergy',  label: 'Synergy'  },
   { href: '#stack',    label: 'Stack'    },
+  { href: '#harness-setup', label: 'Harness' },
   { href: '#workflow', label: 'Workflow' },
   { href: '#how',      label: 'How'      },
   { href: '#commands', label: 'Commands' },
@@ -25,7 +26,7 @@ const navLinks = [
       </div>
     </a>
 
-    <div class="hidden lg:flex items-center gap-8 font-mono text-[10px] tracking-[0.25em] uppercase text-[var(--color-muted)]">
+    <div class="hidden lg:flex items-center gap-5 xl:gap-7 font-mono text-[10px] tracking-[0.22em] uppercase text-[var(--color-muted)]">
       {navLinks.map(l => (
         <a href={l.href} class="hover:text-white transition-colors relative group">
           <span class="text-[var(--color-accent-2)] opacity-0 group-hover:opacity-100 mr-1 transition-opacity">[</span>{l.label}<span class="text-[var(--color-accent-2)] opacity-0 group-hover:opacity-100 ml-1 transition-opacity">]</span>
@@ -187,10 +188,12 @@ const navLinks = [
     color: var(--color-accent-2);
     text-transform: uppercase;
     opacity: 0.7;
+    /* Keep the full tagline on one line — at the previous gap-8 nav
+       spacing the second word would push "Thinking Partner" to a
+       second line under "Your AI". gap reduced to gap-5 (lg) /
+       gap-7 (xl) so this nowrap fits comfortably. */
+    white-space: nowrap;
   }
-  /* Force "Thinking Partner" to break as one unit so the wrap pattern
-     reads "Your AI" / "Thinking Partner" instead of the default
-     "Your AI Thinking" / "Partner". */
   .nav-tagline-pair {
     white-space: nowrap;
   }
