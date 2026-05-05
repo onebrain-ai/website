@@ -25,7 +25,7 @@ import Brain from "../components/Brain.astro";
         <span class="nf-band-dot"></span>
         ONEBRAIN.OS // ROUTING_FAULT
       </span>
-      <span class="nf-band-meta">EXIT_CODE 404</span>
+      <span class="nf-band-meta">VAULT_NAV · CHECK_PATH</span>
     </div>
 
     <!-- Bottom status band -->
@@ -35,25 +35,29 @@ import Brain from "../components/Brain.astro";
     </div>
 
     <div class="nf-shell">
-      <!-- Brand block: logo + wordmark + tagline -->
-      <a href="/" class="nf-brand" aria-label="Return to OneBrain home">
-        <Brain size={56} ariaLabel="OneBrain" />
-        <div class="nf-brand-text">
-          <span class="nf-wordmark">OneBrain</span>
-          <span class="nf-tagline">Your AI <span class="nf-tagline-pair">Thinking Partner</span></span>
-        </div>
+      <!-- Beacon: large brain logo with concentric pulsing rings.
+           Replaces the previous "404" headline — the logo + rings are
+           the focal point now, communicating "OneBrain looking for a
+           signal that isn't there" without ever spelling out the code. -->
+      <a href="/" class="nf-beacon" aria-label="Return to OneBrain home">
+        <span class="nf-beacon-ring nf-beacon-ring-1" aria-hidden="true"></span>
+        <span class="nf-beacon-ring nf-beacon-ring-2" aria-hidden="true"></span>
+        <span class="nf-beacon-ring nf-beacon-ring-3" aria-hidden="true"></span>
+        <span class="nf-beacon-glow" aria-hidden="true"></span>
+        <span class="nf-beacon-brain"><Brain size={132} ariaLabel="OneBrain" /></span>
       </a>
+
+      <!-- Brand wordmark + tagline below the beacon -->
+      <div class="nf-brand-text">
+        <span class="nf-wordmark">OneBrain</span>
+        <span class="nf-tagline">Your AI <span class="nf-tagline-pair">Thinking Partner</span></span>
+      </div>
 
       <!-- Status pill -->
       <div class="nf-pill">
         <span class="nf-pill-dot" aria-hidden="true"></span>
         <span>SIGNAL_LOST // PAGE_NOT_FOUND</span>
       </div>
-
-      <!-- Big 404 with stroke variant -->
-      <h1 class="nf-code">
-        <span class="nf-code-stroke" data-text="404">404</span>
-      </h1>
 
       <!-- Message -->
       <p class="nf-msg">
@@ -220,38 +224,96 @@ import Brain from "../components/Brain.astro";
     max-width: 640px;
   }
 
-  /* Brand block */
-  .nf-brand {
+  /* ── Beacon: brain logo + concentric pulsing rings ──
+     Three rings expand outward from the brain centre with staggered
+     phases so the diagram reads as "searching" — no copy needed. */
+  .nf-beacon {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 2rem;
+    justify-content: center;
+    width: 260px;
+    height: 260px;
+    margin: 0 auto 1.5rem;
     text-decoration: none;
-    transition: opacity 0.2s;
+    transition: transform 0.3s ease;
   }
-  .nf-brand:hover { opacity: 0.85; }
+  .nf-beacon:hover { transform: scale(1.02); }
+  .nf-beacon-brain {
+    position: relative;
+    z-index: 4;
+    filter:
+      drop-shadow(0 0 28px rgba(255, 45, 146, 0.55))
+      drop-shadow(0 0 70px rgba(0, 243, 255, 0.22));
+    animation: nf-beacon-breathe 3.4s ease-in-out infinite;
+  }
+  .nf-beacon-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 220px;
+    height: 220px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle,
+      rgba(255, 45, 146, 0.32) 0%,
+      rgba(255, 45, 146, 0.12) 28%,
+      transparent 65%);
+    filter: blur(20px);
+    z-index: 1;
+    animation: nf-beacon-glow-pulse 3.4s ease-in-out infinite;
+  }
+  .nf-beacon-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 45, 146, 0.45);
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .nf-beacon-ring-1 { width: 180px; height: 180px; animation: nf-beacon-ring-out 3.6s ease-out infinite;          }
+  .nf-beacon-ring-2 { width: 180px; height: 180px; animation: nf-beacon-ring-out 3.6s 1.2s ease-out infinite;     }
+  .nf-beacon-ring-3 { width: 180px; height: 180px; animation: nf-beacon-ring-out 3.6s 2.4s ease-out infinite;     }
+  @keyframes nf-beacon-breathe {
+    0%, 100% { transform: scale(1);    }
+    50%      { transform: scale(1.04); }
+  }
+  @keyframes nf-beacon-glow-pulse {
+    0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1);    }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.08); }
+  }
+  @keyframes nf-beacon-ring-out {
+    0%   { transform: translate(-50%, -50%) scale(0.55); opacity: 0;    border-color: rgba(255, 45, 146, 0.85); }
+    20%  { opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.45); opacity: 0;    border-color: rgba(255, 45, 146, 0.1);  }
+  }
+
+  /* Wordmark + tagline below the beacon */
   .nf-brand-text {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
-    text-align: left;
+    align-items: center;
+    margin-bottom: 1.5rem;
   }
   .nf-wordmark {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: 1.9rem;
     color: #fff;
     letter-spacing: -0.01em;
     line-height: 1.05;
   }
   .nf-tagline {
-    margin-top: 4px;
+    margin-top: 6px;
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-size: 10px;
+    letter-spacing: 0.3em;
     color: var(--color-accent-2, #00f3ff);
     text-transform: uppercase;
-    opacity: 0.75;
+    opacity: 0.8;
     white-space: nowrap;
   }
   .nf-tagline-pair { white-space: nowrap; }
@@ -288,36 +350,6 @@ import Brain from "../components/Brain.astro";
     border-radius: 50%;
     box-shadow: 0 0 12px currentColor;
     animation: nf-pulse 1.6s ease-in-out infinite;
-  }
-
-  /* Big 404 */
-  .nf-code {
-    margin: 0 0 1.5rem;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 700;
-    font-size: clamp(7rem, 21vw, 16rem);
-    line-height: 0.9;
-    letter-spacing: -0.02em;
-    color: #fff;
-  }
-  .nf-code-stroke {
-    color: transparent;
-    -webkit-text-stroke: 2px #ff2d92;
-    text-shadow:
-      0 0 60px rgba(255, 45, 146, 0.45),
-      0 0 120px rgba(255, 45, 146, 0.2);
-    position: relative;
-    display: inline-block;
-    animation: nf-glitch 7s linear infinite;
-  }
-  /* RGB-split flicker every ~7s — quick 500ms cycle, otherwise stable. */
-  @keyframes nf-glitch {
-    0%, 92%, 100% { text-shadow: 0 0 60px rgba(255, 45, 146, 0.45), 0 0 120px rgba(255, 45, 146, 0.2); transform: translate(0, 0); }
-    93%  { text-shadow: -3px 0 #00f3ff, 3px 0 #ff2d92, 0 0 60px rgba(255, 45, 146, 0.45); transform: translate(1px, 0); }
-    94%  { text-shadow: 3px 0 #00f3ff, -3px 0 #ff2d92, 0 0 60px rgba(255, 45, 146, 0.45); transform: translate(-1px, 0); }
-    95%  { text-shadow: -2px 0 #00f3ff, 2px 0 #ff2d92, 0 0 60px rgba(255, 45, 146, 0.45); transform: translate(1px, -1px); }
-    96%  { text-shadow: 0 0 60px rgba(255, 45, 146, 0.45), 0 0 120px rgba(255, 45, 146, 0.2); transform: translate(0, 0); }
   }
 
   /* Message */
@@ -384,12 +416,12 @@ import Brain from "../components/Brain.astro";
   .nf-shell > * {
     animation: nf-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
-  .nf-shell > .nf-brand { animation-delay: 0.05s; }
-  .nf-shell > .nf-pill  { animation-delay: 0.2s;  }
-  .nf-shell > .nf-code  { animation-delay: 0.35s; }
-  .nf-shell > .nf-msg   { animation-delay: 0.55s; }
-  .nf-shell > .nf-log   { animation-delay: 0.7s;  }
-  .nf-shell > .nf-cta   { animation-delay: 0.95s; }
+  .nf-shell > .nf-beacon     { animation-delay: 0.05s; }
+  .nf-shell > .nf-brand-text { animation-delay: 0.3s;  }
+  .nf-shell > .nf-pill       { animation-delay: 0.5s;  }
+  .nf-shell > .nf-msg        { animation-delay: 0.65s; }
+  .nf-shell > .nf-log        { animation-delay: 0.8s;  }
+  .nf-shell > .nf-cta        { animation-delay: 1.05s; }
   @keyframes nf-rise {
     0%   { opacity: 0; transform: translateY(10px); }
     100% { opacity: 1; transform: translateY(0);    }
@@ -400,8 +432,11 @@ import Brain from "../components/Brain.astro";
     .nf-orb-b,
     .nf-band-dot,
     .nf-pill-dot,
-    .nf-code-stroke,
+    .nf-beacon-brain,
+    .nf-beacon-glow,
+    .nf-beacon-ring,
     .nf-shell > *,
     .nf-log-line { animation: none; }
+    .nf-beacon-ring { display: none; }
   }
 </style>

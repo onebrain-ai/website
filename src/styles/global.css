@@ -554,8 +554,11 @@
   100% { opacity: 1; transform: translateX(0); }
 }
 @keyframes section-h2-drain {
-  0%   { background-position: 0 0;    }
-  100% { background-position: 100% 0; }
+  /* From filled (accent half visible at right side of bg) to drained
+     (transparent half slid in from the left) — i.e. drain reads as
+     "wave moving left → right". */
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0 0;    }
 }
 @keyframes section-sub-rise {
   0%   { opacity: 0; transform: translateY(8px); }
@@ -659,6 +662,28 @@
   animation: cyber-pulse 1.5s ease-in-out infinite;
 }
 
+/* Typewriter caret — appears as a small blinking block at the end of
+   the eyebrow pill text while data-typing="1" (set by the typewriter
+   IIFE in Layout.astro). Disappears the moment typing finishes. */
+.cyber-pill[data-typing="1"] > span:not(.cyber-pill-dot)::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 11px;
+  margin-left: 4px;
+  vertical-align: -1px;
+  background: currentColor;
+  animation: cyber-caret-blink 0.55s steps(2) infinite;
+}
+@keyframes cyber-caret-blink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cyber-pill[data-typing="1"] > span:not(.cyber-pill-dot)::after {
+    animation: none;
+  }
+}
+
 .cyber-h2 {
   font-family: var(--font-display);
   font-weight: 700;
@@ -675,19 +700,20 @@
   color: transparent;
   -webkit-text-stroke: 1.5px var(--section-accent);
   text-shadow: 0 0 50px color-mix(in srgb, var(--section-accent) 35%, transparent);
-  /* Color-drain effect support: a 200%-wide sharp gradient (accent on
-     the left half, transparent on the right) is clipped to the text
-     shape via background-clip:text. Default state (background-position:
-     100% 0) shows the transparent half — i.e. stroke-only — so the
-     element looks identical to before for users without the active
-     animation. The section-h2-drain keyframe animates the position
-     0% → 100% to "drain" the accent fill from left to right,
-     revealing the outline letterforms beneath. */
+  /* Color-drain effect support: a 200%-wide sharp gradient (transparent
+     on the left half, accent on the right) clipped to the text shape
+     via background-clip:text. Default state (background-position: 0 0)
+     shows the transparent half — i.e. stroke-only — so the element
+     looks identical to before for users without the active animation.
+     The section-h2-drain keyframe animates the position 100% → 0%,
+     which slides the transparent half across from LEFT to RIGHT —
+     so the accent fill drains starting at the left edge, with the
+     right side holding accent the longest. */
   background-image: linear-gradient(90deg,
-    var(--section-accent) 50%,
-    transparent 50%);
+    transparent 50%,
+    var(--section-accent) 50%);
   background-size: 200% 100%;
-  background-position: 100% 0;
+  background-position: 0 0;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
           background-clip: text;
