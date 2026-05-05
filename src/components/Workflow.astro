@@ -373,4 +373,11 @@ const dispatches = [
     .hub-spoke-set { opacity: 1; }
     .hub-particle { display: none; }
   }
+
+  /* Mobile: trim the third recap beat so the section settles in fewer
+     screens — first 2 beats already carry the "vault as command center"
+     idea. */
+  @media (max-width: 720px) {
+    .workflow-recap li:nth-child(3) { display: none; }
+  }
 </style>

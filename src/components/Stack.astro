@@ -1,49 +1,44 @@
 ---
+// 4-layer architecture mirroring the README harness-os-stack diagram.
+// Top → bottom: OneBrain (plugin + CLI combined) → Harness → LLM → Obsidian Vault.
+// Vault sits at the BASE as the durable source of truth that everything
+// above ultimately reads from and writes to.
 const layers = [
   {
     idx: '01',
-    name: 'OBSIDIAN VAULT',
-    role: 'COGNITIVE_INTERFACE',
-    desc: 'Plain Markdown — your single source of truth.',
-    sub: 'Notes · memory · decisions · knowledge graph',
-    tag: 'USER_FACING',
-    accent: '#00f3ff',
-  },
-  {
-    idx: '02',
-    name: 'ONEBRAIN PLUGIN',
-    role: 'SKILLS_AND_HOOKS',
-    desc: '24+ skills + lifecycle hooks. Loaded into any harness.',
-    sub: 'braindump · capture · research · distill · doctor · ...',
-    tag: 'BEHAVIOR_DEF',
+    name: 'ONEBRAIN',
+    role: 'OS_LAYER',
+    desc: '24+ skills · lifecycle hooks · vault sync · indexing · checkpoints · harness routing.',
+    sub: 'plugin + CLI — the OS that keeps every harness on the same page.',
+    tag: 'PLUGIN+CLI',
     accent: '#ff2d92',
   },
   {
-    idx: '03',
-    name: 'ONEBRAIN CLI',
-    role: 'HARNESS_ORCHESTRATOR',
-    desc: 'Vault sync · indexing · checkpoints · routing.',
-    sub: 'The OS layer that keeps every harness on the same page.',
-    tag: 'CONTEXT_BRIDGE',
-    accent: '#ffb000',
-  },
-  {
-    idx: '04',
+    idx: '02',
     name: 'HARNESS',
     role: 'AGENTIC_RUNTIME',
-    desc: 'Bring your own. Pick by task, by skill, by cost.',
-    sub: 'claude code · gemini cli · codex · qwen · cursor · ...',
+    desc: 'Bring your own. Pick by familiarity, by task, or by cost.',
+    sub: 'claude code · gemini cli · codex · qwen · ...',
     tag: 'BYO_HARNESS',
     accent: '#bc13fe',
   },
   {
-    idx: '05',
+    idx: '03',
     name: 'LLM',
     role: 'INTELLIGENCE_SOURCE',
-    desc: 'Whatever powers the harness — OneBrain stays consistent.',
+    desc: 'Whatever powers the harness — OneBrain stays consistent across swaps.',
     sub: 'local (mlx · ollama) · cloud (claude · gemini · gpt) · raw api',
     tag: 'RAW_TOKENS',
     accent: '#c8ff00',
+  },
+  {
+    idx: '04',
+    name: 'OBSIDIAN VAULT',
+    role: 'SOURCE_OF_TRUTH',
+    desc: 'Plain Markdown — notes, memory, decisions, knowledge graph.',
+    sub: 'lives forever · agent-readable · version-controlled · yours.',
+    tag: 'FOUNDATION',
+    accent: '#00f3ff',
   },
 ];
 ---
@@ -89,8 +84,8 @@ const layers = [
         </div>
       </header>
 
-      <!-- RIGHT: Animated 5-layer architecture diagram -->
-      <div class="harness-stack" role="img" aria-label="Five-layer architecture: Obsidian Vault, OneBrain Plugin, OneBrain CLI, Harness, LLM — top to bottom.">
+      <!-- RIGHT: Animated 4-layer architecture diagram -->
+      <div class="harness-stack" role="img" aria-label="Four-layer architecture: OneBrain (plugin and CLI), Harness, LLM, Obsidian Vault — top to bottom.">
         <span class="hs-corner hs-corner-tl" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-tr" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-bl" aria-hidden="true"></span>
@@ -99,7 +94,7 @@ const layers = [
         <div class="hs-band hs-band-top" aria-hidden="true">
           <span class="hs-band-dot"></span>
           <span class="hs-band-label">HARNESS_OS_STACK · ↑ INTERFACE</span>
-          <span class="hs-band-meta">ARCH_v1.0 · 05_LAYERS</span>
+          <span class="hs-band-meta">ARCH_v1.0 · 04_LAYERS</span>
         </div>
 
         <div class="hs-layers">
@@ -139,7 +134,7 @@ const layers = [
         </div>
 
         <div class="hs-band hs-band-bottom" aria-hidden="true">
-          <span class="hs-band-meta-mute">↓ INTELLIGENCE</span>
+          <span class="hs-band-meta-mute">↓ FOUNDATION</span>
           <span class="hs-band-meta-mute">CONTEXT_FLOWS_BOTH_WAYS · VAULT_AGNOSTIC</span>
         </div>
       </div>
@@ -245,7 +240,9 @@ const layers = [
     gap: 6px;
   }
 
-  /* Animated spine (vertical with travelling particles) */
+  /* Animated spine (vertical with travelling particles).
+     Gradient stops match the 4 layer accents top→bottom:
+     OneBrain magenta → Harness violet → LLM lime → Vault cyan. */
   .hs-spine {
     position: absolute;
     left: 14px;
@@ -254,11 +251,10 @@ const layers = [
     width: 2px;
     pointer-events: none;
     background: linear-gradient(180deg,
-      rgba(0, 243, 255, 0.5) 0%,
-      rgba(255, 45, 146, 0.5) 25%,
-      rgba(255, 176, 0, 0.5) 50%,
-      rgba(188, 19, 254, 0.5) 75%,
-      rgba(200, 255, 0, 0.5) 100%);
+      rgba(255, 45, 146, 0.5) 0%,
+      rgba(188, 19, 254, 0.5) 33%,
+      rgba(200, 255, 0, 0.5) 66%,
+      rgba(0, 243, 255, 0.5) 100%);
     mask-image: repeating-linear-gradient(180deg, #000 0 4px, transparent 4px 9px);
     -webkit-mask-image: repeating-linear-gradient(180deg, #000 0 4px, transparent 4px 9px);
   }
@@ -409,7 +405,10 @@ const layers = [
     .hs-layer-right { display: none; }
   }
 
-  /* Mobile — collapse to single column inside layer */
+  /* Mobile — collapse to single column inside layer + trim density:
+     drop the per-layer `sub` line and the bottom HUD band so each layer
+     renders as just `LAYER_NN · NAME · ROLE · DESC` for fast scan. The
+     manifesto + only 2 of its 4 rows survive (PICK_BY task / cost).  */
   @media (max-width: 720px) {
     .harness-stack { padding: 14px 12px 12px; }
     .hs-layer {
@@ -417,9 +416,12 @@ const layers = [
       gap: 6px;
       padding: 10px 14px 10px 26px;
     }
+    .hs-layer-sub { display: none; }
     .hs-band-meta-mute:last-child { display: none; }
     .hs-band-bottom { justify-content: flex-start; }
     .manifesto-tag { width: 48px; font-size: 8px; }
+    .manifesto-row:nth-child(1),
+    .manifesto-row:nth-child(3) { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {

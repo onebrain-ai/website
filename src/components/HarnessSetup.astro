@@ -196,6 +196,10 @@ npm i -g @musistudio/claude-code-router &amp;&amp; ccr code
   }
   @media (max-width: 540px) {
     .harness-grid { grid-template-columns: 1fr; }
+    /* Trim mobile density: drop the bestFor tagline and the READS row.
+       Each card stays useful with name + install/run commands. */
+    .hc-best,
+    .hc-foot { display: none; }
   }
   .harness-card {
     position: relative;

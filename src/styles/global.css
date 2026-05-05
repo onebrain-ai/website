@@ -502,6 +502,13 @@
 .cyber-section.active::after {
   animation: section-scanline 1.1s ease-out;
 }
+/* Mobile: skip the per-section scanline sweep — repeated reveals as the
+   user scrolls through every section reads as visual noise on small
+   viewports. Boot-fade choreography on text/cards is kept; only the
+   horizontal scan band is suppressed. */
+@media (max-width: 1023px) {
+  .cyber-section.active::after { animation: none; opacity: 0; }
+}
 
 /* ─────────────────────────────────────────────────────────────────
    SECTION ENTRY CHOREOGRAPHY (Option D — combined cinematic)
