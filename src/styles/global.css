@@ -521,18 +521,20 @@
   }
 }
 
-/* Brand emphasis — every prose mention of "OneBrain" in body copy gets
-   wrapped in <strong class="brand"> so the product name pops in magenta
-   against the surrounding muted body text. Aligns the inline mentions
-   with the nav wordmark + section accents.
-   `!important` is needed to win against component-scoped overrides like
-   `.hero-sub strong { color: #fff }` whose Astro auto-scoping bumps
-   the selector specificity above a plain `.brand` class. */
+/* Brand emphasis — every prose mention of "OneBrain" in body copy
+   gets wrapped in <strong class="brand"> so the product name pops in
+   pure white against the surrounding muted body text (which sits at
+   ~rgba(255,255,255,0.6–0.7) inside .cyber-sub). Bold + 100% opacity
+   + a soft white halo lifts the mentions just enough to read as
+   "the brand" without competing with section accents.
+   `!important` is needed to win against component-scoped overrides
+   like `.hero-sub strong { color: #fff }` whose Astro auto-scoping
+   bumps selector specificity above a plain `.brand` class. */
 .brand {
-  color: #ff2d92 !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
   letter-spacing: -0.005em;
-  text-shadow: 0 0 12px rgba(255, 45, 146, 0.35);
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -843,7 +845,6 @@ section[data-vis="off"] *::after {
    `display: none` on the carrier. This kills SMIL playback in every
    engine the moment the section scrolls offscreen, and it restarts
    from t=0 when data-vis flips back to "on". */
-section[data-vis="off"] .bidir-arcs,
 section[data-vis="off"] .how-loop-svg {
   display: none;
 }
