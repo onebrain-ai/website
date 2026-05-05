@@ -68,122 +68,138 @@ const tiers = [
       </p>
     </header>
 
-    <!-- ════════ 1. Bidirectional flow — engine ════════ -->
-    <div class="bidir" role="img" aria-label="Bidirectional flow: Human sends preferences, decisions, and corrections to Agent. Agent returns captures, links, and synthesis. Each interaction sharpens both.">
-      <span class="bidir-corner bidir-corner-tl" aria-hidden="true"></span>
-      <span class="bidir-corner bidir-corner-tr" aria-hidden="true"></span>
-      <span class="bidir-corner bidir-corner-bl" aria-hidden="true"></span>
-      <span class="bidir-corner bidir-corner-br" aria-hidden="true"></span>
+    <!-- ════════ Memory grid — bidir engine + tier stack side by side ════════
+         50:50 split at lg+; collapses to a single column below 1024px.
+         Both visuals are vertical so they read as parallel "engines"
+         standing next to each other. -->
+    <div class="memory-grid">
 
-      <div class="bidir-band" aria-hidden="true">
-        <span class="bidir-band-dot"></span>
-        <span class="bidir-band-label">CO_EVOLUTION_ENGINE</span>
-        <span class="bidir-band-meta">// SHARPENS_BOTH_SIDES</span>
-      </div>
+      <!-- 1. Bidirectional flow — engine (left column, vertical) -->
+      <div class="bidir" role="img" aria-label="Bidirectional flow: Human sends preferences, decisions, and corrections down to the Agent. Agent returns captures, links, and synthesis back up to the Human. Each interaction sharpens both.">
+        <span class="bidir-corner bidir-corner-tl" aria-hidden="true"></span>
+        <span class="bidir-corner bidir-corner-tr" aria-hidden="true"></span>
+        <span class="bidir-corner bidir-corner-bl" aria-hidden="true"></span>
+        <span class="bidir-corner bidir-corner-br" aria-hidden="true"></span>
 
-      <div class="bidir-stage">
-        <!-- Human core (left, cyan) -->
-        <div class="bidir-core bidir-core-human" aria-hidden="true">
-          <span class="bidir-core-ring"></span>
-          <span class="bidir-core-eyebrow">YOU</span>
-          <span class="bidir-core-name">HUMAN</span>
+        <div class="bidir-band" aria-hidden="true">
+          <span class="bidir-band-dot"></span>
+          <span class="bidir-band-label">CO_EVOLUTION_ENGINE</span>
+          <span class="bidir-band-meta">// SHARPENS_BOTH_SIDES</span>
         </div>
 
-        <!-- Bidirectional arcs SVG -->
-        <svg class="bidir-arcs" viewBox="0 0 720 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <defs>
-            <marker id="bidir-ah-pink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff2d92"/>
-            </marker>
-            <marker id="bidir-ah-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#00f3ff"/>
-            </marker>
-          </defs>
+        <div class="bidir-stage">
+          <!-- Human core (top, cyan) -->
+          <div class="bidir-core bidir-core-human" aria-hidden="true">
+            <span class="bidir-core-ring"></span>
+            <span class="bidir-core-eyebrow">YOU</span>
+            <span class="bidir-core-name">HUMAN</span>
+          </div>
 
-          <!-- HUMAN → AGENT (top arc, pink) -->
-          <g class="bidir-arc bidir-arc-down">
-            <path
-              id="bidir-path-down"
-              d="M 110 110 Q 360 -20 610 110"
-              fill="none"
-              stroke="#ff2d92"
-              stroke-width="1.6"
-              stroke-opacity="0.5"
-              stroke-dasharray="5 6"
-              marker-end="url(#bidir-ah-pink)"
-            />
-            <text class="bidir-arc-label bidir-arc-label-down" text-anchor="middle">
-              <textPath href="#bidir-path-down" startOffset="50%">
-                PREFERENCES · DECISIONS · CORRECTIONS
-              </textPath>
-            </text>
-            <circle class="bidir-flow-dot bidir-flow-dot-down" r="4" fill="#ff2d92">
-              <animateMotion dur="4.8s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#bidir-path-down"/>
-              </animateMotion>
-            </circle>
-            <circle class="bidir-flow-dot bidir-flow-dot-down" r="3" fill="#ff85c1" opacity="0.7">
-              <animateMotion dur="4.8s" begin="1.6s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#bidir-path-down"/>
-              </animateMotion>
-            </circle>
-            <circle class="bidir-flow-dot bidir-flow-dot-down" r="3" fill="#ff85c1" opacity="0.5">
-              <animateMotion dur="4.8s" begin="3.2s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#bidir-path-down"/>
-              </animateMotion>
-            </circle>
-          </g>
+          <!-- Vertical bidirectional arcs SVG -->
+          <svg class="bidir-arcs" viewBox="-130 0 260 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <!-- Arrows orient along the path tangent at marker location.
+                   With orient="auto-start-reverse" + marker-end, the arrow
+                   points in the direction the path is travelling. -->
+              <marker id="bidir-ah-pink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff2d92"/>
+              </marker>
+              <marker id="bidir-ah-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#00f3ff"/>
+              </marker>
+            </defs>
 
-          <!-- AGENT → HUMAN (bottom arc, cyan) -->
-          <g class="bidir-arc bidir-arc-up">
-            <path
-              id="bidir-path-up"
-              d="M 610 130 Q 360 260 110 130"
-              fill="none"
-              stroke="#00f3ff"
-              stroke-width="1.6"
-              stroke-opacity="0.5"
-              stroke-dasharray="5 6"
-              marker-end="url(#bidir-ah-cyan)"
-            />
-            <text class="bidir-arc-label bidir-arc-label-up" text-anchor="middle">
-              <textPath href="#bidir-path-up" startOffset="50%">
-                CAPTURES · LINKS · SYNTHESIS
-              </textPath>
-            </text>
-            <circle class="bidir-flow-dot bidir-flow-dot-up" r="4" fill="#00f3ff">
-              <animateMotion dur="5.4s" begin="0.4s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#bidir-path-up"/>
-              </animateMotion>
-            </circle>
-            <circle class="bidir-flow-dot bidir-flow-dot-up" r="3" fill="#7af0ff" opacity="0.7">
-              <animateMotion dur="5.4s" begin="2.2s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#bidir-path-up"/>
-              </animateMotion>
-            </circle>
-            <circle class="bidir-flow-dot bidir-flow-dot-up" r="3" fill="#7af0ff" opacity="0.5">
-              <animateMotion dur="5.4s" begin="3.8s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#bidir-path-up"/>
-              </animateMotion>
-            </circle>
-          </g>
-        </svg>
+            <!-- HUMAN → AGENT — pink arc, sweeps right and down -->
+            <g class="bidir-arc bidir-arc-down">
+              <path
+                id="bidir-path-down"
+                d="M 0 4 C 130 50 130 170 0 216"
+                fill="none"
+                stroke="#ff2d92"
+                stroke-width="1.6"
+                stroke-opacity="0.55"
+                stroke-dasharray="5 6"
+                marker-end="url(#bidir-ah-pink)"
+              />
+              <text class="bidir-arc-label bidir-arc-label-down">
+                <textPath href="#bidir-path-down" startOffset="50%" text-anchor="middle">
+                  PREFS · DECISIONS · CORRECTIONS
+                </textPath>
+              </text>
+              <circle class="bidir-flow-dot bidir-flow-dot-down" r="4" fill="#ff2d92">
+                <animateMotion dur="4.8s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#bidir-path-down"/>
+                </animateMotion>
+              </circle>
+              <circle class="bidir-flow-dot bidir-flow-dot-down" r="3" fill="#ff85c1" opacity="0.7">
+                <animateMotion dur="4.8s" begin="1.6s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#bidir-path-down"/>
+                </animateMotion>
+              </circle>
+              <circle class="bidir-flow-dot bidir-flow-dot-down" r="3" fill="#ff85c1" opacity="0.5">
+                <animateMotion dur="4.8s" begin="3.2s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#bidir-path-down"/>
+                </animateMotion>
+              </circle>
+            </g>
 
-        <!-- Agent core (right, magenta) -->
-        <div class="bidir-core bidir-core-agent" aria-hidden="true">
-          <span class="bidir-core-ring"></span>
-          <span class="bidir-core-eyebrow">ONEBRAIN</span>
-          <span class="bidir-core-name">AGENT</span>
+            <!-- AGENT → HUMAN — cyan arc, geometry sweeps left.
+                 Path is authored top→bottom (so textPath glyphs render
+                 the right way up), but the dots flow REVERSE via
+                 keyPoints="1;0" so the visible motion is bottom→top —
+                 matching the "agent recalls upward" semantic. The
+                 arrowhead is placed at the path start (top, near human
+                 core) via marker-start with orient="auto-start-reverse"
+                 so it points up toward the receiver. -->
+            <g class="bidir-arc bidir-arc-up">
+              <path
+                id="bidir-path-up"
+                d="M 0 4 C -130 50 -130 170 0 216"
+                fill="none"
+                stroke="#00f3ff"
+                stroke-width="1.6"
+                stroke-opacity="0.55"
+                stroke-dasharray="5 6"
+                marker-start="url(#bidir-ah-cyan)"
+              />
+              <text class="bidir-arc-label bidir-arc-label-up">
+                <textPath href="#bidir-path-up" startOffset="50%" text-anchor="middle">
+                  CAPTURES · LINKS · SYNTHESIS
+                </textPath>
+              </text>
+              <circle class="bidir-flow-dot bidir-flow-dot-up" r="4" fill="#00f3ff">
+                <animateMotion dur="5.4s" begin="0.4s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                  <mpath href="#bidir-path-up"/>
+                </animateMotion>
+              </circle>
+              <circle class="bidir-flow-dot bidir-flow-dot-up" r="3" fill="#7af0ff" opacity="0.7">
+                <animateMotion dur="5.4s" begin="2.2s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                  <mpath href="#bidir-path-up"/>
+                </animateMotion>
+              </circle>
+              <circle class="bidir-flow-dot bidir-flow-dot-up" r="3" fill="#7af0ff" opacity="0.5">
+                <animateMotion dur="5.4s" begin="3.8s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                  <mpath href="#bidir-path-up"/>
+                </animateMotion>
+              </circle>
+            </g>
+          </svg>
+
+          <!-- Agent core (bottom, magenta) -->
+          <div class="bidir-core bidir-core-agent" aria-hidden="true">
+            <span class="bidir-core-ring"></span>
+            <span class="bidir-core-eyebrow">ONEBRAIN</span>
+            <span class="bidir-core-name">AGENT</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ════════ 2. Four-tier persistence stack — infrastructure ════════ -->
-    <!-- No role="img" here — each tier carries real text content (name,
-         location, description, promoters) that should land in the AT
-         tree naturally. Only the decorative spine + arrow column are
-         marked aria-hidden. -->
-    <div class="mt-stack">
+      <!-- 2. Four-tier persistence stack — infrastructure (right column).
+           No role="img" here — each tier carries real text content (name,
+           location, description, promoters) that should land in the AT
+           tree naturally. Only the decorative spine + arrow column are
+           marked aria-hidden. -->
+      <div class="mt-stack">
       <span class="mt-corner mt-corner-tl" aria-hidden="true"></span>
       <span class="mt-corner mt-corner-tr" aria-hidden="true"></span>
       <span class="mt-corner mt-corner-bl" aria-hidden="true"></span>
@@ -249,18 +265,35 @@ const tiers = [
         <span class="mt-band-meta-mute">FOUR_TIERS_ACROSS_EVERY_SESSION</span>
         <span class="mt-band-meta-mute">VAULT_AS_TRUTH · MARKDOWN_FOREVER</span>
       </div>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  /* ─────────────── Bidirectional flow header ─────────────── */
+  /* ─────────────── 50:50 grid ─────────────── */
+  .memory-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  @media (max-width: 1024px) {
+    .memory-grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+  }
+
+  /* ─────────────── Bidirectional flow (left column, vertical) ─────────────── */
   .bidir {
     position: relative;
-    margin-top: 1.5rem;
     padding: 14px 18px 12px;
     background: rgba(8, 8, 14, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
   }
   .bidir-corner {
     position: absolute;
@@ -301,24 +334,31 @@ const tiers = [
   }
   .bidir-band-meta { margin-left: auto; }
 
+  /* Vertical stage: Human core top → arcs in middle → Agent core bottom.
+     Cores anchor each end; the SVG fills the middle vertical channel.
+     The bidir card stretches to match the tier stack height via the
+     parent grid's `align-items: stretch` — the SVG flexes (flex: 1) to
+     fill any extra vertical space, so both engines feel the same size. */
   .bidir-stage {
     position: relative;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    min-height: 200px;
+    gap: 0;
+    flex: 1;
+    min-height: 380px;
   }
 
   .bidir-core {
     position: relative;
-    width: 124px;
-    height: 124px;
+    width: 116px;
+    height: 116px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 2;
+    flex-shrink: 0;
   }
   .bidir-core-ring {
     position: absolute;
@@ -377,13 +417,18 @@ const tiers = [
 
   .bidir-arcs {
     width: 100%;
-    height: 220px;
+    flex: 1;
+    min-height: 200px;
     overflow: visible;
+    /* Pull the arcs slightly into the cores so the path tangents read
+       as continuous flow — the cores draw their own border, the arcs
+       end inside them visually. */
+    margin: -8px 0;
   }
   .bidir-arc-label {
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.24em;
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
     fill: rgba(255, 255, 255, 0.62);
     text-transform: uppercase;
   }
@@ -397,10 +442,12 @@ const tiers = [
   .bidir-flow-dot-down { color: #ff2d92; }
   .bidir-flow-dot-up   { color: #00f3ff; }
 
-  /* ─────────────── Four-tier stack ─────────────── */
+  /* ─────────────── Four-tier stack (right column) ─────────────── */
   .mt-stack {
     position: relative;
-    margin-top: 1.5rem;
+    /* No margin-top here — the parent .memory-grid carries the section
+       gap. Adding it would shift the tier stack 24px below the bidir
+       card's top edge inside the same grid row. */
     padding: 16px 14px 14px;
     background: rgba(8, 8, 14, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -679,17 +726,14 @@ const tiers = [
   }
 
   @media (max-width: 720px) {
-    .bidir-stage {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto;
-    }
+    /* Bidir-stage is already flex column — just tighten cores + SVG. */
     .bidir-core {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto;
+      width: 96px;
+      height: 96px;
     }
     .bidir-core-name { font-size: 1.15rem; }
-    .bidir-arcs { height: 160px; }
+    .bidir-stage { min-height: 320px; }
+    .bidir-arcs { min-height: 160px; }
     /* Suspend ring breathing on phones — two simultaneous keyframes
        compositing magenta + cyan halos isn't worth the per-frame paint
        cost on small viewports. The static glow + flowing arc dots
