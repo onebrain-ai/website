@@ -510,6 +510,31 @@
   .cyber-section.active::after { animation: none; opacity: 0; }
 }
 
+/* Mobile: scroll-snap is disabled below 1023px so sections flow into
+   each other continuously. Drop a thin horizontal divider at the bottom
+   of every section (and the hero) so the user gets a clear "section
+   ended" signal as they scroll. Desktop uses snap + the page-spine HUD
+   for the same purpose, so this rule is mobile-only. */
+@media (max-width: 1023px) {
+  main > section + section {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Brand emphasis — every prose mention of "OneBrain" in body copy gets
+   wrapped in <strong class="brand"> so the product name pops in magenta
+   against the surrounding muted body text. Aligns the inline mentions
+   with the nav wordmark + section accents.
+   `!important` is needed to win against component-scoped overrides like
+   `.hero-sub strong { color: #fff }` whose Astro auto-scoping bumps
+   the selector specificity above a plain `.brand` class. */
+.brand {
+  color: #ff2d92 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.005em;
+  text-shadow: 0 0 12px rgba(255, 45, 146, 0.35);
+}
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION ENTRY CHOREOGRAPHY (Option D — combined cinematic)
    - pill: fade + tiny drop (250ms, delay 100ms)

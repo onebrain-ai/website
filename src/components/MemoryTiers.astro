@@ -423,13 +423,15 @@ const tiers = [
   }
 
   .bidir-arcs {
-    /* Tight viewBox 200×220 + capped width keeps the ribbons compact;
-       overlap into the cores by 18px so the arrow tips visually land
-       INSIDE each core border, not floating in the gap between SVG
-       and the HTML core div. */
-    width: 100%;
-    max-width: 200px;
-    aspect-ratio: 200 / 220;
+    /* Fixed pixel dimensions on the SVG element — `width: 100%` plus
+       `max-width` was being interpreted differently from intended in
+       some rendering contexts (the SVG's intrinsic viewBox aspect was
+       blowing the container up to fit the column width). Explicit
+       width/height removes the ambiguity entirely. Overlap into the
+       cores by 18px so arrow tips land inside each core border. */
+    width: 200px;
+    height: 220px;
+    flex-shrink: 0;
     align-self: center;
     overflow: visible;
     margin: -18px 0;
