@@ -88,12 +88,16 @@ const ogImageUrl = `https://onebrain.run${image}`;
          Old set loaded 14 weights — ~150KB of font CSS — the trim
          drops the LCP critical path by ~80KB.
 
-         `as="style"` preload bumps the CSS fetch into the high-
-         priority queue so the woff2 URLs inside it start loading
-         sooner; the actual <link rel="stylesheet"> still uses the
-         media="print" onload="this.media='all'" trick so styles
-         don't render-block. -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,700;1,700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+         The `media="print" onload="this.media='all'"` trick fetches
+         the stylesheet immediately as a low-priority resource (no
+         render-block), then promotes it to "all" media on load so
+         the styles take effect. Tried adding `<link rel="preload"
+         as="style">` to bump the priority but the browser raises a
+         "preload not used within seconds of load" warning because
+         the consumer link starts with media="print" and doesn't
+         match the preload as a consumer until the onload swap.
+         The non-preload version is the cleanest path — preconnect
+         already shaved the DNS + TLS handshake. -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,700;1,700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'">
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,700;1,700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
