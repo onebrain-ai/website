@@ -701,7 +701,10 @@ const tiers = [
 
     .mt-stack { padding: 14px 12px 12px; }
     .mt-tier {
-      grid-template-columns: 28px 1fr;
+      /* 32px col fits the 30px-wide glyph cleanly; padding-left tracks
+         the spine column at 26px so the spine still aligns with the
+         tier rows. */
+      grid-template-columns: 32px 1fr;
       gap: 10px;
       padding: 10px 14px 10px 26px;
     }
