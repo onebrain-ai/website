@@ -6,6 +6,7 @@
 const layers = [
   {
     idx: '01',
+    glyph: '🧠',
     name: 'ONEBRAIN',
     role: 'OS_LAYER',
     desc: '24+ skills · lifecycle hooks · vault sync · indexing · checkpoints · harness routing.',
@@ -15,6 +16,7 @@ const layers = [
   },
   {
     idx: '02',
+    glyph: '🔀',
     name: 'HARNESS',
     role: 'AGENTIC_RUNTIME',
     desc: 'Bring your own. Pick by familiarity, by task, or by cost.',
@@ -24,6 +26,7 @@ const layers = [
   },
   {
     idx: '03',
+    glyph: '⚡',
     name: 'LLM',
     role: 'INTELLIGENCE_SOURCE',
     desc: 'Whatever powers the harness — OneBrain stays consistent across swaps.',
@@ -33,6 +36,7 @@ const layers = [
   },
   {
     idx: '04',
+    glyph: '💎',
     name: 'OBSIDIAN VAULT',
     role: 'SOURCE_OF_TRUTH',
     desc: 'Plain Markdown — notes, memory, decisions, knowledge graph.',
@@ -114,6 +118,8 @@ const layers = [
               <span class="hs-stripe" aria-hidden="true"></span>
               <span class="hs-edge hs-edge-tl" aria-hidden="true"></span>
               <span class="hs-edge hs-edge-br" aria-hidden="true"></span>
+
+              <div class="hs-layer-glyph" aria-hidden="true">{l.glyph}</div>
 
               <div class="hs-layer-left">
                 <div class="hs-layer-idx">LAYER_{l.idx}</div>
@@ -286,7 +292,8 @@ const layers = [
   .hs-layer {
     position: relative;
     display: grid;
-    grid-template-columns: 158px 1fr auto;
+    /* glyph col + name col + desc col + chip col */
+    grid-template-columns: 32px 158px 1fr auto;
     gap: 14px;
     padding: 9px 14px 9px 30px;
     background: linear-gradient(180deg, rgba(12, 12, 24, 0.92), rgba(6, 6, 13, 0.92));
@@ -349,6 +356,15 @@ const layers = [
       inset 0 0 0 1px color-mix(in srgb, var(--layer-accent) 30%, transparent);
   }
 
+  .hs-layer-glyph {
+    font-size: 22px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--layer-accent) 55%, transparent));
+  }
+
   .hs-layer-idx {
     font-family: var(--font-mono);
     font-size: 9.5px;
@@ -401,21 +417,21 @@ const layers = [
 
   /* Tablet — drop the right chip column to give middle column more room */
   @media (max-width: 1024px) {
-    .hs-layer { grid-template-columns: 150px 1fr; }
+    .hs-layer { grid-template-columns: 32px 150px 1fr; }
     .hs-layer-right { display: none; }
   }
 
-  /* Mobile — collapse to single column inside layer + trim density:
-     drop the per-layer `sub` line and the bottom HUD band so each layer
-     renders as just `LAYER_NN · NAME · ROLE · DESC` for fast scan. The
-     manifesto + only 2 of its 4 rows survive (PICK_BY task / cost).  */
+  /* Mobile — collapse to a 2-col layout (glyph + content) so each layer
+     renders as `glyph · LAYER_NN / NAME / ROLE / DESC` for fast scan.
+     Sub line + bottom HUD band are dropped, manifesto trims to 2 rows. */
   @media (max-width: 720px) {
     .harness-stack { padding: 14px 12px 12px; }
     .hs-layer {
-      grid-template-columns: 1fr;
-      gap: 6px;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
       padding: 10px 14px 10px 26px;
     }
+    .hs-layer-glyph { font-size: 18px; }
     .hs-layer-sub { display: none; }
     .hs-band-meta-mute:last-child { display: none; }
     .hs-band-bottom { justify-content: flex-start; }
