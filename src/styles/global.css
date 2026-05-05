@@ -395,6 +395,24 @@
   opacity: 1 !important;
 }
 
+/* Safari sticky-hover fix. After clicking a nav link, Safari (macOS
+   + iOS) keeps `:hover` state on the just-clicked element until the
+   pointer moves — which never happens if the user scrolls via
+   arrow/Page keys. Result: the clicked link's `[ ]` brackets stay
+   on while the IntersectionObserver flips `.is-active` to a new
+   link, and the user sees TWO active-looking items at once.
+   The fix: when `body.suppress-hover` is set (toggled by the click
+   handler in Layout.astro), force-hide the hover bracket spans and
+   the hover colour shift on links that don't currently own
+   `.is-active`. The class clears on the first mousemove, so normal
+   hover behaviour resumes the moment the user touches the trackpad. */
+body.suppress-hover .nav-glass a:not(.is-active):hover {
+  color: var(--color-muted) !important;
+}
+body.suppress-hover .nav-glass a:not(.is-active):hover > span {
+  opacity: 0 !important;
+}
+
 .btn-tech {
   position: relative;
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);

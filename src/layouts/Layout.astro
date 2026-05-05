@@ -531,7 +531,28 @@ const ogImageUrl = `https://onebrain.run${image}`;
         if (!href) return;
         e.preventDefault();
         warpTo(href);
+        // Safari macOS keeps `:hover` sticky on a clicked element
+        // until the pointer moves. Combined with arrow-key scrolling
+        // (no pointer move) the IO flips `.is-active` to a new link
+        // while the original click target still shows hover-revealed
+        // [ ] brackets — two active-looking items at once. Blur the
+        // link to release any focus halo and add `body.suppress-hover`
+        // so the CSS in global.css can mute the lingering :hover
+        // state. The class clears on the first mousemove (below) so
+        // normal hover behaviour returns the moment the user reaches
+        // for the trackpad.
+        n.blur();
+        document.body.classList.add('suppress-hover');
       });
+      // First pointer move clears the suppression — at that point the
+      // browser has either dropped the sticky :hover on its own or
+      // re-evaluated it against the new cursor position, so the gate
+      // is no longer needed.
+      document.addEventListener('mousemove', () => {
+        if (document.body.classList.contains('suppress-hover')) {
+          document.body.classList.remove('suppress-hover');
+        }
+      }, { passive: true });
 
       // External / initial hash navigation also plays the warp:
       //   - URL with a hash on first load (stashed in <head>, replayed here)
