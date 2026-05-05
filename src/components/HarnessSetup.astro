@@ -60,7 +60,8 @@ const llmRoutes = [
         <span>ONEBRAIN // HARNESS_SETUP</span>
       </div>
       <h2 class="cyber-h2">
-        Pick Your <span class="cyber-h2-stroke">Harness.</span>
+        Pick Your<br/>
+        <span class="cyber-h2-stroke">Harness.</span>
       </h2>
       <p class="cyber-sub">
         Each harness reads OneBrain's instructions automatically — install, run inside your vault, the plugin loads on first prompt.
@@ -467,12 +468,14 @@ ccr code           <span class="cmt"># config + launch Claude Code via the route
 
   /* Section sizing tightening — fit in one viewport. Override default
      desktop section padding (4rem/3rem) so the dense 4-card + BYO grid
-     fits below the nav on 700–800px laptop viewports. */
-  #harness-setup .cyber-section-head { margin-bottom: 0.6rem; }
-  #harness-setup .cyber-h2           { font-size: clamp(1.3rem, 2.6vw, 2rem); line-height: 1.05; }
-  #harness-setup .cyber-sub          { font-size: 0.84rem; max-width: 760px; line-height: 1.45; }
-  #harness-setup .cyber-pill         { margin-bottom: 10px; }
+     fits below the nav on 700–800px laptop viewports. H2 + sub kept
+     close to the global default sizing so this section visually
+     matches its siblings (Stack, Workflow, Features). */
+  #harness-setup .cyber-section-head { margin-bottom: 0.9rem; }
+  #harness-setup .cyber-h2           { font-size: clamp(1.9rem, 4.2vw, 3.4rem); line-height: 0.95; }
+  #harness-setup .cyber-sub          { font-size: 0.92rem; max-width: 760px; line-height: 1.55; margin-top: 14px; }
+  #harness-setup .cyber-pill         { margin-bottom: 14px; }
   @media (min-width: 1024px) {
-    #harness-setup { padding: 2rem 3rem 1.75rem; }
+    #harness-setup { padding: 1.75rem 3rem 1.5rem; }
   }
 </style>
