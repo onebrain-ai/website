@@ -1,0 +1,407 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Brain from "../components/Brain.astro";
+---
+
+<Layout
+  title="404 — Signal Lost · OneBrain"
+  description="The route you tried to reach never made it to the OneBrain vault."
+>
+  <main class="nf">
+    <!-- Background ambient -->
+    <div class="nf-grid" aria-hidden="true"></div>
+    <div class="nf-orb-a" aria-hidden="true"></div>
+    <div class="nf-orb-b" aria-hidden="true"></div>
+
+    <!-- HUD frame corners -->
+    <span class="nf-corner nf-corner-tl" aria-hidden="true"></span>
+    <span class="nf-corner nf-corner-tr" aria-hidden="true"></span>
+    <span class="nf-corner nf-corner-bl" aria-hidden="true"></span>
+    <span class="nf-corner nf-corner-br" aria-hidden="true"></span>
+
+    <!-- Top status band -->
+    <div class="nf-band nf-band-top" aria-hidden="true">
+      <span class="nf-band-mark">
+        <span class="nf-band-dot"></span>
+        ONEBRAIN.OS // ROUTING_FAULT
+      </span>
+      <span class="nf-band-meta">EXIT_CODE 404</span>
+    </div>
+
+    <!-- Bottom status band -->
+    <div class="nf-band nf-band-bottom" aria-hidden="true">
+      <span class="nf-band-meta-mute">VAULT_INTEGRITY OK · NO_DATA_LOSS</span>
+      <span class="nf-band-meta-mute">RECOVERY_PATH ./</span>
+    </div>
+
+    <div class="nf-shell">
+      <!-- Brand block: logo + wordmark + tagline -->
+      <a href="/" class="nf-brand" aria-label="Return to OneBrain home">
+        <Brain size={56} ariaLabel="OneBrain" />
+        <div class="nf-brand-text">
+          <span class="nf-wordmark">OneBrain</span>
+          <span class="nf-tagline">Your AI <span class="nf-tagline-pair">Thinking Partner</span></span>
+        </div>
+      </a>
+
+      <!-- Status pill -->
+      <div class="nf-pill">
+        <span class="nf-pill-dot" aria-hidden="true"></span>
+        <span>SIGNAL_LOST // PAGE_NOT_FOUND</span>
+      </div>
+
+      <!-- Big 404 with stroke variant -->
+      <h1 class="nf-code">
+        <span class="nf-code-stroke" data-text="404">404</span>
+      </h1>
+
+      <!-- Message -->
+      <p class="nf-msg">
+        This route never made it to the vault.<br/>
+        The agent has no memory of <code class="nf-path"></code>
+      </p>
+
+      <!-- Pseudo-terminal log -->
+      <div class="nf-log" aria-hidden="true">
+        <span class="nf-log-line">&gt; ATTEMPTING TO LOCATE ROUTE…</span>
+        <span class="nf-log-line nf-log-fail">&gt; ROUTE NOT INDEXED IN VAULT</span>
+        <span class="nf-log-line">&gt; INITIATING RECOVERY → ./</span>
+      </div>
+
+      <!-- CTA: return home -->
+      <a href="/" class="nf-cta btn-tech group">
+        <div class="btn-tech-inner">
+          <span class="font-mono text-[11px] font-bold tracking-[0.2em] uppercase text-white group-hover:text-black">↩ Return_Home_</span>
+        </div>
+      </a>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline>
+  /* Inject the actual requested path into the message + log so the user
+     sees what they tried to reach. Reads from window.location, runs
+     after hydration, no SSR needed (Cloudflare Workers serves 404.html
+     to every unknown route — pathname is available in the browser). */
+  (function () {
+    const path = location.pathname || '/';
+    const display = path.length > 36 ? path.slice(0, 33) + '…' : path;
+    const slot = document.querySelector('.nf-path');
+    if (slot) slot.textContent = display;
+    const log = document.querySelector('.nf-log .nf-log-line');
+    if (log) log.textContent = '> ATTEMPTING TO LOCATE  ' + display + '  …';
+  })();
+</script>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 75% 55% at 50% 50%, #0a0a14 0%, #050507 60%, #020204 100%);
+    padding: 6rem 1.5rem 5rem;
+  }
+
+  /* ── Ambient background ── */
+  .nf-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 50%, black 30%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 55% at 50% 50%, black 30%, transparent 100%);
+    pointer-events: none;
+  }
+  .nf-orb-a,
+  .nf-orb-b {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(110px);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .nf-orb-a {
+    top: 22%;
+    left: 28%;
+    width: 380px;
+    height: 380px;
+    background: rgba(255, 45, 146, 0.4);
+    animation: nf-orb-drift-a 14s ease-in-out infinite;
+  }
+  .nf-orb-b {
+    bottom: 18%;
+    right: 22%;
+    width: 320px;
+    height: 320px;
+    background: rgba(0, 243, 255, 0.28);
+    animation: nf-orb-drift-b 18s ease-in-out infinite;
+  }
+  @keyframes nf-orb-drift-a {
+    0%, 100% { transform: translate(0, 0)     scale(1);   }
+    50%      { transform: translate(40px, -30px) scale(1.08); }
+  }
+  @keyframes nf-orb-drift-b {
+    0%, 100% { transform: translate(0, 0)      scale(1);   }
+    50%      { transform: translate(-30px, 40px) scale(1.1); }
+  }
+
+  /* ── HUD frame corners ── */
+  .nf-corner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255, 45, 146, 0.5);
+    z-index: 4;
+  }
+  .nf-corner-tl { top: 32px;    left: 32px;    border-right: 0; border-bottom: 0; }
+  .nf-corner-tr { top: 32px;    right: 32px;   border-left: 0;  border-bottom: 0; }
+  .nf-corner-bl { bottom: 32px; left: 32px;    border-right: 0; border-top: 0;    }
+  .nf-corner-br { bottom: 32px; right: 32px;   border-left: 0;  border-top: 0;    }
+
+  /* ── Status bands ── */
+  .nf-band {
+    position: absolute;
+    left: 72px;
+    right: 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    z-index: 4;
+  }
+  .nf-band-top    { top: 38px;    }
+  .nf-band-bottom { bottom: 38px; }
+  .nf-band-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 45, 146, 0.85);
+  }
+  .nf-band-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 10px currentColor;
+    animation: nf-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes nf-pulse {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%      { opacity: 0.4; transform: scale(0.85); }
+  }
+  .nf-band-meta-mute { color: rgba(255, 255, 255, 0.32); }
+
+  @media (max-width: 720px) {
+    .nf-band      { left: 28px; right: 28px; font-size: 8px; letter-spacing: 0.22em; }
+    .nf-corner    { width: 18px; height: 18px; }
+    .nf-corner-tl, .nf-corner-tr { top: 20px; }
+    .nf-corner-bl, .nf-corner-br { bottom: 20px; }
+    .nf-corner-tl, .nf-corner-bl { left: 20px; }
+    .nf-corner-tr, .nf-corner-br { right: 20px; }
+    .nf-band-top    { top: 24px;    }
+    .nf-band-bottom { bottom: 24px; }
+  }
+
+  /* ── Centre shell ── */
+  .nf-shell {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    max-width: 640px;
+  }
+
+  /* Brand block */
+  .nf-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 2rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nf-brand:hover { opacity: 0.85; }
+  .nf-brand-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+  .nf-wordmark {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .nf-tagline {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--color-accent-2, #00f3ff);
+    text-transform: uppercase;
+    opacity: 0.75;
+    white-space: nowrap;
+  }
+  .nf-tagline-pair { white-space: nowrap; }
+
+  /* Status pill — same shape as cyber-pill */
+  .nf-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #ff2d92;
+    background: rgba(255, 45, 146, 0.05);
+    border: 1px solid rgba(255, 45, 146, 0.45);
+    position: relative;
+    margin-bottom: 1.75rem;
+  }
+  .nf-pill::before, .nf-pill::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 1px solid currentColor;
+  }
+  .nf-pill::before { top: -2px;    left: -2px;    border-right: 0; border-bottom: 0; }
+  .nf-pill::after  { bottom: -2px; right: -2px;   border-left: 0;  border-top: 0;    }
+  .nf-pill-dot {
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+    border-radius: 50%;
+    box-shadow: 0 0 12px currentColor;
+    animation: nf-pulse 1.6s ease-in-out infinite;
+  }
+
+  /* Big 404 */
+  .nf-code {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(7rem, 21vw, 16rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .nf-code-stroke {
+    color: transparent;
+    -webkit-text-stroke: 2px #ff2d92;
+    text-shadow:
+      0 0 60px rgba(255, 45, 146, 0.45),
+      0 0 120px rgba(255, 45, 146, 0.2);
+    position: relative;
+    display: inline-block;
+    animation: nf-glitch 7s linear infinite;
+  }
+  /* RGB-split flicker every ~7s — quick 500ms cycle, otherwise stable. */
+  @keyframes nf-glitch {
+    0%, 92%, 100% { text-shadow: 0 0 60px rgba(255, 45, 146, 0.45), 0 0 120px rgba(255, 45, 146, 0.2); transform: translate(0, 0); }
+    93%  { text-shadow: -3px 0 #00f3ff, 3px 0 #ff2d92, 0 0 60px rgba(255, 45, 146, 0.45); transform: translate(1px, 0); }
+    94%  { text-shadow: 3px 0 #00f3ff, -3px 0 #ff2d92, 0 0 60px rgba(255, 45, 146, 0.45); transform: translate(-1px, 0); }
+    95%  { text-shadow: -2px 0 #00f3ff, 2px 0 #ff2d92, 0 0 60px rgba(255, 45, 146, 0.45); transform: translate(1px, -1px); }
+    96%  { text-shadow: 0 0 60px rgba(255, 45, 146, 0.45), 0 0 120px rgba(255, 45, 146, 0.2); transform: translate(0, 0); }
+  }
+
+  /* Message */
+  .nf-msg {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.9;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  .nf-path {
+    display: inline-block;
+    color: #00f3ff;
+    background: rgba(0, 243, 255, 0.08);
+    border: 1px solid rgba(0, 243, 255, 0.35);
+    padding: 1px 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+    margin-left: 4px;
+  }
+  .nf-path:empty::before { content: '/unknown'; opacity: 0.5; }
+
+  /* Pseudo terminal log */
+  .nf-log {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 2px solid rgba(255, 45, 146, 0.5);
+    padding: 12px 16px;
+    margin: 0 auto 2rem;
+    max-width: 480px;
+  }
+  .nf-log-line  { animation: nf-line-in 0.4s ease-out backwards; }
+  .nf-log-line:nth-child(1) { animation-delay: 0.4s; }
+  .nf-log-line:nth-child(2) { animation-delay: 0.8s; }
+  .nf-log-line:nth-child(3) { animation-delay: 1.2s; }
+  .nf-log-fail              { color: rgba(255, 45, 146, 0.85); }
+  @keyframes nf-line-in {
+    0%   { opacity: 0; transform: translateY(2px); }
+    100% { opacity: 1; transform: translateY(0);   }
+  }
+
+  /* CTA — reuse btn-tech style from global so the angled button matches
+     INITIALIZE_ in the nav. */
+  .nf-cta {
+    display: inline-block;
+    height: 44px;
+    width: 200px;
+  }
+
+  /* Sequential reveal of the centre shell when the page loads */
+  .nf-shell > * {
+    animation: nf-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .nf-shell > .nf-brand { animation-delay: 0.05s; }
+  .nf-shell > .nf-pill  { animation-delay: 0.2s;  }
+  .nf-shell > .nf-code  { animation-delay: 0.35s; }
+  .nf-shell > .nf-msg   { animation-delay: 0.55s; }
+  .nf-shell > .nf-log   { animation-delay: 0.7s;  }
+  .nf-shell > .nf-cta   { animation-delay: 0.95s; }
+  @keyframes nf-rise {
+    0%   { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0);    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nf-orb-a,
+    .nf-orb-b,
+    .nf-band-dot,
+    .nf-pill-dot,
+    .nf-code-stroke,
+    .nf-shell > *,
+    .nf-log-line { animation: none; }
+  }
+</style>
