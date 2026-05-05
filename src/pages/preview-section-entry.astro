@@ -1,0 +1,496 @@
+---
+// Throw-away preview page for the harness-os-positioning branch — demos
+// 4 candidate section-entry choreographies on identical mock copy so
+// keng can pick one before we wire it into every cyber-section.
+//
+// REMOVE THIS FILE before merging the PR.
+import Layout from "../layouts/Layout.astro";
+
+const demos = [
+  {
+    id: 'a',
+    label: 'A — HUD Typewriter Boot',
+    blurb: 'Eyebrow types in character-by-character with blinking caret. H2 fades in + drifts from left. Sub fades in + lifts from below. Console-boot vibe.',
+  },
+  {
+    id: 'b',
+    label: 'B — Color Drain on H2',
+    blurb: 'H2 stroke variant starts solid in the section accent, then "drains" left → right to reveal the stroke outline. Eyebrow + sub fade in normally.',
+  },
+  {
+    id: 'c',
+    label: 'C — Glitch Boot (RGB split)',
+    blurb: 'All text blocks briefly RGB-split + flicker (~250ms) before settling. Borrows from the Hero "INTELLIGENCE" glitch language. Most cyberpunk.',
+  },
+  {
+    id: 'd',
+    label: 'D — Combined Choreography (recommended)',
+    blurb: 'Eyebrow types (180ms) → H2 fade + slide (400ms) → H2 stroke color-drain (600ms) → sub fade + lift (350ms). Choreographed ~800ms cinematic sequence.',
+  },
+];
+---
+
+<Layout title="Section Entry Animation Preview · OneBrain">
+  <main class="prev-page">
+    <header class="prev-head">
+      <span class="prev-tag">// PREVIEW · throw-away page · remove before merge</span>
+      <h1 class="prev-h1">Section Entry Animation</h1>
+      <p class="prev-sub">
+        Each card below shows the same mock content with a different entry choreography. Click <strong>REPLAY</strong> to see it again. Pick the one that feels right and tell จิโอ้.
+      </p>
+    </header>
+
+    <div class="prev-grid">
+      {demos.map((d) => (
+        <article class="prev-card" data-demo={d.id}>
+          <header class="prev-card-head">
+            <span class="prev-card-id">{d.id.toUpperCase()}</span>
+            <h2 class="prev-card-label">{d.label}</h2>
+            <button class="prev-replay" type="button" data-replay={d.id}>↻ REPLAY</button>
+          </header>
+          <p class="prev-card-blurb">{d.blurb}</p>
+
+          <div class={`prev-stage demo-${d.id}`} data-stage>
+            <div class="cyber-pill mock-eyebrow" data-eyebrow>
+              <span class="cyber-pill-dot"></span>
+              <span class="mock-eyebrow-text" data-eyebrow-text>ONEBRAIN // PREVIEW</span>
+              <span class="mock-caret" data-caret></span>
+            </div>
+
+            {d.id === 'b' || d.id === 'd' ? (
+              <h3 class="cyber-h2 mock-h2">
+                Designed for<br/>
+                <span class="cyber-h2-stroke mock-h2-stroke-wrap" data-stroke-wrap>
+                  <span class="mock-h2-stroke-fill" data-stroke-fill>Synergetic Thinking.</span>
+                  <span class="mock-h2-stroke-outline" data-stroke-outline>Synergetic Thinking.</span>
+                </span>
+              </h3>
+            ) : (
+              <h3 class="cyber-h2 mock-h2">
+                Designed for<br/>
+                <span class="cyber-h2-stroke">Synergetic Thinking.</span>
+              </h3>
+            )}
+
+            <p class="cyber-sub mock-sub">
+              OneBrain doesn't just store markdown. Every feature exists to make you and the agent better at each other's job.
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <footer class="prev-foot">
+      <p>Once you pick: tell จิโอ้ "go with X" and the chosen choreography ships in the harness-os-positioning PR. Then this page gets deleted.</p>
+    </footer>
+  </main>
+</Layout>
+
+<script is:inline>
+  /* Each demo plays on first scroll-into-view (or on Replay click).
+     Replay re-fires by toggling .playing → reflow → .playing again,
+     same trick the warp transition uses to replay the boot scanline. */
+  (function () {
+    const stages = document.querySelectorAll('[data-stage]');
+
+    function replay(stage) {
+      stage.classList.remove('playing');
+      // Force reflow so the animation restarts from frame 0
+      void stage.offsetWidth;
+      stage.classList.add('playing');
+      // Re-run the typewriter for stages that use it (A, D)
+      const id = stage.parentElement.dataset.demo;
+      if (id === 'a' || id === 'd') runTypewriter(stage);
+    }
+
+    function runTypewriter(stage) {
+      const target = 'ONEBRAIN // PREVIEW';
+      const el = stage.querySelector('[data-eyebrow-text]');
+      if (!el) return;
+      el.textContent = '';
+      let i = 0;
+      const tick = 18; // ms per char
+      function step() {
+        if (i <= target.length) {
+          el.textContent = target.slice(0, i);
+          i++;
+          setTimeout(step, tick);
+        } else {
+          // Done — hide caret after a short blink
+          const caret = stage.querySelector('[data-caret]');
+          setTimeout(() => caret && caret.classList.add('caret-done'), 600);
+        }
+      }
+      // Reset caret state
+      const caret = stage.querySelector('[data-caret]');
+      if (caret) caret.classList.remove('caret-done');
+      step();
+    }
+
+    /* Auto-play on first intersection */
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !e.target.dataset.played) {
+            e.target.dataset.played = '1';
+            replay(e.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      stages.forEach((s) => io.observe(s));
+    } else {
+      stages.forEach(replay);
+    }
+
+    /* Replay buttons */
+    document.querySelectorAll('[data-replay]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.replay;
+        const stage = document.querySelector(`[data-demo="${id}"] [data-stage]`);
+        if (stage) replay(stage);
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* ── Page chrome ──────────────────────────────────────────── */
+  .prev-page {
+    min-height: 100vh;
+    padding: 4.5rem 2rem 4rem;
+    max-width: 1320px;
+    margin: 0 auto;
+    background: radial-gradient(ellipse 85% 55% at 50% 0%, #0a0a14 0%, #050507 60%, #020204 100%);
+  }
+  .prev-head {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .prev-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(255, 176, 0, 0.7);
+    border: 1px solid rgba(255, 176, 0, 0.35);
+    padding: 4px 14px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .prev-h1 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: #fff;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  .prev-sub {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .prev-sub strong { color: #fff; font-weight: 600; }
+
+  /* ── Grid of 4 demo cards ─────────────────────────────────── */
+  .prev-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 1100px) {
+    .prev-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .prev-card {
+    background: rgba(8, 8, 14, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .prev-card-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .prev-card-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--color-accent-2, #00f3ff);
+    background: rgba(0, 243, 255, 0.08);
+    border: 1px solid rgba(0, 243, 255, 0.4);
+    padding: 3px 9px;
+  }
+  .prev-card-label {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    flex: 1;
+  }
+  .prev-replay {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-accent-2, #00f3ff);
+    background: transparent;
+    border: 1px solid rgba(0, 243, 255, 0.4);
+    padding: 6px 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+  }
+  .prev-replay:hover {
+    background: rgba(0, 243, 255, 0.12);
+    color: #fff;
+  }
+  .prev-card-blurb {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 12px 18px 0;
+  }
+  .prev-stage {
+    padding: 28px 22px 32px;
+    /* Shared mock content sizing — close to a real cyber-section but
+       boxed so we can run 4 of them on one page. */
+  }
+  .prev-stage .mock-h2 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    line-height: 1.05;
+    color: #fff;
+    margin: 14px 0 10px;
+    letter-spacing: 0.02em;
+  }
+  .prev-stage .cyber-h2-stroke {
+    color: transparent;
+    -webkit-text-stroke: 1.4px var(--demo-accent, #00f3ff);
+  }
+  .prev-stage .mock-sub {
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 540px;
+  }
+
+  /* ── Per-demo accent palette so each demo has its own colour ── */
+  .demo-a { --demo-accent: #00f3ff; }
+  .demo-b { --demo-accent: #ff2d92; }
+  .demo-c { --demo-accent: #bc13fe; }
+  .demo-d { --demo-accent: #ffb000; }
+  .demo-a .cyber-pill { color: var(--demo-accent); border-color: color-mix(in srgb, var(--demo-accent) 40%, transparent); }
+  .demo-b .cyber-pill { color: var(--demo-accent); border-color: color-mix(in srgb, var(--demo-accent) 40%, transparent); }
+  .demo-c .cyber-pill { color: var(--demo-accent); border-color: color-mix(in srgb, var(--demo-accent) 40%, transparent); }
+  .demo-d .cyber-pill { color: var(--demo-accent); border-color: color-mix(in srgb, var(--demo-accent) 40%, transparent); }
+  .demo-a .cyber-pill-dot,
+  .demo-b .cyber-pill-dot,
+  .demo-c .cyber-pill-dot,
+  .demo-d .cyber-pill-dot { background: var(--demo-accent); }
+
+  /* ── Initial states (before .playing fires) ─────────────────── */
+  .prev-stage:not(.playing) .mock-eyebrow      { opacity: 0; }
+  .prev-stage:not(.playing) .mock-h2           { opacity: 0; }
+  .prev-stage:not(.playing) .mock-sub          { opacity: 0; }
+
+  /* Caret used by typewriter demos (A, D) */
+  .mock-caret {
+    display: inline-block;
+    width: 7px;
+    height: 12px;
+    background: var(--demo-accent);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: caret-blink 0.7s steps(2) infinite;
+  }
+  .demo-b .mock-caret,
+  .demo-c .mock-caret { display: none; }
+  .mock-caret.caret-done { display: none; }
+  @keyframes caret-blink {
+    50% { opacity: 0; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     A — HUD TYPEWRITER BOOT
+     - eyebrow opacity 0 → 1 instantly when stage starts
+     - eyebrow text content typed in via JS (see <script>)
+     - H2 fade in + slide from left (400ms)
+     - sub fade in + lift from below (350ms, delayed)
+     ═══════════════════════════════════════════════════════════════ */
+  .demo-a.playing .mock-eyebrow {
+    animation: a-eyebrow-on 1ms forwards;
+  }
+  .demo-a.playing .mock-h2 {
+    animation: a-slide-in 0.4s 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .demo-a.playing .mock-sub {
+    animation: a-rise-in 0.35s 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes a-eyebrow-on { to { opacity: 1; } }
+  @keyframes a-slide-in {
+    0%   { opacity: 0; transform: translateX(-12px); }
+    100% { opacity: 1; transform: translateX(0);     }
+  }
+  @keyframes a-rise-in {
+    0%   { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0);   }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     B — COLOR DRAIN ON H2
+     - eyebrow normal fade-in
+     - H2 main line: normal fade-in
+     - H2 stroke: layered approach. The "fill" span sits on top with
+       a clip-path that animates 100% → 0% width, revealing the
+       "outline" span below.
+     - sub fade-in, slight delay
+     ═══════════════════════════════════════════════════════════════ */
+  .mock-h2-stroke-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .mock-h2-stroke-fill,
+  .mock-h2-stroke-outline {
+    display: inline-block;
+  }
+  .mock-h2-stroke-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--demo-accent);
+    -webkit-text-stroke: 0;
+    /* clip-path inset(top right bottom left) */
+    clip-path: inset(0 0 0 0);
+  }
+  .demo-b .mock-h2-stroke-fill {
+    color: var(--demo-accent);
+    -webkit-text-stroke: 0;
+  }
+  .demo-b .mock-h2-stroke-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.4px var(--demo-accent);
+  }
+
+  .demo-b.playing .mock-eyebrow {
+    animation: b-fade 0.45s ease-out forwards;
+  }
+  .demo-b.playing .mock-h2 {
+    animation: b-fade 0.45s 0.1s ease-out forwards;
+  }
+  .demo-b.playing .mock-h2-stroke-fill {
+    animation: b-drain 0.7s 0.35s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+  }
+  .demo-b.playing .mock-sub {
+    animation: b-fade-up 0.45s 0.45s ease-out forwards;
+  }
+  @keyframes b-fade {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes b-fade-up {
+    0%   { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0);   }
+  }
+  @keyframes b-drain {
+    0%   { clip-path: inset(0 0 0 0);    }
+    100% { clip-path: inset(0 0 0 100%); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     C — GLITCH BOOT (RGB split)
+     - All text blocks briefly RGB-split via dual text-shadow that
+       converges to (0,0). Plus a quick opacity flicker.
+     ═══════════════════════════════════════════════════════════════ */
+  .demo-c.playing .mock-eyebrow {
+    animation: c-flicker 0.32s ease-out forwards, c-rgb 0.32s ease-out forwards;
+  }
+  .demo-c.playing .mock-h2 {
+    animation: c-flicker 0.4s 0.1s ease-out forwards, c-rgb 0.4s 0.1s ease-out forwards;
+  }
+  .demo-c.playing .mock-sub {
+    animation: c-flicker 0.32s 0.25s ease-out forwards;
+  }
+  @keyframes c-flicker {
+    0%   { opacity: 0;   }
+    20%  { opacity: 0.8; }
+    35%  { opacity: 0.2; }
+    50%  { opacity: 0.9; }
+    70%  { opacity: 0.5; }
+    100% { opacity: 1;   }
+  }
+  @keyframes c-rgb {
+    0%   { text-shadow: -3px 0 #00f3ff, 3px 0 #ff2d92; }
+    50%  { text-shadow: -2px 0 #00f3ff, 2px 0 #ff2d92; }
+    80%  { text-shadow: -0.5px 0 #00f3ff, 0.5px 0 #ff2d92; }
+    100% { text-shadow: 0 0 transparent, 0 0 transparent; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     D — COMBINED CHOREOGRAPHY (recommended)
+     Eyebrow types → H2 main fade+slide → H2 stroke color-drain →
+     sub fade+lift. Choreographed sequence ~800ms.
+     ═══════════════════════════════════════════════════════════════ */
+  .demo-d .mock-h2-stroke-fill { color: var(--demo-accent); -webkit-text-stroke: 0; }
+  .demo-d .mock-h2-stroke-outline { color: transparent; -webkit-text-stroke: 1.4px var(--demo-accent); }
+
+  .demo-d.playing .mock-eyebrow {
+    animation: d-on 1ms forwards;
+  }
+  .demo-d.playing .mock-h2 {
+    animation: d-slide 0.42s 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .demo-d.playing .mock-h2-stroke-fill {
+    animation: d-drain 0.7s 0.35s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+  }
+  .demo-d.playing .mock-sub {
+    animation: d-rise 0.4s 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes d-on { to { opacity: 1; } }
+  @keyframes d-slide {
+    0%   { opacity: 0; transform: translateX(-10px); }
+    100% { opacity: 1; transform: translateX(0);     }
+  }
+  @keyframes d-drain {
+    0%   { clip-path: inset(0 0 0 0);    }
+    100% { clip-path: inset(0 0 0 100%); }
+  }
+  @keyframes d-rise {
+    0%   { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0);   }
+  }
+
+  /* ── Footer ──────────────────────────────────────────────── */
+  .prev-foot {
+    margin-top: 3rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.45);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Skip the choreography for users who opt out. The end state is
+       always set by `forwards`, so the content stays visible. */
+    .prev-stage * { animation-duration: 1ms !important; animation-delay: 0ms !important; }
+    .mock-h2-stroke-fill { display: none; }
+    .mock-caret { display: none; }
+  }
+</style>
