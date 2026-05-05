@@ -516,7 +516,7 @@
    - h2 entire element: fade + slide from left (450ms, delay 250ms)
    - h2 stroke variant: COLOR DRAIN left → right (750ms, delay 700ms)
    - sub paragraph: fade + lift from below (450ms, delay 500ms)
-   - cards / stack-rows / waitlist: shared fade-rise stagger from 750ms
+   - cards / waitlist: shared fade-rise stagger from 750ms
    The drain is implemented via background-clip:text + background-position
    animation, so no DOM duplication needed — the existing
    <span class="cyber-h2-stroke">…</span> markup keeps working everywhere.
