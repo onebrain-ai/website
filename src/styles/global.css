@@ -401,15 +401,19 @@
    arrow/Page keys. Result: the clicked link's `[ ]` brackets stay
    on while the IntersectionObserver flips `.is-active` to a new
    link, and the user sees TWO active-looking items at once.
+
    The fix: when `body.suppress-hover` is set (toggled by the click
-   handler in Layout.astro), force-hide the hover bracket spans and
-   the hover colour shift on links that don't currently own
-   `.is-active`. The class clears on the first mousemove, so normal
-   hover behaviour resumes the moment the user touches the trackpad. */
-body.suppress-hover .nav-glass a:not(.is-active):hover {
+   handler in Layout.astro and cleared on the first mousemove),
+   force-hide every non-active link's bracket spans and mute the
+   white hover colour — independent of the lingering :hover pseudo
+   state. We don't gate this on `:hover` because Safari's stuck
+   hover state is exactly what we're trying to override; the rule
+   has to apply unconditionally to non-active links until mousemove
+   releases the gate. */
+body.suppress-hover .nav-glass a:not(.is-active) {
   color: var(--color-muted) !important;
 }
-body.suppress-hover .nav-glass a:not(.is-active):hover > span {
+body.suppress-hover .nav-glass a:not(.is-active) > span {
   opacity: 0 !important;
 }
 
