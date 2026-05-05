@@ -423,15 +423,24 @@ const layers = [
 
   /* Mobile — collapse to a 2-col layout (glyph + content) so each layer
      renders as `glyph · LAYER_NN / NAME / ROLE / DESC` for fast scan.
-     Sub line + bottom HUD band are dropped, manifesto trims to 2 rows. */
+     Sub line + bottom HUD band are dropped, manifesto trims to 2 rows.
+     Explicit grid placement: glyph sits row-1 col-1, the LAYER head
+     (idx/name/role) sits row-1 col-2, and the description spans both
+     columns on row-2 so it can use the full card width — without this
+     the auto-placement algorithm parked `.hs-layer-mid` into col-1
+     (28px wide) and the desc text wrapped one word per line. */
   @media (max-width: 720px) {
     .harness-stack { padding: 14px 12px 12px; }
     .hs-layer {
       grid-template-columns: 28px 1fr;
-      gap: 8px;
+      grid-template-rows: auto auto;
+      column-gap: 10px;
+      row-gap: 6px;
       padding: 10px 14px 10px 26px;
     }
-    .hs-layer-glyph { font-size: 18px; }
+    .hs-layer-glyph { font-size: 18px; grid-column: 1; grid-row: 1; }
+    .hs-layer-left  { grid-column: 2; grid-row: 1; }
+    .hs-layer-mid   { grid-column: 1 / -1; grid-row: 2; }
     .hs-layer-sub { display: none; }
     .hs-band-meta-mute:last-child { display: none; }
     .hs-band-bottom { justify-content: flex-start; }
