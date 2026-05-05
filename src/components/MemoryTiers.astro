@@ -335,15 +335,16 @@ const tiers = [
   .bidir-band-meta { margin-left: auto; }
 
   /* Vertical stage: Human core top → arcs in middle → Agent core bottom.
-     Cores anchor each end; the SVG fills the middle vertical channel.
-     The bidir card stretches to match the tier stack height via the
-     parent grid's `align-items: stretch` — the SVG flexes (flex: 1) to
-     fill any extra vertical space, so both engines feel the same size. */
+     `justify-content: space-between` distributes the three children
+     evenly inside whatever height the parent grid stretches us to —
+     so the cores hug the top + bottom edges and the arcs SVG centres
+     in between, instead of all three packing to the top. */
   .bidir-stage {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     gap: 0;
     flex: 1;
     min-height: 380px;
@@ -416,9 +417,14 @@ const tiers = [
   }
 
   .bidir-arcs {
+    /* Cap the SVG footprint so a wide column doesn't blow up the arcs
+       to 400px+ tall. Aspect-ratio derives the height from the capped
+       width (260:220 → 280×237). The stage's `justify-content:
+       space-between` handles any slack vertical space around it. */
     width: 100%;
-    flex: 1;
-    min-height: 200px;
+    max-width: 280px;
+    aspect-ratio: 260 / 220;
+    align-self: center;
     overflow: visible;
     /* Pull the arcs slightly into the cores so the path tangents read
        as continuous flow — the cores draw their own border, the arcs

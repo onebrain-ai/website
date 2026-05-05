@@ -124,33 +124,35 @@ const steps = [
             </circle>
           </g>
 
-          <!-- Node 01 — INITIATE (top) -->
+          <!-- Node 01 — INITIATE (top). Number + name go inside the
+               circle; the cmd label sits OUTSIDE below the circle so
+               long strings can never overflow the disc. -->
           <g class="how-node" transform="translate(0,-130)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#ff2d92" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#ff2d92" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse"/>
-            <text x="0" y="-14" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#ff2d92" letter-spacing="0.18em">01</text>
-            <text x="0" y="4" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#fff">INITIATE</text>
-            <text x="0" y="22" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8.5" letter-spacing="0.28em" fill="#ff2d92">/onboarding</text>
+            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#ff2d92" letter-spacing="0.18em">01</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">INITIATE</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#ff2d92">/onboarding</text>
           </g>
 
-          <!-- Node 02 — CAPTURE INTENT (bottom-right) -->
+          <!-- Node 02 — CAPTURE INTENT (bottom-right). Two-line name -->
           <g class="how-node" transform="translate(112.6,65)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#bc13fe" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#bc13fe" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 1.2s;"/>
-            <text x="0" y="-14" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">02</text>
-            <text x="0" y="2" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
-            <text x="0" y="16" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">INTENT</text>
-            <text x="0" y="34" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="0.26em" fill="#bc13fe">/braindump</text>
+            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">02</text>
+            <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
+            <text x="0" y="22" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">INTENT</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#bc13fe">/braindump</text>
           </g>
 
-          <!-- Node 03 — MUTUAL EVOLUTION (bottom-left) -->
+          <!-- Node 03 — MUTUAL EVOLUTION (bottom-left). Two-line name -->
           <g class="how-node" transform="translate(-112.6,65)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#00f3ff" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#00f3ff" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 2.4s;"/>
-            <text x="0" y="-14" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">03</text>
-            <text x="0" y="2" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">MUTUAL</text>
-            <text x="0" y="16" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">EVOLUTION</text>
-            <text x="0" y="34" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="0.26em" fill="#00f3ff">/distill · /learn</text>
+            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">03</text>
+            <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">MUTUAL</text>
+            <text x="0" y="22" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">EVOLUTION</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#00f3ff">/distill · /learn</text>
           </g>
         </svg>
 
@@ -263,8 +265,27 @@ const steps = [
 
   .how-loop-svg {
     width: 100%;
+    /* Cap diagram footprint so a wide laptop column doesn't blow it up
+       to 500px+ tall. The viewBox aspect 450:395 gives a square-ish box;
+       capping width at 440 keeps the rendered height around 386px so the
+       loop card stays snug inside the section. */
+    max-width: 440px;
     aspect-ratio: 450 / 395;
-    overflow: visible;
+    align-self: center;
+    display: block;
+    margin: 0 auto;
+    /* Marker arrows + node-pulse rings stay safely inside the viewBox
+       (ring r=180 vs viewBox half-width 225), so we can clip overflow
+       to keep the diagram from leaking past the card boundary on any
+       container width. */
+    overflow: hidden;
+  }
+  /* Centre the loop card inside its column so it doesn't anchor flush-
+     left while the SVG visually centres — the right column was fluid-
+     width, the SVG is now capped, so the gap between had to go. */
+  .how-loop {
+    display: flex;
+    flex-direction: column;
   }
 
   .how-loop-ring {
