@@ -231,10 +231,14 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           io.observe(heroEl);
         }
 
-        // UNIFIED — initial scramble + rare loop (every 12-20s).
+        // UNIFIED — periodic scramble loop only (every 12-20s). The
+        // initial scramble pass is removed: the hero h1 is the LCP
+        // element, and rolling characters across the first 1.1s of
+        // page life made Chrome wait for the text to stabilise before
+        // it would mark LCP. The loop still fires later for the
+        // cinematic flicker.
         document.querySelectorAll('[data-scramble]').forEach((el) => {
           const t = el.dataset.scramble;
-          setTimeout(() => scramble(el, t, 1100), 280);
           function loop() {
             if (heroVisible) scramble(el, t, 600);
             setTimeout(loop, 12000 + Math.random() * 8000);

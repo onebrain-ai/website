@@ -81,16 +81,22 @@ const ogImageUrl = `https://onebrain.run${image}`;
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Non-blocking font load: media="print" makes the browser fetch
-         the stylesheet without applying or blocking, then onload swaps
-         media to "all" so the styles take effect. The hero h1 (LCP
-         candidate) paints with the system fallback first, swaps to
-         Chakra Petch on load. `display=swap` keeps the swap painless.
-         <noscript> falls back to a regular blocking link for JS-off
-         users so they still get the brand fonts. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+    <!-- Font weights trimmed to actually-used set: Chakra Petch
+         italic 700 (every cyber-h2 + the LCP hero h1) plus regular
+         700 for the nav wordmark; Inter regular + 700 for body
+         emphasis; JetBrains Mono regular + 700 for code/UI mono.
+         Old set loaded 14 weights — ~150KB of font CSS — the trim
+         drops the LCP critical path by ~80KB.
+
+         `as="style"` preload bumps the CSS fetch into the high-
+         priority queue so the woff2 URLs inside it start loading
+         sooner; the actual <link rel="stylesheet"> still uses the
+         media="print" onload="this.media='all'" trick so styles
+         don't render-block. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,700;1,700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,700;1,700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'">
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,700;1,700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
     </noscript>
 
     <!-- Stash any incoming hash before the browser performs its default scroll-to-id.
