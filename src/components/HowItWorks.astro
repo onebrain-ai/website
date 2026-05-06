@@ -1,27 +1,36 @@
 ---
-// Mirrors the README coevo-loop diagram: 3 nodes in a triangle with
-// curved arrows flowing clockwise. Left column carries the narrative,
-// right column carries the closed-loop visual.
+// Bootstrap + 3-step session loop. INITIALIZE sits outside the dashed
+// ring as a one-time bootstrap; CAPTURE → EVOLVE → WRAPUP is the
+// session loop that runs every time you sit down to think with the
+// agent. Loop closes from WRAPUP back to CAPTURE — each cycle both
+// sides sharpen.
 const steps = [
   {
     n: '01',
-    t: 'INITIATE',
-    d: 'Install the CLI · run /onboarding · the agent learns your name, vault, and identity.',
+    t: 'INITIALIZE',
+    d: 'Run /onboarding once. The agent learns your name, vault, identity. Bootstrap step — never repeats.',
     code: 'npm install -g @onebrain-ai/cli',
-    accent: '#ff2d92',
+    accent: '#c8ff00',
   },
   {
     n: '02',
-    t: 'CAPTURE_INTENT',
-    d: 'Talk to the agent in natural language. It writes, classifies, and links in real time.',
+    t: 'CAPTURE',
+    d: 'Talk in natural language. The agent writes, classifies, and links in real time.',
     code: '/braindump · /capture · /bookmark',
-    accent: '#bc13fe',
+    accent: '#ff2d92',
   },
   {
     n: '03',
-    t: 'MUTUAL_EVOLUTION',
-    d: '/research and /distill expand your knowledge. /learn deepens the agent. The loop tightens.',
+    t: 'EVOLVE',
+    d: '/research and /distill expand the vault. /learn deepens the agent.',
     code: '/research · /distill · /learn',
+    accent: '#bc13fe',
+  },
+  {
+    n: '04',
+    t: 'WRAPUP',
+    d: '/wrapup consolidates the session into a log. /recap promotes lessons into memory. The loop closes — next session starts sharper.',
+    code: '/wrapup · /recap',
     accent: '#00f3ff',
   },
 ];
@@ -42,11 +51,11 @@ const steps = [
             <span>ONEBRAIN // PROTOCOL</span>
           </div>
           <h2 class="cyber-h2">
-            The Path to<br/>
-            <span class="cyber-h2-stroke">Co-Evolution.</span>
+            Every Session<br/>
+            <span class="cyber-h2-stroke">Sharpens Both Sides.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> tightens with every revolution — a 3-step loop where both sides get sharper, cycle after cycle.
+            <strong class="brand">OneBrain</strong> bootstraps once — then loops forever. Capture intent, evolve the vault, wrap up to deepen memory. Each cycle, both sides sharpen.
           </p>
         </header>
 
@@ -64,8 +73,8 @@ const steps = [
         </ol>
       </div>
 
-      <!-- RIGHT: animated triangle loop -->
-      <div class="how-loop" role="img" aria-label="Three-step closed loop: 01 INITIATE flows to 02 CAPTURE_INTENT, then to 03 MUTUAL_EVOLUTION, then back to 01. Each revolution sharpens both human and agent.">
+      <!-- RIGHT: animated bootstrap + triangle loop -->
+      <div class="how-loop" role="img" aria-label="Bootstrap then loop. 01 INITIALIZE is a one-time setup that feeds into the session loop. 02 CAPTURE flows to 03 EVOLVE flows to 04 WRAPUP, then back to CAPTURE. INITIALIZE never repeats; the inner loop runs every session, and each revolution sharpens both human and agent.">
         <span class="how-loop-corner how-loop-corner-tl" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-tr" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-bl" aria-hidden="true"></span>
@@ -79,6 +88,9 @@ const steps = [
 
         <svg class="how-loop-svg" viewBox="-225 -200 450 395" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <defs>
+            <marker id="how-ah-init" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#c8ff00"/>
+            </marker>
             <marker id="how-ah-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff2d92"/>
             </marker>
@@ -94,7 +106,13 @@ const steps = [
           <circle class="how-loop-ring" cx="0" cy="0" r="180" fill="none" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1" stroke-dasharray="3 6"/>
           <circle cx="0" cy="0" r="180" fill="none" stroke="rgba(200, 255, 0, 0.08)" stroke-width="1"/>
 
-          <!-- 01 → 02 (magenta arc) -->
+          <!-- Bootstrap arrow (one-time, dashed) — 01 INIT to 02 CAPTURE -->
+          <g class="how-leg how-leg-init">
+            <text x="-100" y="-187" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" letter-spacing="0.32em" fill="rgba(200, 255, 0, 0.55)">ONE_TIME · BOOTSTRAP</text>
+            <path id="how-path-init" d="M -143 -160 Q -100 -180 -39.6 -169.6" fill="none" stroke="#c8ff00" stroke-width="1.4" stroke-opacity="0.6" stroke-dasharray="4 4" marker-end="url(#how-ah-init)"/>
+          </g>
+
+          <!-- 02 → 03 (magenta arc) -->
           <g class="how-leg how-leg-1">
             <path id="how-path-1" d="M 27 -83.2 Q 82.2 -47.5 85.6 18.2" fill="none" stroke="#ff2d92" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-1)"/>
             <circle r="5" fill="#ff2d92" class="how-flow-dot how-flow-dot-1">
@@ -104,7 +122,7 @@ const steps = [
             </circle>
           </g>
 
-          <!-- 02 → 03 (violet arc) -->
+          <!-- 03 → 04 (violet arc) -->
           <g class="how-leg how-leg-2">
             <path id="how-path-2" d="M 58.6 65 Q 0 110 -58.6 65" fill="none" stroke="#bc13fe" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-2)"/>
             <circle r="5" fill="#bc13fe" class="how-flow-dot how-flow-dot-2">
@@ -114,7 +132,7 @@ const steps = [
             </circle>
           </g>
 
-          <!-- 03 → 01 (cyan arc) -->
+          <!-- 04 → 02 (cyan arc) — closes the session loop -->
           <g class="how-leg how-leg-3">
             <path id="how-path-3" d="M -85.6 18.2 Q -82.2 -47.5 -27 -83.2" fill="none" stroke="#00f3ff" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-3)"/>
             <circle r="5" fill="#00f3ff" class="how-flow-dot how-flow-dot-3">
@@ -124,35 +142,43 @@ const steps = [
             </circle>
           </g>
 
-          <!-- Node 01 — INITIATE (top). Number + name go inside the
-               circle; the cmd label sits OUTSIDE below the circle so
-               long strings can never overflow the disc. -->
+          <!-- Node 01 — INITIALIZE (outside the ring, upper-left, smaller).
+               Dashed stroke + smaller radius reinforce the "bootstrap,
+               once" semantics: this node is not part of the cycle. -->
+          <g class="how-node how-node-init" transform="translate(-175,-160)">
+            <circle r="32" fill="rgba(8, 8, 14, 0.95)" stroke="#c8ff00" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <text x="0" y="-3" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" fill="#c8ff00" letter-spacing="0.18em">01</text>
+            <text x="0" y="11" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="11" letter-spacing="0.05em" fill="#fff">INIT</text>
+          </g>
+
+          <!-- Node 02 — CAPTURE (top of inner triangle).
+               Number + name go inside the circle; the cmd label sits
+               OUTSIDE below the circle so long strings can never
+               overflow the disc. -->
           <g class="how-node" transform="translate(0,-130)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#ff2d92" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#ff2d92" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse"/>
-            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#ff2d92" letter-spacing="0.18em">01</text>
-            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">INITIATE</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#ff2d92">/onboarding</text>
+            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#ff2d92" letter-spacing="0.18em">02</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#ff2d92">/braindump</text>
           </g>
 
-          <!-- Node 02 — CAPTURE INTENT (bottom-right). Two-line name -->
+          <!-- Node 03 — EVOLVE (bottom-right) -->
           <g class="how-node" transform="translate(112.6,65)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#bc13fe" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#bc13fe" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 1.2s;"/>
-            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">02</text>
-            <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
-            <text x="0" y="22" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">INTENT</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#bc13fe">/braindump</text>
+            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">03</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">EVOLVE</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#bc13fe">/distill · /learn</text>
           </g>
 
-          <!-- Node 03 — MUTUAL EVOLUTION (bottom-left). Two-line name -->
+          <!-- Node 04 — WRAPUP (bottom-left) -->
           <g class="how-node" transform="translate(-112.6,65)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#00f3ff" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#00f3ff" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 2.4s;"/>
-            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">03</text>
-            <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">MUTUAL</text>
-            <text x="0" y="22" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">EVOLUTION</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#00f3ff">/distill · /learn</text>
+            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">04</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">WRAPUP</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#00f3ff">/wrapup · /recap</text>
           </g>
         </svg>
 
@@ -165,11 +191,11 @@ const steps = [
 </section>
 
 <style>
-  /* ── Step list (left) — compact density so all 3 steps + header
+  /* ── Step list (left) — compact density so 4 steps + header
         + sub fit inside the section's scroll-snap viewport without the
         last code line being clipped at the bottom edge. */
   .how-steps {
-    margin-top: 0.75rem;
+    margin-top: 0.6rem;
     list-style: none;
     padding: 0;
     display: flex;
@@ -178,9 +204,9 @@ const steps = [
   }
   .how-step {
     display: grid;
-    grid-template-columns: 44px 1fr;
-    gap: 12px;
-    padding: 10px 0;
+    grid-template-columns: 40px 1fr;
+    gap: 11px;
+    padding: 8px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     align-items: flex-start;
   }
@@ -189,31 +215,31 @@ const steps = [
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 1.9rem;
+    font-size: 1.7rem;
     line-height: 1;
     color: var(--step-accent);
     text-shadow: 0 0 24px color-mix(in srgb, var(--step-accent) 45%, transparent);
   }
   .how-step-title {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #fff;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin: 0 0 4px;
+    margin: 0 0 3px;
   }
   .how-step-desc {
-    margin: 0 0 6px;
+    margin: 0 0 5px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10.5px;
     line-height: 1.5;
     color: rgba(255, 255, 255, 0.62);
   }
   .how-step-code {
     display: block;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9.5px;
     letter-spacing: 0.04em;
     color: var(--step-accent);
     opacity: 0.85;
@@ -267,24 +293,20 @@ const steps = [
 
   .how-loop-svg {
     width: 100%;
-    /* Cap diagram footprint so a wide laptop column doesn't blow it up
-       to 500px+ tall. The viewBox aspect 450:395 gives a square-ish box;
-       capping width at 440 keeps the rendered height around 386px so the
-       loop card stays snug inside the section. */
+    /* Cap diagram footprint so a wide laptop column doesn't blow it up.
+       The viewBox aspect 450:395 gives a square-ish box; capping width
+       at 440 keeps the rendered height around 386px so the loop card
+       stays snug inside the section. */
     max-width: 440px;
     aspect-ratio: 450 / 395;
     align-self: center;
     display: block;
     margin: 0 auto;
-    /* Marker arrows + node-pulse rings stay safely inside the viewBox
-       (ring r=180 vs viewBox half-width 225), so we can clip overflow
-       to keep the diagram from leaking past the card boundary on any
-       container width. */
+    /* Marker arrows + node-pulse rings stay inside the viewBox, so we
+       can clip overflow to keep the diagram from leaking past the card
+       boundary on any container width. */
     overflow: hidden;
   }
-  /* Centre the loop card inside its column so it doesn't anchor flush-
-     left while the SVG visually centres — the right column was fluid-
-     width, the SVG is now capped, so the gap between had to go. */
   .how-loop {
     display: flex;
     flex-direction: column;
@@ -302,6 +324,10 @@ const steps = [
   .how-leg-1 { animation-delay: 0s; }
   .how-leg-2 { animation-delay: 2.2s; }
   .how-leg-3 { animation-delay: 4.4s; }
+  /* Bootstrap arrow doesn't pulse — it's one-time, not part of the
+     cycle. Static dashed stroke is the visual cue for "fired once,
+     then quiet". */
+  .how-leg-init { animation: none; }
   @keyframes how-leg-pulse {
     0%, 33%, 100% { stroke-opacity: 0.55; }
     10%           { stroke-opacity: 1;    }
@@ -309,8 +335,7 @@ const steps = [
 
   /* No filter on the moving dots — `filter: drop-shadow` on a
      transform/SMIL-animated SVG element triggers per-frame
-     re-rasterisation in Safari. The pulsing leg stroke + flowing dot
-     are enough motion signal. */
+     re-rasterisation in Safari. */
   .how-flow-dot-1 { color: #ff2d92; }
   .how-flow-dot-2 { color: #bc13fe; }
   .how-flow-dot-3 { color: #00f3ff; }
@@ -338,12 +363,12 @@ const steps = [
   }
 
   /* ── Responsive ───────────────────────────────────────── */
-  /* Tighten desktop section padding so 3 steps + the loop diagram fit
+  /* Tighten desktop section padding so 4 steps + the loop diagram fit
      comfortably inside the scroll-snap viewport on shorter laptop
      screens (~700–800px tall). */
   @media (min-width: 1024px) {
     #how { padding: 2.25rem 3rem 1.75rem; }
-    #how .cyber-section-head { margin-bottom: 0.75rem; }
+    #how .cyber-section-head { margin-bottom: 0.6rem; }
   }
 
   @media (max-width: 1024px) {
@@ -352,8 +377,8 @@ const steps = [
   }
 
   @media (max-width: 720px) {
-    .how-step { grid-template-columns: 44px 1fr; gap: 10px; padding: 10px 0; }
-    .how-step-num { font-size: 1.9rem; }
+    .how-step { grid-template-columns: 40px 1fr; gap: 10px; padding: 9px 0; }
+    .how-step-num { font-size: 1.7rem; }
     .how-step-desc { font-size: 11px; }
     .how-loop-band-meta,
     .how-loop-foot { display: none; }

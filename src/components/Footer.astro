@@ -60,6 +60,12 @@ const cliVersion = await getCliVersion();
           <li><a href="mailto:hello@onebrain.run">Contact</a></li>
         </ul>
       </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">LEGAL</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+        </ul>
+      </div>
     </nav>
 
   </div>
@@ -195,8 +201,11 @@ const cliVersion = await getCliVersion();
   /* ── Nav columns ── */
   .footer-nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+  }
+  @media (min-width: 640px) {
+    .footer-nav { grid-template-columns: repeat(4, 1fr); }
   }
   .footer-col-title {
     font-family: var(--font-mono);

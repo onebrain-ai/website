@@ -1,15 +1,33 @@
 ---
-const tiers = [
+import { getGitHubStars, formatStars } from '../lib/gh-stars';
+
+// Discriminated union: `live` tiers carry the link + tagline that the
+// card uses to render the active state; `soon` tiers don't. Coupling
+// these fields by tag prevents a future edit from adding `href`
+// without `tagline` (or vice versa) and rendering a half-broken card.
+type Tier =
+  | { kind: 'live'; name: string; desc: string; status: string; tagline: string; href: string }
+  | { kind: 'soon'; name: string; desc: string; status: string };
+
+const tiers: Tier[] = [
   {
+    kind: 'live',
     name: 'FREE',
     tagline: 'Always free & open source',
     desc: 'Local vault · OSS skills · BYOK',
     status: 'AVAILABLE_NOW',
     href: 'https://github.com/onebrain-ai/onebrain#installation',
   },
-  { name: 'PRO',  desc: 'Sync · mobile · hosted runtime',  status: 'COMING_SOON' },
-  { name: 'TEAM', desc: 'Shared intelligence · team mesh', status: 'COMING_SOON' },
+  { kind: 'soon', name: 'PRO',  desc: 'Sync · mobile · hosted runtime',  status: '~$10/MO · EST.' },
+  { kind: 'soon', name: 'TEAM', desc: 'Shared intelligence · team mesh', status: '~$25/MO · EST.' },
 ];
+
+const stars = await getGitHubStars();
+const starsLabel = formatStars(stars);
+// Hide the badge entirely if the build-time fetch fell back to 0 —
+// rendering "0 stars on GitHub" as social proof is worse than rendering
+// nothing.
+const showStars = stars > 0;
 ---
 
 <section id="cloud" class="cyber-section reveal" style="--section-accent: #00bfff;">
@@ -37,20 +55,21 @@ const tiers = [
 
         <div class="tiers">
           {tiers.map((t, i) => {
-            const Tag = t.href ? 'a' : 'div';
-            const props = t.href
+            const isLive = t.kind === 'live';
+            const Tag = isLive ? 'a' : 'div';
+            const props = isLive
               ? { href: t.href, target: '_blank', rel: 'noopener noreferrer' }
               : { 'aria-disabled': 'true' };
             return (
-              <Tag class={`cyber-card tier-card ${t.href ? 'tier-card-live' : 'tier-card-soon'}`} {...props}>
+              <Tag class={`cyber-card tier-card ${isLive ? 'tier-card-live' : 'tier-card-soon'}`} {...props}>
                 <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
                 <h3 class="cyber-card-title tier-name">{t.name}</h3>
-                {t.tagline && <span class="tier-tagline">// {t.tagline}</span>}
+                {isLive && <span class="tier-tagline">// {t.tagline}</span>}
                 <p class="cyber-card-desc">{t.desc}</p>
                 <span class="tier-status">
-                  {t.href && <span class="tier-status-dot" aria-hidden="true"></span>}
+                  {isLive && <span class="tier-status-dot" aria-hidden="true"></span>}
                   [ {t.status} ]
-                  {t.href && <span class="tier-arrow" aria-hidden="true">→</span>}
+                  {isLive && <span class="tier-arrow" aria-hidden="true">→</span>}
                 </span>
               </Tag>
             );
@@ -70,6 +89,31 @@ const tiers = [
           <span>CLOUD WAITLIST :: OPEN</span>
         </div>
 
+        <div class="waitlist-proof" aria-label="Social proof">
+          {showStars && (
+            <>
+              <a
+                href="https://github.com/onebrain-ai/onebrain"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="waitlist-proof-stars"
+                aria-label={`${stars} stars on GitHub`}
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 .587l3.668 7.568L24 9.75l-6 5.848 1.417 8.265L12 19.771 4.583 23.863 6 15.598 0 9.75l8.332-1.595z"/>
+                </svg>
+                <span class="waitlist-proof-num">{starsLabel}</span>
+                <span class="waitlist-proof-tag">stars on github</span>
+              </a>
+              <span class="waitlist-proof-sep" aria-hidden="true">·</span>
+            </>
+          )}
+          <span class="waitlist-proof-built">
+            Built by
+            <a href="https://x.com/kengio" target="_blank" rel="noopener noreferrer">@kengio</a>
+          </span>
+        </div>
+
         <h3 class="waitlist-title">Lock in early access to <strong>PRO + TEAM</strong>.</h3>
         <p class="waitlist-blurb">
           Drop your email and we'll let you know the moment sync, hosted runtime,
@@ -85,6 +129,18 @@ const tiers = [
               placeholder="hello@onebrain.run"
               class="waitlist-input"
               autocomplete="email"
+            />
+          </label>
+
+          <label class="waitlist-label">
+            <span>USE CASE <span class="waitlist-label-meta">// optional</span></span>
+            <input
+              type="text"
+              placeholder="knowledge base · journal · research · team brief..."
+              class="waitlist-input"
+              maxlength="500"
+              name="use_case"
+              autocomplete="off"
             />
           </label>
 
@@ -115,8 +171,12 @@ const tiers = [
     const form = document.getElementById('waitlist-form');
     const banner = document.getElementById('waitlist-banner');
     const input = form && form.querySelector('input[type="email"]');
+    const useCaseInput = form && form.querySelector('input[name="use_case"]');
     const button = form && form.querySelector('button[type="submit"]');
-    if (!form || !banner || !input || !button) return;
+    // useCaseInput is part of the same template, so missing means a
+    // template regression — fail loud in the early-return rather than
+    // silently degrading to email-only submission.
+    if (!form || !banner || !input || !useCaseInput || !button) return;
 
     function showBanner(state, message) {
       banner.dataset.state = state;
@@ -135,22 +195,34 @@ const tiers = [
       const labelEl = button.querySelector('span');
       if (labelEl) labelEl.textContent = 'SENDING_';
 
+      const useCase = useCaseInput.value.trim();
+
       try {
         const res = await fetch('/api/waitlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, use_case: useCase || undefined }),
         });
-        const data = await res.json().catch(() => ({}));
+        let data;
+        try {
+          data = await res.json();
+        } catch (parseErr) {
+          console.error('[waitlist] response not JSON:', res.status, parseErr);
+          data = {};
+        }
         if (res.ok && data.ok) {
           showBanner('success', '✓ Got it. You\'re on the list — we\'ll ping you at launch.');
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
+        } else if (data.error === 'use_case_too_long') {
+          showBanner('error', '✗ Use case is over 500 characters. Trim it down and resubmit.');
         } else {
+          console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');
         }
-      } catch (_e) {
+      } catch (err) {
+        console.error('[waitlist] network error:', err);
         showBanner('error', '✗ Network error. Try again.');
       } finally {
         button.disabled = false;
@@ -335,6 +407,54 @@ const tiers = [
     animation: cyber-pulse 1.5s ease-in-out infinite;
   }
 
+  /* Social proof — compact one-line strip between waitlist head and
+     title. GitHub star count + "built by" attribution. Same mono
+     vocabulary as the rest of the console, dim by default so it
+     doesn't compete with the H3. */
+  .waitlist-proof {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: -0.4rem 0 1.4rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+  }
+  .waitlist-proof a {
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .waitlist-proof a:hover { color: var(--section-accent); }
+  .waitlist-proof-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .waitlist-proof-stars svg {
+    color: var(--section-accent);
+    flex-shrink: 0;
+    transform: translateY(-1px);
+  }
+  .waitlist-proof-num {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .waitlist-proof-tag { letter-spacing: 0.22em; }
+  .waitlist-proof-sep { color: rgba(255, 255, 255, 0.18); }
+  .waitlist-proof-built a {
+    color: var(--section-accent);
+    border-bottom: 1px dotted color-mix(in srgb, var(--section-accent) 40%, transparent);
+  }
+  .waitlist-proof-built a:hover {
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.5);
+  }
+
   .waitlist-title {
     margin: 0 0 0.7rem;
     /* Match site H2 vocabulary — Chakra Petch italic, just smaller. */
@@ -376,6 +496,13 @@ const tiers = [
     color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
     margin-bottom: 6px;
+  }
+  .waitlist-label-meta {
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.22);
+    margin-left: 6px;
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
   }
   .waitlist-input {
     width: 100%;
