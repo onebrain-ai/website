@@ -3,6 +3,10 @@ import { getCliVersion } from '../lib/version';
 import Brain from './Brain.astro';
 const year = new Date().getFullYear();
 const cliVersion = await getCliVersion();
+// Same logic as Nav — when rendered from a non-root route like
+// /privacy, prefix in-page anchors with `/` so they navigate home first.
+const isHome = Astro.url.pathname === '/';
+const home = isHome ? '' : '/';
 ---
 
 <footer class="footer" id="footer">
@@ -39,10 +43,10 @@ const cliVersion = await getCliVersion();
       <div class="footer-col">
         <h4 class="footer-col-title">PROJECT</h4>
         <ul>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#synergy">Synergy</a></li>
-          <li><a href="#commands">Commands</a></li>
-          <li><a href="#cloud">Cloud</a></li>
+          <li><a href={`${home}#features`}>Features</a></li>
+          <li><a href={`${home}#synergy`}>Synergy</a></li>
+          <li><a href={`${home}#commands`}>Commands</a></li>
+          <li><a href={`${home}#cloud`}>Cloud</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -58,6 +62,12 @@ const cliVersion = await getCliVersion();
         <ul>
           <li><a href="https://x.com/onebrain_run" target="_blank" rel="noopener noreferrer">X / Twitter <span class="footer-ext">↗</span></a></li>
           <li><a href="mailto:hello@onebrain.run">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">LEGAL</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
         </ul>
       </div>
     </nav>
@@ -195,8 +205,11 @@ const cliVersion = await getCliVersion();
   /* ── Nav columns ── */
   .footer-nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+  }
+  @media (min-width: 640px) {
+    .footer-nav { grid-template-columns: repeat(4, 1fr); }
   }
   .footer-col-title {
     font-family: var(--font-mono);

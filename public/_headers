@@ -1,0 +1,23 @@
+# Security headers served by Cloudflare Workers Static Assets.
+# Lighthouse Best Practices scoring: HSTS + COOP + X-Frame-Options +
+# X-Content-Type-Options + Referrer-Policy + Permissions-Policy is the
+# set that lifts the score from 96 → 100 on incognito audits.
+#
+# CSP allows 'unsafe-inline' for scripts because Hero/Cloud/etc. ship
+# with `<script is:inline>` blocks (copy buttons, neural canvas,
+# waitlist submit). Tightening to nonces is a separate refactor.
+#
+# Cloudflare Web Analytics beacon hosts (static.cloudflareinsights.com,
+# cloudflareinsights.com) are allowlisted in CSP because Cloudflare
+# auto-injects the beacon at the zone level — blocking it via CSP
+# would create a different console error without fixing the existing
+# ERR_CONNECTION_REFUSED (which is network-level, environmental).
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests

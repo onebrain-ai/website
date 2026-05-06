@@ -1,27 +1,28 @@
 ---
-// Mirrors the README coevo-loop diagram: 3 nodes in a triangle with
-// curved arrows flowing clockwise. Left column carries the narrative,
-// right column carries the closed-loop visual.
+// 3-step session loop: CAPTURE → EVOLVE → WRAPUP, then back to
+// CAPTURE. Each cycle the vault grows and the agent learns more
+// about you — both sides sharpen. (Install + /onboarding is a
+// one-time bootstrap and lives in the Hero install line, not here.)
 const steps = [
   {
     n: '01',
-    t: 'INITIATE',
-    d: 'Install the CLI · run /onboarding · the agent learns your name, vault, and identity.',
-    code: 'npm install -g @onebrain-ai/cli',
+    t: 'CAPTURE',
+    d: 'Talk to the agent in natural language. It writes, classifies, and links your thoughts in real time.',
+    code: '/braindump · /capture · /bookmark',
     accent: '#ff2d92',
   },
   {
     n: '02',
-    t: 'CAPTURE_INTENT',
-    d: 'Talk to the agent in natural language. It writes, classifies, and links in real time.',
-    code: '/braindump · /capture · /bookmark',
+    t: 'EVOLVE',
+    d: '/research and /distill expand your knowledge. /learn deepens the agent. The loop tightens.',
+    code: '/research · /distill · /learn',
     accent: '#bc13fe',
   },
   {
     n: '03',
-    t: 'MUTUAL_EVOLUTION',
-    d: '/research and /distill expand your knowledge. /learn deepens the agent. The loop tightens.',
-    code: '/research · /distill · /learn',
+    t: 'WRAPUP',
+    d: '/wrapup consolidates the session log. /recap promotes lessons to memory.',
+    code: '/wrapup · /recap',
     accent: '#00f3ff',
   },
 ];
@@ -32,7 +33,7 @@ const steps = [
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-16 items-center how-grid">
+    <div class="grid lg:grid-cols-[3fr_2fr] gap-10 lg:gap-16 items-center how-grid">
 
       <!-- LEFT: header + step list -->
       <div class="how-left">
@@ -42,11 +43,11 @@ const steps = [
             <span>ONEBRAIN // PROTOCOL</span>
           </div>
           <h2 class="cyber-h2">
-            The Path to<br/>
-            <span class="cyber-h2-stroke">Co-Evolution.</span>
+            Every Session<br/>
+            <span class="cyber-h2-stroke">Sharpens Both.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> tightens with every revolution — a 3-step loop where both sides get sharper, cycle after cycle.
+            <strong class="brand">OneBrain</strong> runs as a tight 3-step loop. Each cycle, both sides sharpen.
           </p>
         </header>
 
@@ -56,7 +57,7 @@ const steps = [
               <span class="how-step-num">{s.n}</span>
               <div class="how-step-body">
                 <h3 class="how-step-title">{s.t}</h3>
-                <p class="how-step-desc">{s.d}</p>
+                {s.d && <p class="how-step-desc">{s.d}</p>}
                 <code class="how-step-code">{s.code}</code>
               </div>
             </li>
@@ -65,7 +66,7 @@ const steps = [
       </div>
 
       <!-- RIGHT: animated triangle loop -->
-      <div class="how-loop" role="img" aria-label="Three-step closed loop: 01 INITIATE flows to 02 CAPTURE_INTENT, then to 03 MUTUAL_EVOLUTION, then back to 01. Each revolution sharpens both human and agent.">
+      <div class="how-loop" role="img" aria-label="Three-step closed loop: 01 CAPTURE flows to 02 EVOLVE, then to 03 WRAPUP, then back to 01. Each revolution sharpens both human and agent.">
         <span class="how-loop-corner how-loop-corner-tl" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-tr" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-bl" aria-hidden="true"></span>
@@ -114,7 +115,7 @@ const steps = [
             </circle>
           </g>
 
-          <!-- 03 → 01 (cyan arc) -->
+          <!-- 03 → 01 (cyan arc) — closes the loop -->
           <g class="how-leg how-leg-3">
             <path id="how-path-3" d="M -85.6 18.2 Q -82.2 -47.5 -27 -83.2" fill="none" stroke="#00f3ff" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-3)"/>
             <circle r="5" fill="#00f3ff" class="how-flow-dot how-flow-dot-3">
@@ -124,35 +125,34 @@ const steps = [
             </circle>
           </g>
 
-          <!-- Node 01 — INITIATE (top). Number + name go inside the
-               circle; the cmd label sits OUTSIDE below the circle so
-               long strings can never overflow the disc. -->
+          <!-- Node 01 — CAPTURE (top of triangle).
+               Number + name go inside the circle; the cmd label sits
+               OUTSIDE below the circle so long strings can never
+               overflow the disc. -->
           <g class="how-node" transform="translate(0,-130)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#ff2d92" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#ff2d92" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse"/>
             <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#ff2d92" letter-spacing="0.18em">01</text>
-            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">INITIATE</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#ff2d92">/onboarding</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#ff2d92">/braindump</text>
           </g>
 
-          <!-- Node 02 — CAPTURE INTENT (bottom-right). Two-line name -->
+          <!-- Node 02 — EVOLVE (bottom-right) -->
           <g class="how-node" transform="translate(112.6,65)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#bc13fe" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#bc13fe" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 1.2s;"/>
-            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">02</text>
-            <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
-            <text x="0" y="22" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">INTENT</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#bc13fe">/braindump</text>
+            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">02</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">EVOLVE</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#bc13fe">/distill · /learn</text>
           </g>
 
-          <!-- Node 03 — MUTUAL EVOLUTION (bottom-left). Two-line name -->
+          <!-- Node 03 — WRAPUP (bottom-left) -->
           <g class="how-node" transform="translate(-112.6,65)">
             <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#00f3ff" stroke-width="1.5"/>
             <circle r="56" fill="none" stroke="#00f3ff" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 2.4s;"/>
-            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">03</text>
-            <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">MUTUAL</text>
-            <text x="0" y="22" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.05em" fill="#fff">EVOLUTION</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#00f3ff">/distill · /learn</text>
+            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">03</text>
+            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">WRAPUP</text>
+            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#00f3ff">/wrapup · /recap</text>
           </g>
         </svg>
 
@@ -165,9 +165,9 @@ const steps = [
 </section>
 
 <style>
-  /* ── Step list (left) — compact density so all 3 steps + header
-        + sub fit inside the section's scroll-snap viewport without the
-        last code line being clipped at the bottom edge. */
+  /* ── Step list (left) — body fonts at the standard section size.
+        Three steps (CAPTURE / EVOLVE / WRAPUP) all carry full
+        descriptions; no compaction needed. */
   .how-steps {
     margin-top: 0.75rem;
     list-style: none;
@@ -180,7 +180,7 @@ const steps = [
     display: grid;
     grid-template-columns: 44px 1fr;
     gap: 12px;
-    padding: 10px 0;
+    padding: 9px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     align-items: flex-start;
   }
@@ -267,24 +267,20 @@ const steps = [
 
   .how-loop-svg {
     width: 100%;
-    /* Cap diagram footprint so a wide laptop column doesn't blow it up
-       to 500px+ tall. The viewBox aspect 450:395 gives a square-ish box;
-       capping width at 440 keeps the rendered height around 386px so the
-       loop card stays snug inside the section. */
+    /* Cap diagram footprint so a wide laptop column doesn't blow it up.
+       The viewBox aspect 450:395 gives a square-ish box; capping width
+       at 440 keeps the rendered height around 386px so the loop card
+       stays snug inside the section. */
     max-width: 440px;
     aspect-ratio: 450 / 395;
     align-self: center;
     display: block;
     margin: 0 auto;
-    /* Marker arrows + node-pulse rings stay safely inside the viewBox
-       (ring r=180 vs viewBox half-width 225), so we can clip overflow
-       to keep the diagram from leaking past the card boundary on any
-       container width. */
+    /* Marker arrows + node-pulse rings stay inside the viewBox, so we
+       can clip overflow to keep the diagram from leaking past the card
+       boundary on any container width. */
     overflow: hidden;
   }
-  /* Centre the loop card inside its column so it doesn't anchor flush-
-     left while the SVG visually centres — the right column was fluid-
-     width, the SVG is now capped, so the gap between had to go. */
   .how-loop {
     display: flex;
     flex-direction: column;
@@ -309,8 +305,7 @@ const steps = [
 
   /* No filter on the moving dots — `filter: drop-shadow` on a
      transform/SMIL-animated SVG element triggers per-frame
-     re-rasterisation in Safari. The pulsing leg stroke + flowing dot
-     are enough motion signal. */
+     re-rasterisation in Safari. */
   .how-flow-dot-1 { color: #ff2d92; }
   .how-flow-dot-2 { color: #bc13fe; }
   .how-flow-dot-3 { color: #00f3ff; }
@@ -338,9 +333,6 @@ const steps = [
   }
 
   /* ── Responsive ───────────────────────────────────────── */
-  /* Tighten desktop section padding so 3 steps + the loop diagram fit
-     comfortably inside the scroll-snap viewport on shorter laptop
-     screens (~700–800px tall). */
   @media (min-width: 1024px) {
     #how { padding: 2.25rem 3rem 1.75rem; }
     #how .cyber-section-head { margin-bottom: 0.75rem; }

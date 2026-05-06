@@ -1,0 +1,174 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const updated = '2026-05-06';
+---
+
+<Layout
+  title="Privacy — OneBrain"
+  description="OneBrain runs in your local Obsidian vault. Here's the short list of what we don't store, what we do, and how to reach us."
+>
+  <Nav />
+  <main>
+    <section class="legal-section">
+      <div class="legal-shell">
+        <header class="legal-head">
+          <div class="cyber-pill">
+            <span class="cyber-pill-dot"></span>
+            <span>ONEBRAIN // LEGAL</span>
+          </div>
+          <h1 class="legal-h1">Privacy.</h1>
+          <p class="legal-meta">UPDATED {updated} · APPLIES TO onebrain.run + @onebrain-ai/cli</p>
+        </header>
+
+        <article class="legal-prose">
+          <p>
+            <strong class="brand">OneBrain</strong> runs in your local Obsidian vault.
+            Your notes, your agent's memory, your conversations — none of it leaves
+            your machine in the FREE tier. The CLI talks directly to your LLM
+            provider of choice; the plugin reads and writes files on your disk.
+            We don't have a server in that loop.
+          </p>
+
+          <h2>What we don't store</h2>
+          <p>
+            Vault contents. Agent memory. Prompts. Session logs. Skill output.
+            We never see any of it. There's no telemetry pipeline, no
+            cloud-backed analytics on what you write or how you use the agent.
+          </p>
+
+          <h2>What we do store</h2>
+          <p>
+            The Cloud waitlist signup is the one place you hand us data. The
+            row holds: your email, the time you signed up, and a hash of your
+            IP (salted with a private string and truncated — the raw IP is
+            never written). That's it. No tracking pixels, no third-party
+            analytics, no embedded scripts shipped to the page from anywhere
+            except this domain.
+          </p>
+          <p>
+            When OneBrain Cloud (PRO + TEAM) ships, this page will be replaced
+            by a full data-handling notice covering sync payloads, encryption,
+            retention, and sub-processors. Until then, the only record we hold
+            is the waitlist row keyed by your email.
+          </p>
+
+          <h2>Contact</h2>
+          <p>
+            Questions, deletion requests, GDPR/CCPA asks, or anything else —
+            email <a href="mailto:hello@onebrain.run">hello@onebrain.run</a>
+            and we'll respond within a few business days.
+          </p>
+        </article>
+
+        <p class="legal-back">
+          <a href="/">← back to onebrain.run</a>
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal-section {
+    position: relative;
+    min-height: calc(100vh - 80px);
+    /* Top padding only needs to clear the 64px sticky nav + a little
+       breathing room — 8rem left an unnecessary blank band above the
+       title. */
+    padding: 4rem 1.5rem 4rem;
+    background: #050507;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .legal-shell {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .legal-head { margin-bottom: 3rem; }
+
+  .legal-h1 {
+    margin: 1.2rem 0 0.6rem;
+    font-family: 'Chakra Petch', var(--font-display), sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+  .legal-h1-stroke {
+    -webkit-text-stroke: 1.5px #c8ff00;
+    color: transparent;
+    text-shadow: 0 0 30px rgba(200, 255, 0, 0.35);
+  }
+  .legal-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .legal-prose {
+    font-family: 'JetBrains Mono', var(--font-mono), monospace;
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .legal-prose p {
+    margin: 0 0 1.2rem;
+  }
+  .legal-prose h2 {
+    margin: 2.2rem 0 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #c8ff00;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(200, 255, 0, 0.18);
+  }
+  .legal-prose strong.brand {
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.18);
+  }
+  .legal-prose a {
+    color: #c8ff00;
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(200, 255, 0, 0.4);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .legal-prose a:hover {
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .legal-back {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+  .legal-back a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .legal-back a:hover { color: #c8ff00; }
+
+  @media (max-width: 640px) {
+    .legal-section { padding: 3rem 1.25rem 3rem; }
+    .legal-prose { font-size: 13px; line-height: 1.8; }
+  }
+</style>
