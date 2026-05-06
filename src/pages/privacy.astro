@@ -74,6 +74,12 @@ const updated = '2026-05-06';
 
 <style>
   .legal-section {
+    /* The cyber-pill in <header> reads `var(--section-accent)` for its
+       color/background/border — without a value here, color-mix() can't
+       resolve and the pill collapses to just its corner brackets +
+       dot. Set the accent (matches legal-h1-stroke + prose links). */
+    --section-accent: #c8ff00;
+
     position: relative;
     min-height: calc(100vh - 80px);
     /* Top padding only needs to clear the 64px sticky nav + a little

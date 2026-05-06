@@ -314,7 +314,11 @@ const ogImageUrl = `https://onebrain.run${image}`;
       // the page has no cyber-pills (e.g. /404).
       // ────────────────────────────────────────────────────────────
       (function () {
-        const pills = document.querySelectorAll('.cyber-pill > span:not(.cyber-pill-dot)');
+        // Only pre-clear pills that the IntersectionObserver below will
+        // re-type. Pills outside a `.cyber-section.reveal` (e.g. the
+        // `ONEBRAIN // LEGAL` pill on /privacy) would otherwise be
+        // cleared and never restored, leaving an empty pill on screen.
+        const pills = document.querySelectorAll('.cyber-section.reveal .cyber-pill > span:not(.cyber-pill-dot)');
         if (!pills.length) return;
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         pills.forEach((span) => {
