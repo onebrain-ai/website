@@ -19,10 +19,7 @@ const updated = '2026-05-06';
             <span class="cyber-pill-dot"></span>
             <span>ONEBRAIN // LEGAL</span>
           </div>
-          <h1 class="legal-h1">
-            Privacy.<br/>
-            <span class="legal-h1-stroke">Short version.</span>
-          </h1>
+          <h1 class="legal-h1">Privacy.</h1>
           <p class="legal-meta">UPDATED {updated} · APPLIES TO onebrain.run + @onebrain-ai/cli</p>
         </header>
 
@@ -79,7 +76,10 @@ const updated = '2026-05-06';
   .legal-section {
     position: relative;
     min-height: calc(100vh - 80px);
-    padding: 8rem 1.5rem 4rem;
+    /* Top padding only needs to clear the 64px sticky nav + a little
+       breathing room — 8rem left an unnecessary blank band above the
+       title. */
+    padding: 4rem 1.5rem 4rem;
     background: #050507;
     color: rgba(255, 255, 255, 0.78);
   }
@@ -168,7 +168,7 @@ const updated = '2026-05-06';
   .legal-back a:hover { color: #c8ff00; }
 
   @media (max-width: 640px) {
-    .legal-section { padding: 6rem 1.25rem 3rem; }
+    .legal-section { padding: 3rem 1.25rem 3rem; }
     .legal-prose { font-size: 13px; line-height: 1.8; }
   }
 </style>

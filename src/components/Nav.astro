@@ -1,14 +1,22 @@
 ---
 import Brain from './Brain.astro';
 
+// Hash-only links break when the user is on a non-root route like
+// /privacy — the browser tries to scroll to an anchor that doesn't
+// exist on the current page. Prefix with `/` from any non-root page
+// so the link navigates home first, then scrolls. From `/` itself
+// the browser treats `/#foo` as same-document fragment (no reload).
+const isHome = Astro.url.pathname === '/';
+const linkBase = isHome ? '' : '/';
+
 const navLinks = [
-  { href: '#features', label: 'Features' },
-  { href: '#synergy',  label: 'Synergy'  },
-  { href: '#stack',    label: 'Stack'    },
-  { href: '#workflow', label: 'Workflow' },
-  { href: '#how',      label: 'How'      },
-  { href: '#commands', label: 'Commands' },
-  { href: '#cloud',    label: 'Cloud'    },
+  { href: `${linkBase}#features`, label: 'Features' },
+  { href: `${linkBase}#synergy`,  label: 'Synergy'  },
+  { href: `${linkBase}#stack`,    label: 'Stack'    },
+  { href: `${linkBase}#workflow`, label: 'Workflow' },
+  { href: `${linkBase}#how`,      label: 'How'      },
+  { href: `${linkBase}#commands`, label: 'Commands' },
+  { href: `${linkBase}#cloud`,    label: 'Cloud'    },
 ];
 ---
 
