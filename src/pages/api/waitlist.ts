@@ -41,8 +41,6 @@ async function hashIp(ip: string): Promise<string> {
     .join('');
 }
 
-const USE_CASE_MAX = 500;
-
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   let body: unknown;
   try {
@@ -63,12 +61,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
     return json({ ok: false, error: 'invalid_email' }, 400);
   }
-
-  const useCaseRaw = (asString(fields.use_case) ?? '').trim();
-  if (useCaseRaw.length > USE_CASE_MAX) {
-    return json({ ok: false, error: 'use_case_too_long' }, 400);
-  }
-  const useCase = useCaseRaw || null;
 
   const db = (env as { WAITLIST_DB?: D1Database }).WAITLIST_DB;
   if (!db) {
@@ -97,18 +89,14 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
     await db
       .prepare(
-        'INSERT INTO waitlist (email, created_at, source, ip_hash, use_case) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT(email) DO NOTHING',
+        'INSERT INTO waitlist (email, created_at, source, ip_hash) VALUES (?1, ?2, ?3, ?4) ON CONFLICT(email) DO NOTHING',
       )
-      .bind(email, new Date().toISOString(), 'website', ipHash, useCase)
+      .bind(email, new Date().toISOString(), 'website', ipHash)
       .run();
 
     return json({ ok: true }, 200);
   } catch (e) {
-    // Most likely cause if this fires after a deploy: migration
-    // `0002_add_use_case.sql` not yet applied — column `use_case`
-    // doesn't exist. Surface enough context for the operator without
-    // leaking schema details to the client.
-    console.error('[waitlist] insert failed (check migrations applied?):', e);
+    console.error('[waitlist] insert failed:', e);
     return json({ ok: false, error: 'server_error' }, 500);
   }
 };

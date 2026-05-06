@@ -8,28 +8,28 @@ const steps = [
   {
     n: '01',
     t: 'INITIALIZE',
-    d: 'Run /onboarding once. The agent learns your name, vault, identity. Bootstrap step — never repeats.',
+    d: 'Bootstrap once. The agent learns your name and vault.',
     code: 'npm install -g @onebrain-ai/cli',
     accent: '#c8ff00',
   },
   {
     n: '02',
     t: 'CAPTURE',
-    d: 'Talk in natural language. The agent writes, classifies, and links in real time.',
+    d: 'Talk; the agent writes, classifies, and links in real time.',
     code: '/braindump · /capture · /bookmark',
     accent: '#ff2d92',
   },
   {
     n: '03',
     t: 'EVOLVE',
-    d: '/research and /distill expand the vault. /learn deepens the agent.',
+    d: 'Expand the vault, deepen the agent.',
     code: '/research · /distill · /learn',
     accent: '#bc13fe',
   },
   {
     n: '04',
     t: 'WRAPUP',
-    d: '/wrapup consolidates the session into a log. /recap promotes lessons into memory. The loop closes — next session starts sharper.',
+    d: 'Consolidate the session, promote lessons to memory.',
     code: '/wrapup · /recap',
     accent: '#00f3ff',
   },
@@ -55,7 +55,7 @@ const steps = [
             <span class="cyber-h2-stroke">Sharpens Both Sides.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> bootstraps once — then loops forever. Capture intent, evolve the vault, wrap up to deepen memory. Each cycle, both sides sharpen.
+            <strong class="brand">OneBrain</strong> bootstraps once — then loops. Each cycle, both sides sharpen.
           </p>
         </header>
 
@@ -191,11 +191,13 @@ const steps = [
 </section>
 
 <style>
-  /* ── Step list (left) — compact density so 4 steps + header
-        + sub fit inside the section's scroll-snap viewport without the
-        last code line being clipped at the bottom edge. */
+  /* ── Step list (left) — compact density so 4 steps + header + sub
+        fit inside the section's scroll-snap viewport on shorter laptop
+        screens (~700–800px tall). Tightened from the 3-step version:
+        smaller num + desc + code, denser row padding, single-line
+        descriptions (the diagram carries the rest of the story). */
   .how-steps {
-    margin-top: 0.6rem;
+    margin-top: 0.4rem;
     list-style: none;
     padding: 0;
     display: flex;
@@ -204,45 +206,45 @@ const steps = [
   }
   .how-step {
     display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 11px;
-    padding: 8px 0;
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+    padding: 6px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     align-items: flex-start;
   }
-  .how-step:first-child { border-top: 0; padding-top: 4px; }
+  .how-step:first-child { border-top: 0; padding-top: 2px; }
   .how-step-num {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     line-height: 1;
     color: var(--step-accent);
-    text-shadow: 0 0 24px color-mix(in srgb, var(--step-accent) 45%, transparent);
+    text-shadow: 0 0 20px color-mix(in srgb, var(--step-accent) 45%, transparent);
   }
   .how-step-title {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #fff;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin: 0 0 3px;
+    margin: 0 0 2px;
   }
   .how-step-desc {
-    margin: 0 0 5px;
+    margin: 0 0 3px;
     font-family: var(--font-mono);
-    font-size: 10.5px;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.62);
+    font-size: 10px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.6);
   }
   .how-step-code {
     display: block;
     font-family: var(--font-mono);
-    font-size: 9.5px;
+    font-size: 9px;
     letter-spacing: 0.04em;
     color: var(--step-accent);
-    opacity: 0.85;
+    opacity: 0.82;
   }
 
   /* ── Loop diagram (right) ─────────────────────────────── */
@@ -367,8 +369,14 @@ const steps = [
      comfortably inside the scroll-snap viewport on shorter laptop
      screens (~700–800px tall). */
   @media (min-width: 1024px) {
-    #how { padding: 2.25rem 3rem 1.75rem; }
-    #how .cyber-section-head { margin-bottom: 0.6rem; }
+    #how { padding: 2rem 3rem 1.5rem; }
+    #how .cyber-section-head { margin-bottom: 0.4rem; }
+    /* Shrink the section headline ~12% so the 4-step list + diagram
+       both fit a 720px-tall snap viewport without overflow. The
+       global cyber-h2 is sized for sections with a single visual on
+       the right; this section's right column is denser. */
+    #how .cyber-h2 { font-size: clamp(2.2rem, 4vw, 3rem); line-height: 1.05; }
+    #how .cyber-sub { font-size: 12px; line-height: 1.55; max-width: 36ch; }
   }
 
   @media (max-width: 1024px) {
@@ -377,9 +385,9 @@ const steps = [
   }
 
   @media (max-width: 720px) {
-    .how-step { grid-template-columns: 40px 1fr; gap: 10px; padding: 9px 0; }
-    .how-step-num { font-size: 1.7rem; }
-    .how-step-desc { font-size: 11px; }
+    .how-step { grid-template-columns: 36px 1fr; gap: 9px; padding: 7px 0; }
+    .how-step-num { font-size: 1.5rem; }
+    .how-step-desc { font-size: 10.5px; }
     .how-loop-band-meta,
     .how-loop-foot { display: none; }
     .how-loop { padding: 12px 10px 10px; }

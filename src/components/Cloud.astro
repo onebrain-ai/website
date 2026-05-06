@@ -110,7 +110,7 @@ const showStars = stars > 0;
           )}
           <span class="waitlist-proof-built">
             Built by
-            <a href="https://x.com/kengio" target="_blank" rel="noopener noreferrer">@kengio</a>
+            <a href="https://github.com/kengio" target="_blank" rel="noopener noreferrer">@kengio</a>
           </span>
         </div>
 
@@ -129,18 +129,6 @@ const showStars = stars > 0;
               placeholder="hello@onebrain.run"
               class="waitlist-input"
               autocomplete="email"
-            />
-          </label>
-
-          <label class="waitlist-label">
-            <span>USE CASE <span class="waitlist-label-meta">// optional</span></span>
-            <input
-              type="text"
-              placeholder="knowledge base · journal · research · team brief..."
-              class="waitlist-input"
-              maxlength="500"
-              name="use_case"
-              autocomplete="off"
             />
           </label>
 
@@ -171,12 +159,8 @@ const showStars = stars > 0;
     const form = document.getElementById('waitlist-form');
     const banner = document.getElementById('waitlist-banner');
     const input = form && form.querySelector('input[type="email"]');
-    const useCaseInput = form && form.querySelector('input[name="use_case"]');
     const button = form && form.querySelector('button[type="submit"]');
-    // useCaseInput is part of the same template, so missing means a
-    // template regression — fail loud in the early-return rather than
-    // silently degrading to email-only submission.
-    if (!form || !banner || !input || !useCaseInput || !button) return;
+    if (!form || !banner || !input || !button) return;
 
     function showBanner(state, message) {
       banner.dataset.state = state;
@@ -195,13 +179,11 @@ const showStars = stars > 0;
       const labelEl = button.querySelector('span');
       if (labelEl) labelEl.textContent = 'SENDING_';
 
-      const useCase = useCaseInput.value.trim();
-
       try {
         const res = await fetch('/api/waitlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, use_case: useCase || undefined }),
+          body: JSON.stringify({ email }),
         });
         let data;
         try {
@@ -215,8 +197,6 @@ const showStars = stars > 0;
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
-        } else if (data.error === 'use_case_too_long') {
-          showBanner('error', '✗ Use case is over 500 characters. Trim it down and resubmit.');
         } else {
           console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');
@@ -496,13 +476,6 @@ const showStars = stars > 0;
     color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
     margin-bottom: 6px;
-  }
-  .waitlist-label-meta {
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.22);
-    margin-left: 6px;
-    letter-spacing: 0.3em;
-    text-transform: lowercase;
   }
   .waitlist-input {
     width: 100%;
