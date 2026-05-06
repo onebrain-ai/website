@@ -65,8 +65,19 @@ const dispatches = [
            browser can promote each element to its own compositor layer
            and never repaint. No JS — durations are set once at render
            and stay fixed. -->
-      <div class="workflow-hub" aria-hidden="true">
-        <svg viewBox="-280 -200 560 400" class="workflow-hub-svg">
+      <div class="workflow-hub">
+        <span class="workflow-hub-corner workflow-hub-corner-tl" aria-hidden="true"></span>
+        <span class="workflow-hub-corner workflow-hub-corner-tr" aria-hidden="true"></span>
+        <span class="workflow-hub-corner workflow-hub-corner-bl" aria-hidden="true"></span>
+        <span class="workflow-hub-corner workflow-hub-corner-br" aria-hidden="true"></span>
+
+        <div class="workflow-hub-band" aria-hidden="true">
+          <span class="workflow-hub-band-dot"></span>
+          <span class="workflow-hub-band-label">VAULT_HUB · OBSIDIAN</span>
+          <span class="workflow-hub-band-meta">8_SPOKES_LIVE</span>
+        </div>
+
+        <svg viewBox="-280 -200 560 400" class="workflow-hub-svg" aria-hidden="true">
           <!-- Outer guide ring (very subtle, slowly rotating) -->
           <circle cx="0" cy="0" r="150" class="hub-ring" />
 
@@ -135,6 +146,10 @@ const dispatches = [
           <text x="0" y="3" text-anchor="middle" class="hub-core-label">OBSIDIAN</text>
           <text x="0" y="19" text-anchor="middle" class="hub-core-sub">vault</text>
         </svg>
+
+        <div class="workflow-hub-foot" aria-hidden="true">
+          <span class="workflow-hub-foot-mute">ONE_VAULT · ALL_PROJECTS</span>
+        </div>
       </div>
 
     </div>
@@ -189,17 +204,78 @@ const dispatches = [
   }
 
   /* ── RIGHT: hub diagram ── */
+  /* Border + band + foot mirror the HowItWorks loop card so the two
+     section diagrams read as one visual family — corner brackets at
+     each edge, a header with pulsing dot + label + meta on the right,
+     a muted footer line. The SVG sits between band and foot. */
   .workflow-hub {
+    position: relative;
+    padding: 14px 14px 12px;
+    background: rgba(8, 8, 14, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     width: 100%;
   }
+  .workflow-hub-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+  .workflow-hub-corner-tl { top: -1px;    left: -1px;    border-right: 0; border-bottom: 0; }
+  .workflow-hub-corner-tr { top: -1px;    right: -1px;   border-left: 0;  border-bottom: 0; }
+  .workflow-hub-corner-bl { bottom: -1px; left: -1px;    border-right: 0; border-top: 0; }
+  .workflow-hub-corner-br { bottom: -1px; right: -1px;   border-left: 0;  border-top: 0; }
+
+  .workflow-hub-band {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 6px;
+  }
+  .workflow-hub-band-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--section-accent);
+    box-shadow: 0 0 10px var(--section-accent);
+    flex-shrink: 0;
+    animation: workflow-band-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes workflow-band-pulse {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%      { opacity: 0.4; transform: scale(0.85); }
+  }
+  .workflow-hub-band-meta { margin-left: auto; }
+
   .workflow-hub-svg {
     width: 100%;
     max-width: 520px;
     aspect-ratio: 1.4 / 1;
     overflow: visible;
+    align-self: center;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .workflow-hub-foot {
+    margin-top: 6px;
+    padding: 8px 4px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    text-align: right;
   }
 
   /* ── Static structure ── */
@@ -379,5 +455,12 @@ const dispatches = [
      idea. */
   @media (max-width: 720px) {
     .workflow-recap li:nth-child(3) { display: none; }
+    .workflow-hub-band-meta,
+    .workflow-hub-foot { display: none; }
+    .workflow-hub { padding: 12px 10px 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .workflow-hub-band-dot { animation: none; }
   }
 </style>
