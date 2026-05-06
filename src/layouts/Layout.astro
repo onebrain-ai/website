@@ -105,9 +105,14 @@ const ogImageUrl = `https://onebrain.run${image}`;
 
     <!-- Stash any incoming hash before the browser performs its default scroll-to-id.
          The main script will replay it as a warp on load. Has to live in <head>
-         so it runs before paint. -->
+         so it runs before paint. Also pin scroll restoration to manual so a
+         refresh always lands at the top of the document (or the hash target),
+         not at whatever scroll position the browser remembered from last visit. -->
     <script is:inline>
       (function () {
+        if ('scrollRestoration' in history) {
+          history.scrollRestoration = 'manual';
+        }
         if (location.hash && location.hash.length > 1) {
           window.__obPendingHash = location.hash;
           history.replaceState(null, '', location.pathname + location.search);
