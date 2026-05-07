@@ -77,7 +77,7 @@ const home = isHome ? '' : '/';
   <div class="footer-hud">
     <div class="footer-hud-inner">
       <span class="footer-hud-rec"><span class="footer-hud-rec-dot"></span>REC</span>
-      <span class="footer-hud-meta">© {year} OneBrain · LICENSE: MIT</span>
+      <span class="footer-hud-meta">© {year} OneBrain · BUILT BY <a href="https://x.com/kengio" target="_blank" rel="noopener noreferrer" class="footer-hud-author">@KENGIO</a> · LICENSE: MIT</span>
       <span class="footer-hud-meta">REGION_GLOBAL · v{cliVersion}_STABLE</span>
     </div>
   </div>
@@ -302,4 +302,10 @@ const home = isHome ? '' : '/';
   }
   .footer-hud-meta { color: rgba(255, 255, 255, 0.35); }
   .footer-hud-meta:last-child { color: rgba(255, 255, 255, 0.5); }
+  .footer-hud-author {
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .footer-hud-author:hover { color: #ff2d92; }
 </style>
