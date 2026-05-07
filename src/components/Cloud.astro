@@ -35,7 +35,7 @@ const showStars = stars > 0;
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-start">
+    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-stretch cloud-grid">
 
       <!-- LEFT: heading + tiers -->
       <div>
@@ -350,6 +350,13 @@ const showStars = stars > 0;
     background: rgba(8, 8, 14, 0.82);
     border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
     /* drop heavy backdrop-filter — solid bg keeps the look, frees the compositor */
+
+    /* Bottom-align with the tier card row on the left column.
+       The grid uses items-stretch so this column's track height matches
+       the headline + tier row; align-self: end pushes the card to the
+       bottom of that track so its lower edge lines up with the tier
+       cards instead of floating mid-column. */
+    align-self: end;
   }
   .waitlist-frame {
     position: absolute;

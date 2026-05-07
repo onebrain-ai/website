@@ -26,27 +26,27 @@
 
   <defs>
     <linearGradient id="g-onebrain" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#e62a93" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#c91075" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="#00b8d4" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#009eb8" stop-opacity="1"/>
     </linearGradient>
     <linearGradient id="g-harness" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#a855f7" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#7c1ade" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="#008fa6" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#007a8a" stop-opacity="1"/>
     </linearGradient>
     <linearGradient id="g-llm" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#7a9d10" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#4d6d00" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="#006a7a" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#005666" stop-opacity="1"/>
     </linearGradient>
     <linearGradient id="g-vault" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#00a3bc" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#00788c" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="#003d4a" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#002a35" stop-opacity="1"/>
     </linearGradient>
 
     <linearGradient id="spine-grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#e62a93" stop-opacity="0.85"/>
-      <stop offset="33%"  stop-color="#a855f7" stop-opacity="0.85"/>
-      <stop offset="66%"  stop-color="#7a9d10" stop-opacity="0.85"/>
-      <stop offset="100%" stop-color="#00a3bc" stop-opacity="0.85"/>
+      <stop offset="0%"   stop-color="#00b8d4" stop-opacity="0.85"/>
+      <stop offset="33%"  stop-color="#008fa6" stop-opacity="0.85"/>
+      <stop offset="66%"  stop-color="#006a7a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#003d4a" stop-opacity="0.85"/>
     </linearGradient>
   </defs>
 
@@ -57,13 +57,13 @@
     <rect width="780" height="130" fill="url(#g-onebrain)"/>
     <text class="icon-pulse" x="38" y="78" font-size="32" text-anchor="middle" dominant-baseline="central" aria-hidden="true">🧠</text>
     <text x="74" y="42" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.08em">LAYER_01</text>
-    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="28" fill="#ffffff" letter-spacing="0.04em">ONEBRAIN</text>
+    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="24" fill="#ffffff" letter-spacing="0.04em">ONEBRAIN</text>
     <text x="74" y="112" font-family="'JetBrains Mono', monospace" font-size="11" fill="rgba(255,255,255,0.85)" letter-spacing="0.30em">PLUGIN · CLI · ORCHESTRATOR</text>
-    <text x="290" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">The OS layer driving every harness consistently.</text>
-    <text x="290" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">skills · hooks · sync · indexing · checkpoints</text>
-    <g transform="translate(668, 53)">
+    <text x="320" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">The OS layer driving every harness consistently.</text>
+    <text x="320" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">skills · hooks · sync · indexing · checkpoints</text>
+    <g transform="translate(668, 14)">
       <rect width="100" height="24" fill="#ffffff"/>
-      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#c91075" font-weight="700" letter-spacing="0.14em" text-anchor="middle">OS_LAYER</text>
+      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#009eb8" font-weight="700" letter-spacing="0.14em" text-anchor="middle">OS_LAYER</text>
     </g>
   </g>
 
@@ -78,13 +78,13 @@
     <rect width="780" height="130" fill="url(#g-harness)"/>
     <text class="icon-pulse" x="38" y="78" font-size="32" text-anchor="middle" dominant-baseline="central" aria-hidden="true" style="animation-delay: 0.65s;">🤖</text>
     <text x="74" y="42" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.08em">LAYER_02</text>
-    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="28" fill="#ffffff" letter-spacing="0.04em">HARNESS</text>
+    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="24" fill="#ffffff" letter-spacing="0.04em">HARNESS</text>
     <text x="74" y="112" font-family="'JetBrains Mono', monospace" font-size="11" fill="rgba(255,255,255,0.85)" letter-spacing="0.30em">AGENTIC_RUNTIME</text>
-    <text x="290" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">Bring your own. Switch any time.</text>
-    <text x="290" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">claude code · gemini cli · codex · qwen</text>
-    <g transform="translate(668, 53)">
+    <text x="320" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">Bring your own. Switch any time.</text>
+    <text x="320" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">claude code · gemini cli · codex · qwen</text>
+    <g transform="translate(668, 14)">
       <rect width="100" height="24" fill="#ffffff"/>
-      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#7c1ade" font-weight="700" letter-spacing="0.14em" text-anchor="middle">BYO_HARNESS</text>
+      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#007a8a" font-weight="700" letter-spacing="0.14em" text-anchor="middle">BYO_HARNESS</text>
     </g>
   </g>
 
@@ -99,13 +99,13 @@
     <rect width="780" height="130" fill="url(#g-llm)"/>
     <text class="icon-pulse" x="38" y="78" font-size="32" text-anchor="middle" dominant-baseline="central" aria-hidden="true" style="animation-delay: 1.3s;">✨</text>
     <text x="74" y="42" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.08em">LAYER_03</text>
-    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="28" fill="#ffffff" letter-spacing="0.04em">LLM</text>
+    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="24" fill="#ffffff" letter-spacing="0.04em">LLM</text>
     <text x="74" y="112" font-family="'JetBrains Mono', monospace" font-size="11" fill="rgba(255,255,255,0.85)" letter-spacing="0.30em">INTELLIGENCE_SOURCE</text>
-    <text x="290" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">Powered by anything. OneBrain stays the same.</text>
-    <text x="290" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">local: mlx, ollama · cloud: claude, gemini, gpt</text>
-    <g transform="translate(668, 53)">
+    <text x="320" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">Powered by anything. OneBrain stays the same.</text>
+    <text x="320" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">local: mlx, ollama · cloud: claude, gemini, gpt</text>
+    <g transform="translate(668, 14)">
       <rect width="100" height="24" fill="#ffffff"/>
-      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#4d6d00" font-weight="700" letter-spacing="0.14em" text-anchor="middle">RAW_TOKENS</text>
+      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#005666" font-weight="700" letter-spacing="0.14em" text-anchor="middle">RAW_TOKENS</text>
     </g>
   </g>
 
@@ -120,13 +120,13 @@
     <rect width="780" height="130" fill="url(#g-vault)"/>
     <text class="icon-pulse" x="38" y="78" font-size="32" text-anchor="middle" dominant-baseline="central" aria-hidden="true" style="animation-delay: 1.95s;">💎</text>
     <text x="74" y="42" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.08em">LAYER_04</text>
-    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="28" fill="#ffffff" letter-spacing="0.04em">OBSIDIAN VAULT</text>
+    <text x="74" y="82" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="24" fill="#ffffff" letter-spacing="0.04em">OBSIDIAN VAULT</text>
     <text x="74" y="112" font-family="'JetBrains Mono', monospace" font-size="11" fill="rgba(255,255,255,0.85)" letter-spacing="0.30em">SOURCE_OF_TRUTH</text>
-    <text x="290" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">Plain Markdown · durable state for every layer.</text>
-    <text x="290" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">notes · memory · decisions · knowledge graph</text>
-    <g transform="translate(668, 53)">
+    <text x="320" y="68" font-family="'JetBrains Mono', monospace" font-size="13" fill="#ffffff">Plain Markdown · durable state for every layer.</text>
+    <text x="320" y="98" font-family="'JetBrains Mono', monospace" font-size="13" fill="rgba(255,255,255,0.78)">notes · memory · decisions · knowledge graph</text>
+    <g transform="translate(668, 14)">
       <rect width="100" height="24" fill="#ffffff"/>
-      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#00788c" font-weight="700" letter-spacing="0.14em" text-anchor="middle">BASE_LAYER</text>
+      <text x="50" y="16" font-family="'JetBrains Mono', monospace" font-size="10" fill="#002a35" font-weight="700" letter-spacing="0.14em" text-anchor="middle">BASE_LAYER</text>
     </g>
   </g>
 
