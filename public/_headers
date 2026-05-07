@@ -12,6 +12,15 @@
 # auto-injects the beacon at the zone level — blocking it via CSP
 # would create a different console error without fixing the existing
 # ERR_CONNECTION_REFUSED (which is network-level, environmental).
+#
+# `connect-src` adds an explicit `https://onebrain.run` token alongside
+# `'self'` because Safari/WebKit logs CSP violations for the same-origin
+# `/cdn-cgi/rum` RUM endpoint despite `'self'` matching it per spec.
+# The explicit hostname suppresses the noise without widening the
+# policy meaningfully (it points to the same origin already covered by
+# `'self'`). No subdomain wildcards are added — there are no current
+# `*.onebrain.run` subdomains and `static.cloudflareinsights.com` is the
+# only beacon host in use.
 
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains
@@ -20,4 +29,4 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://onebrain.run https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
