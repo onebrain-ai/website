@@ -725,11 +725,24 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     width: 100%;
     align-items: center;
   }
+  @media (min-width: 768px) {
+    .hero-grid-content {
+      /* Tablet+ (≥768px): 50:50 — terminal already shows up next
+         to the headline at iPad-landscape and small-laptop widths,
+         instead of stacking below. */
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
   @media (min-width: 1024px) {
     .hero-shell { padding: 8rem 4rem 5rem; }
+  }
+  @media (min-width: 1280px) {
     .hero-grid-content {
-      grid-template-columns: 1.25fr 1fr;
-      gap: 4rem;
+      /* Desktop (≥1280px): 40:60 — terminal takes the larger
+         column so the live agent loop reads first; headline + install
+         line still have plenty of room at 40%. */
+      grid-template-columns: 2fr 3fr;
     }
   }
 

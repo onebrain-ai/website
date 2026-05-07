@@ -35,7 +35,7 @@ const showStars = stars > 0;
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-start">
+    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-stretch cloud-grid">
 
       <!-- LEFT: heading + tiers -->
       <div>
@@ -115,10 +115,6 @@ const showStars = stars > 0;
         </div>
 
         <h3 class="waitlist-title">Lock in early access to <strong>PRO + TEAM</strong>.</h3>
-        <p class="waitlist-blurb">
-          Drop your email and we'll let you know the moment sync, hosted runtime,
-          and team mesh ship — no spam, just the launch notice.
-        </p>
 
         <form id="waitlist-form" class="waitlist-form">
           <label class="waitlist-label">
@@ -145,9 +141,7 @@ const showStars = stars > 0;
           class="waitlist-banner"
         ></div>
 
-        <p class="waitlist-foot">
-          // early signups get priority access when PRO + TEAM go live
-        </p>
+        <p class="waitlist-foot">// early signups → priority access</p>
       </div>
 
     </div>
@@ -355,6 +349,13 @@ const showStars = stars > 0;
     background: rgba(8, 8, 14, 0.82);
     border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
     /* drop heavy backdrop-filter — solid bg keeps the look, frees the compositor */
+
+    /* Bottom-align with the tier card row on the left column.
+       The grid uses items-stretch so this column's track height matches
+       the headline + tier row; align-self: end pushes the card to the
+       bottom of that track so its lower edge lines up with the tier
+       cards instead of floating mid-column. */
+    align-self: end;
   }
   .waitlist-frame {
     position: absolute;
@@ -503,15 +504,16 @@ const showStars = stars > 0;
     align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 18px 30px;
+    gap: 10px;
+    padding: 12px 22px;
     background: var(--section-accent);
     color: #050507;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
+    white-space: nowrap;
     border: 1px solid var(--section-accent);
     cursor: pointer;
     transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
