@@ -65,8 +65,8 @@ const steps = [
         </ol>
       </div>
 
-      <!-- RIGHT: animated triangle loop -->
-      <div class="how-loop" role="img" aria-label="Three-step closed loop: 01 CAPTURE flows to 02 EVOLVE, then to 03 WRAPUP, then back to 01. Each revolution sharpens both human and agent.">
+      <!-- RIGHT: triangle loop diagram (synced from README coevo-loop) -->
+      <figure class="how-loop">
         <span class="how-loop-corner how-loop-corner-tl" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-tr" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-bl" aria-hidden="true"></span>
@@ -78,96 +78,26 @@ const steps = [
           <span class="how-loop-band-meta">RUNS_FOREVER</span>
         </div>
 
-        <svg class="how-loop-svg" viewBox="-225 -200 450 395" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <defs>
-            <marker id="how-ah-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff2d92"/>
-            </marker>
-            <marker id="how-ah-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#bc13fe"/>
-            </marker>
-            <marker id="how-ah-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#00f3ff"/>
-            </marker>
-          </defs>
-
-          <!-- Outer guide ring (slowly rotating dashed circle) -->
-          <circle class="how-loop-ring" cx="0" cy="0" r="180" fill="none" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1" stroke-dasharray="3 6"/>
-          <circle cx="0" cy="0" r="180" fill="none" stroke="rgba(200, 255, 0, 0.08)" stroke-width="1"/>
-
-          <!-- 01 → 02 (magenta arc) -->
-          <g class="how-leg how-leg-1">
-            <path id="how-path-1" d="M 27 -83.2 Q 82.2 -47.5 85.6 18.2" fill="none" stroke="#ff2d92" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-1)"/>
-            <circle r="5" fill="#ff2d92" class="how-flow-dot how-flow-dot-1">
-              <animateMotion dur="6.6s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#how-path-1"/>
-              </animateMotion>
-            </circle>
-          </g>
-
-          <!-- 02 → 03 (violet arc) -->
-          <g class="how-leg how-leg-2">
-            <path id="how-path-2" d="M 58.6 65 Q 0 110 -58.6 65" fill="none" stroke="#bc13fe" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-2)"/>
-            <circle r="5" fill="#bc13fe" class="how-flow-dot how-flow-dot-2">
-              <animateMotion dur="6.6s" begin="2.2s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#how-path-2"/>
-              </animateMotion>
-            </circle>
-          </g>
-
-          <!-- 03 → 01 (cyan arc) — closes the loop -->
-          <g class="how-leg how-leg-3">
-            <path id="how-path-3" d="M -85.6 18.2 Q -82.2 -47.5 -27 -83.2" fill="none" stroke="#00f3ff" stroke-width="1.6" stroke-opacity="0.6" marker-end="url(#how-ah-3)"/>
-            <circle r="5" fill="#00f3ff" class="how-flow-dot how-flow-dot-3">
-              <animateMotion dur="6.6s" begin="4.4s" repeatCount="indefinite" rotate="auto">
-                <mpath href="#how-path-3"/>
-              </animateMotion>
-            </circle>
-          </g>
-
-          <!-- Node 01 — CAPTURE (top of triangle).
-               Number + name go inside the circle; the cmd label sits
-               OUTSIDE below the circle so long strings can never
-               overflow the disc. -->
-          <g class="how-node" transform="translate(0,-130)">
-            <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#ff2d92" stroke-width="1.5"/>
-            <circle r="56" fill="none" stroke="#ff2d92" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse"/>
-            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#ff2d92" letter-spacing="0.18em">01</text>
-            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">CAPTURE</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#ff2d92">/braindump</text>
-          </g>
-
-          <!-- Node 02 — EVOLVE (bottom-right) -->
-          <g class="how-node" transform="translate(112.6,65)">
-            <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#bc13fe" stroke-width="1.5"/>
-            <circle r="56" fill="none" stroke="#bc13fe" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 1.2s;"/>
-            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#bc13fe" letter-spacing="0.18em">02</text>
-            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">EVOLVE</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#bc13fe">/distill · /learn</text>
-          </g>
-
-          <!-- Node 03 — WRAPUP (bottom-left) -->
-          <g class="how-node" transform="translate(-112.6,65)">
-            <circle r="56" fill="rgba(8, 8, 14, 0.95)" stroke="#00f3ff" stroke-width="1.5"/>
-            <circle r="56" fill="none" stroke="#00f3ff" stroke-width="1" stroke-opacity="0.4" class="how-node-pulse" style="animation-delay: 2.4s;"/>
-            <text x="0" y="-8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#00f3ff" letter-spacing="0.18em">03</text>
-            <text x="0" y="12" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="15" letter-spacing="0.05em" fill="#fff">WRAPUP</text>
-            <text x="0" y="74" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="0.24em" fill="#00f3ff">/wrapup · /recap</text>
-          </g>
-        </svg>
+        <img
+          src="/diagrams/coevo-loop-dark.svg"
+          alt="Three-step session loop: 01 CAPTURE at top, 02 EVOLVE at bottom-right, 03 WRAPUP at bottom-left, with curved arrows flowing clockwise."
+          class="how-loop-svg"
+          width="450"
+          height="395"
+          loading="lazy"
+          decoding="async"
+        />
 
         <div class="how-loop-foot" aria-hidden="true">
           <span class="how-loop-foot-mute">EVERY_CYCLE_TIGHTENS · BOTH_SIDES_SHARPEN</span>
         </div>
-      </div>
+      </figure>
     </div>
   </div>
 </section>
 
 <style>
-  /* ── Step list (left) — body fonts at the standard section size.
-        Three steps (CAPTURE / EVOLVE / WRAPUP) all carry full
-        descriptions; no compaction needed. */
+  /* Step list (left column) */
   .how-steps {
     margin-top: 0.75rem;
     list-style: none;
@@ -222,6 +152,8 @@ const steps = [
   /* ── Loop diagram (right) ─────────────────────────────── */
   .how-loop {
     position: relative;
+    display: flex;
+    flex-direction: column;
     padding: 14px 14px 12px;
     background: rgba(8, 8, 14, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -266,58 +198,11 @@ const steps = [
   .how-loop-band-meta { margin-left: auto; }
 
   .how-loop-svg {
-    width: 100%;
-    /* Cap diagram footprint so a wide laptop column doesn't blow it up.
-       The viewBox aspect 450:395 gives a square-ish box; capping width
-       at 440 keeps the rendered height around 386px so the loop card
-       stays snug inside the section. */
-    max-width: 440px;
-    aspect-ratio: 450 / 395;
-    align-self: center;
     display: block;
+    width: 100%;
+    max-width: 440px;
+    height: auto;
     margin: 0 auto;
-    /* Marker arrows + node-pulse rings stay inside the viewBox, so we
-       can clip overflow to keep the diagram from leaking past the card
-       boundary on any container width. */
-    overflow: hidden;
-  }
-  .how-loop {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .how-loop-ring {
-    transform-origin: 0 0;
-    animation: how-ring-spin 90s linear infinite;
-  }
-  @keyframes how-ring-spin { to { transform: rotate(360deg); } }
-
-  .how-leg {
-    animation: how-leg-pulse 6.6s linear infinite;
-  }
-  .how-leg-1 { animation-delay: 0s; }
-  .how-leg-2 { animation-delay: 2.2s; }
-  .how-leg-3 { animation-delay: 4.4s; }
-  @keyframes how-leg-pulse {
-    0%, 33%, 100% { stroke-opacity: 0.55; }
-    10%           { stroke-opacity: 1;    }
-  }
-
-  /* No filter on the moving dots — `filter: drop-shadow` on a
-     transform/SMIL-animated SVG element triggers per-frame
-     re-rasterisation in Safari. */
-  .how-flow-dot-1 { color: #ff2d92; }
-  .how-flow-dot-2 { color: #bc13fe; }
-  .how-flow-dot-3 { color: #00f3ff; }
-
-  .how-node-pulse {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: how-node-pulse-anim 3.6s ease-in-out infinite;
-  }
-  @keyframes how-node-pulse-anim {
-    0%, 100% { transform: scale(1);    stroke-opacity: 0.4; }
-    50%      { transform: scale(1.06); stroke-opacity: 0;   }
   }
 
   .how-loop-foot {
@@ -340,7 +225,6 @@ const steps = [
 
   @media (max-width: 1024px) {
     .how-grid { grid-template-columns: 1fr; }
-    .how-loop-svg { max-height: 320px; }
   }
 
   @media (max-width: 720px) {
@@ -353,10 +237,6 @@ const steps = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .how-loop-ring,
-    .how-leg,
-    .how-node-pulse,
     .how-loop-band-dot { animation: none; }
-    .how-flow-dot { display: none; }
   }
 </style>

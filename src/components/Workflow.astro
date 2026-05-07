@@ -4,28 +4,6 @@ const beats = [
   'Code in repos, orchestration in vault — agent dispatches from here to wherever the work actually lives.',
   'Markdown replaces Slack / Linear / Notion — version-controlled, AI-readable, yours forever.',
 ];
-
-// Hub-and-spokes map of where the agent dispatches FROM the vault.
-// 8 nodes evenly spaced at 45° intervals.
-//
-// Each spoke runs a continuous "data stream" of 2 dots offset by half
-// the cycle, so the spoke always has 1-2 packets in flight without ever
-// strobing. inbound=true → outer→centre (data arriving from the project),
-// inbound=false → centre→outer (vault dispatching).
-//
-// Per-spoke duration jitter (7-11s range) keeps the eight streams from
-// ever syncing up into a visible pattern. Set once at render — no
-// mid-flight retiming, which was the source of the previous stutter.
-const dispatches = [
-  { angle: -90, label: 'CLI / REPO',    anchor: 'middle', duration:  8.5, inbound: false },
-  { angle: -45, label: 'WEBSITE',       anchor: 'start',  duration:  7.5, inbound: true  },
-  { angle:   0, label: 'CLOUD INFRA',   anchor: 'start',  duration:  9.5, inbound: false },
-  { angle:  45, label: 'SOCIAL MEDIA',  anchor: 'start',  duration: 10.0, inbound: true  },
-  { angle:  90, label: 'OFFICE DOCS',   anchor: 'middle', duration:  9.0, inbound: false },
-  { angle: 135, label: 'PROJECT NOTES', anchor: 'end',    duration:  7.0, inbound: true  },
-  { angle: 180, label: 'RESEARCH',      anchor: 'end',    duration: 10.5, inbound: false },
-  { angle: 225, label: 'MCP SERVER',    anchor: 'end',    duration:  8.0, inbound: true  },
-];
 ---
 
 <section id="workflow" class="cyber-section reveal" style="--section-accent: #7c3aed;">
@@ -59,13 +37,8 @@ const dispatches = [
         </ul>
       </div>
 
-      <!-- Hub-and-spokes diagram. The spokes + nodes + labels are
-           static; only the 16 particles (2 per spoke) and 8 ping rings
-           animate. All animations are pure transform + opacity so the
-           browser can promote each element to its own compositor layer
-           and never repaint. No JS — durations are set once at render
-           and stay fixed. -->
-      <div class="workflow-hub">
+      <!-- Hub-and-spokes diagram (synced from README vault-hub) -->
+      <figure class="workflow-hub">
         <span class="workflow-hub-corner workflow-hub-corner-tl" aria-hidden="true"></span>
         <span class="workflow-hub-corner workflow-hub-corner-tr" aria-hidden="true"></span>
         <span class="workflow-hub-corner workflow-hub-corner-bl" aria-hidden="true"></span>
@@ -77,80 +50,20 @@ const dispatches = [
           <span class="workflow-hub-band-meta">8_SPOKES_LIVE</span>
         </div>
 
-        <svg viewBox="-280 -200 560 400" class="workflow-hub-svg" aria-hidden="true">
-          <!-- Outer guide ring (very subtle, slowly rotating) -->
-          <circle cx="0" cy="0" r="150" class="hub-ring" />
-
-          <!-- Spokes + outer nodes + arrival pings + labels -->
-          {dispatches.map((d, i) => {
-            const rad = (d.angle * Math.PI) / 180;
-            const nodeR = 150;
-            const labelR = 175;
-            const nx = Math.cos(rad) * nodeR;
-            const ny = Math.sin(rad) * nodeR;
-            const lx = Math.cos(rad) * labelR;
-            const ly = Math.sin(rad) * labelR
-              + (d.anchor === 'middle' ? (Math.sin(rad) > 0 ? 14 : -8) : 4);
-            const baseDelay = ((i * 0.41) % d.duration).toFixed(2);
-            const dir = d.inbound ? 'in' : 'out';
-            return (
-              <g class="hub-spoke-set" style={`--seq: ${i};`}>
-                <line
-                  x1="0" y1="0" x2={nx} y2={ny}
-                  class="hub-spoke"
-                />
-                <circle
-                  cx={nx} cy={ny} r="5"
-                  class={`hub-node-ping hub-ping-${dir}`}
-                  style={`animation-duration: ${d.duration}s; animation-delay: ${baseDelay}s;`}
-                />
-                <circle cx={nx} cy={ny} r="5" class="hub-node" />
-                <text
-                  x={lx} y={ly} text-anchor={d.anchor}
-                  class="hub-node-label"
-                >{d.label}</text>
-              </g>
-            );
-          })}
-
-          <!-- Two particles per spoke, offset by half the cycle so the
-               spoke always has 1-2 packets in flight. Pure transform-
-               only animation = single compositor layer per particle,
-               no per-frame paint. -->
-          {dispatches.flatMap((d, i) => {
-            const rad = (d.angle * Math.PI) / 180;
-            const tx = (Math.cos(rad) * 150).toFixed(1);
-            const ty = (Math.sin(rad) * 150).toFixed(1);
-            const dir = d.inbound ? 'in' : 'out';
-            const baseDelay = (i * 0.41) % d.duration;
-            return [0, d.duration / 2].map((offset) => {
-              const delay = ((baseDelay + offset) % d.duration).toFixed(2);
-              return (
-                <circle
-                  r="3"
-                  class={`hub-particle hub-flow-${dir}`}
-                  style={`--tx: ${tx}px; --ty: ${ty}px; animation-duration: ${d.duration}s; animation-delay: ${delay}s;`}
-                />
-              );
-            });
-          })}
-
-          <!-- Centre: Obsidian vault as command center. -->
-          <circle cx="0" cy="0" r="52" class="hub-core" />
-          <g class="hub-core-logo" transform="translate(0, -23)">
-            <path d="M 0 -9 L 7.79 -4.5 L 7.79 4.5 L 0 9 L -7.79 4.5 L -7.79 -4.5 Z"
-                  class="hub-core-logo-shell" />
-            <path d="M 0 -9 L 0 0 M 0 0 L 7.79 4.5 M 0 0 L -7.79 4.5"
-                  class="hub-core-logo-cut" />
-          </g>
-          <text x="0" y="3" text-anchor="middle" class="hub-core-label">OBSIDIAN</text>
-          <text x="0" y="19" text-anchor="middle" class="hub-core-sub">vault</text>
-        </svg>
+        <img
+          src="/diagrams/vault-hub-dark.svg"
+          alt="Hub-and-spoke diagram. Obsidian vault sits at the center, with eight spokes radiating outward to CLI/repo, website, cloud infra, social media, office docs, project notes, research, and MCP server."
+          class="workflow-hub-svg"
+          width="640"
+          height="480"
+          loading="lazy"
+          decoding="async"
+        />
 
         <div class="workflow-hub-foot" aria-hidden="true">
           <span class="workflow-hub-foot-mute">ONE_VAULT · ALL_PROJECTS</span>
         </div>
-      </div>
+      </figure>
 
     </div>
   </div>
@@ -257,12 +170,10 @@ const dispatches = [
   .workflow-hub-band-meta { margin-left: auto; }
 
   .workflow-hub-svg {
+    display: block;
     width: 100%;
     max-width: 520px;
-    aspect-ratio: 1.4 / 1;
-    overflow: visible;
-    align-self: center;
-    display: block;
+    height: auto;
     margin: 0 auto;
   }
 
@@ -276,178 +187,6 @@ const dispatches = [
     color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
     text-align: right;
-  }
-
-  /* ── Static structure ── */
-  .hub-ring {
-    fill: none;
-    stroke: color-mix(in srgb, var(--section-accent) 18%, transparent);
-    stroke-width: 1;
-    stroke-dasharray: 3 5;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  .cyber-section.active .hub-ring {
-    animation: hub-ring-spin 90s linear infinite;
-  }
-  @keyframes hub-ring-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Spokes — static, no per-frame paint cost. The accent stroke at
-     35% opacity reads as "wired but idle"; the moving particles are
-     what carry the "alive" signal. */
-  .hub-spoke {
-    stroke: var(--section-accent);
-    stroke-width: 1;
-    stroke-opacity: 0.4;
-  }
-  .hub-node {
-    fill: var(--section-accent);
-  }
-  .hub-node-label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    fill: rgba(255, 255, 255, 0.78);
-  }
-
-  /* ── Arrival pings — single transform-only pulse per cycle ──
-     Outbound spokes: ping fires when the particle reaches the outer
-     node (88% of cycle). Inbound spokes: ping fires when the particle
-     leaves the outer node (start of cycle). Pure scale + opacity
-     keyframes = composited, no paint, no layout. */
-  .hub-node-ping {
-    fill: none;
-    stroke: var(--section-accent);
-    stroke-width: 1.5;
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  .cyber-section.active .hub-ping-out {
-    animation-name: hub-ping-arrival;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-out;
-  }
-  .cyber-section.active .hub-ping-in {
-    animation-name: hub-ping-departure;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-out;
-  }
-  @keyframes hub-ping-arrival {
-    0%, 80%   { transform: scale(1);   opacity: 0;    }
-    88%       { transform: scale(1);   opacity: 0.95; }
-    100%      { transform: scale(2.6); opacity: 0;    }
-  }
-  @keyframes hub-ping-departure {
-    0%        { transform: scale(1);   opacity: 0.95; }
-    12%       { transform: scale(2.6); opacity: 0;    }
-    100%      { transform: scale(2.6); opacity: 0;    }
-  }
-
-  /* ── Vault core breath ── */
-  .hub-core {
-    fill: rgba(2, 2, 4, 0.92);
-    stroke: var(--section-accent);
-    stroke-width: 1.5;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  .cyber-section.active .hub-core {
-    animation: hub-core-breathe 9s ease-in-out infinite;
-  }
-  @keyframes hub-core-breathe {
-    0%, 100% { stroke-width: 1.5; stroke-opacity: 0.6; }
-    50%      { stroke-width: 2.5; stroke-opacity: 1;   }
-  }
-  .hub-core-label {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    fill: #fff;
-  }
-  .hub-core-sub {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.32em;
-    fill: var(--section-accent);
-  }
-  .hub-core-logo-shell {
-    fill: var(--section-accent);
-    fill-opacity: 0.22;
-    stroke: var(--section-accent);
-    stroke-width: 1.3;
-    stroke-linejoin: round;
-  }
-  .hub-core-logo-cut {
-    fill: none;
-    stroke: var(--section-accent);
-    stroke-width: 0.9;
-    stroke-opacity: 0.85;
-    stroke-linecap: round;
-  }
-
-  /* ── Particles — pure transform + opacity, GPU composited ──
-     translate3d() forces an explicit compositor layer per particle so
-     the animation never repaints, never reflows. Linear timing keeps
-     speed constant along the spoke (no easing-induced "slowing" near
-     the endpoints, which would visually re-trigger the strobe feel
-     the previous design had). */
-  .hub-particle {
-    fill: #ffffff;
-    opacity: 0;
-  }
-  .cyber-section.active .hub-flow-out {
-    animation-name: hub-flow-out;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-  }
-  .cyber-section.active .hub-flow-in {
-    animation-name: hub-flow-in;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-  }
-  /* Outbound: vault → outer. Fade in at 8%, fully visible through the
-     middle, fade out at the destination. No mid-cycle held moment, no
-     return trip — that pattern was the source of the strobe at scale. */
-  @keyframes hub-flow-out {
-    0%   { transform: translate3d(0, 0, 0);                      opacity: 0; }
-    8%   { transform: translate3d(calc(var(--tx) * 0.06), calc(var(--ty) * 0.06), 0); opacity: 1; }
-    92%  { transform: translate3d(calc(var(--tx) * 0.94), calc(var(--ty) * 0.94), 0); opacity: 1; }
-    100% { transform: translate3d(var(--tx), var(--ty), 0);      opacity: 0; }
-  }
-  /* Inbound: outer → vault. Mirror of out. */
-  @keyframes hub-flow-in {
-    0%   { transform: translate3d(var(--tx), var(--ty), 0);      opacity: 0; }
-    8%   { transform: translate3d(calc(var(--tx) * 0.94), calc(var(--ty) * 0.94), 0); opacity: 1; }
-    92%  { transform: translate3d(calc(var(--tx) * 0.06), calc(var(--ty) * 0.06), 0); opacity: 1; }
-    100% { transform: translate3d(0, 0, 0);                      opacity: 0; }
-  }
-
-  /* Sequential boot reveal — each spoke fades in 100ms after the
-     previous, clockwise from CLI/REPO. forwards keeps the final state
-     so no per-frame cost remains after the boot. */
-  .hub-spoke-set { opacity: 0; }
-  .cyber-section.active .hub-spoke-set {
-    animation: hub-set-rise 0.5s ease-out forwards;
-    animation-delay: calc(var(--seq, 0) * 0.1s + 0.5s);
-  }
-  @keyframes hub-set-rise {
-    to { opacity: 1; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cyber-section.active .hub-flow-in,
-    .cyber-section.active .hub-flow-out,
-    .cyber-section.active .hub-ring,
-    .cyber-section.active .hub-core,
-    .cyber-section.active .hub-ping-in,
-    .cyber-section.active .hub-ping-out,
-    .cyber-section.active .hub-spoke-set { animation: none; }
-    .hub-spoke-set { opacity: 1; }
-    .hub-particle { display: none; }
   }
 
   /* Mobile: trim the third recap beat so the section settles in fewer

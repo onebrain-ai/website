@@ -1,50 +1,7 @@
 ---
-// 4-layer architecture mirroring the README harness-os-stack diagram.
-// Top → bottom: OneBrain (plugin + CLI combined) → Harness → LLM → Obsidian Vault.
-// Vault sits at the BASE as the durable source of truth that everything
-// above ultimately reads from and writes to.
-const layers = [
-  {
-    idx: '01',
-    glyph: '🧠',
-    name: 'ONEBRAIN',
-    role: 'OS_LAYER',
-    desc: '24+ skills · lifecycle hooks · vault sync · indexing · checkpoints · harness routing.',
-    sub: 'plugin + CLI — the OS that keeps every harness on the same page.',
-    tag: 'PLUGIN+CLI',
-    accent: '#ff2d92',
-  },
-  {
-    idx: '02',
-    glyph: '🤖',
-    name: 'HARNESS',
-    role: 'AGENTIC_RUNTIME',
-    desc: 'Bring your own. Pick by familiarity, by task, or by cost.',
-    sub: 'claude code · gemini cli · codex · qwen · ...',
-    tag: 'BYO_HARNESS',
-    accent: '#bc13fe',
-  },
-  {
-    idx: '03',
-    glyph: '✨',
-    name: 'LLM',
-    role: 'INTELLIGENCE_SOURCE',
-    desc: 'Whatever powers the harness — OneBrain stays consistent across swaps.',
-    sub: 'local (mlx · ollama) · cloud (claude · gemini · gpt) · raw api',
-    tag: 'RAW_TOKENS',
-    accent: '#c8ff00',
-  },
-  {
-    idx: '04',
-    glyph: '💎',
-    name: 'OBSIDIAN VAULT',
-    role: 'SOURCE_OF_TRUTH',
-    desc: 'Plain Markdown — notes, memory, decisions, knowledge graph.',
-    sub: 'lives forever · agent-readable · version-controlled · yours.',
-    tag: 'FOUNDATION',
-    accent: '#00f3ff',
-  },
-];
+// 4-layer architecture mirrors the README harness-os-stack diagram.
+// SVG is the source of truth (synced from onebrain-ai/onebrain repo)
+// so visuals stay consistent across README + website.
 ---
 
 <section id="stack" class="cyber-section reveal" style="--section-accent: #00f3ff;">
@@ -88,62 +45,23 @@ const layers = [
         </div>
       </header>
 
-      <!-- RIGHT: Animated 4-layer architecture diagram -->
-      <div class="harness-stack" role="img" aria-label="Four-layer architecture: OneBrain (plugin and CLI), Harness, LLM, Obsidian Vault — top to bottom.">
+      <!-- RIGHT: 4-layer architecture diagram (synced from README) -->
+      <figure class="harness-stack">
         <span class="hs-corner hs-corner-tl" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-tr" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-bl" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-br" aria-hidden="true"></span>
 
-        <div class="hs-band hs-band-top" aria-hidden="true">
-          <span class="hs-band-dot"></span>
-          <span class="hs-band-label">HARNESS_OS_STACK · ↑ INTERFACE</span>
-          <span class="hs-band-meta">ARCH_v1.0 · 04_LAYERS</span>
-        </div>
-
-        <div class="hs-layers">
-          <div class="hs-spine" aria-hidden="true">
-            <span class="hs-particle hs-particle-down" style="animation-delay: 0s;"></span>
-            <span class="hs-particle hs-particle-down" style="animation-delay: 1.4s;"></span>
-            <span class="hs-particle hs-particle-down" style="animation-delay: 2.8s;"></span>
-            <span class="hs-particle hs-particle-up" style="animation-delay: 0.7s;"></span>
-            <span class="hs-particle hs-particle-up" style="animation-delay: 2.1s;"></span>
-          </div>
-
-          {layers.map((l, i) => (
-            <div
-              class="hs-layer"
-              style={`--layer-accent: ${l.accent}; --layer-delay: ${i * 0.08}s;`}
-            >
-              <span class="hs-stripe" aria-hidden="true"></span>
-              <span class="hs-edge hs-edge-tl" aria-hidden="true"></span>
-              <span class="hs-edge hs-edge-br" aria-hidden="true"></span>
-
-              <div class="hs-layer-glyph" aria-hidden="true">{l.glyph}</div>
-
-              <div class="hs-layer-left">
-                <div class="hs-layer-idx">LAYER_{l.idx}</div>
-                <div class="hs-layer-name">{l.name}</div>
-                <div class="hs-layer-role">{l.role}</div>
-              </div>
-
-              <div class="hs-layer-mid">
-                <div class="hs-layer-desc">{l.desc}</div>
-                <div class="hs-layer-sub">{l.sub}</div>
-              </div>
-
-              <div class="hs-layer-right">
-                <span class="hs-chip">{l.tag}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div class="hs-band hs-band-bottom" aria-hidden="true">
-          <span class="hs-band-meta-mute">↓ FOUNDATION</span>
-          <span class="hs-band-meta-mute">CONTEXT_FLOWS_BOTH_WAYS · VAULT_AGNOSTIC</span>
-        </div>
-      </div>
+        <img
+          src="/diagrams/harness-os-stack-dark.svg"
+          alt="OneBrain Harness OS — four stacked layers from top to bottom: OneBrain plugin and CLI (OS layer), Harness runtime, LLM intelligence source, and Obsidian Vault as the foundation."
+          class="hs-svg"
+          width="880"
+          height="600"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
 
     </div>
   </div>
@@ -185,10 +103,11 @@ const layers = [
     border-top: 1px solid rgba(0, 243, 255, 0.18);
   }
 
-  /* Harness stack diagram (right column) */
+  /* Harness stack frame (right column) — corner brackets wrap the synced SVG */
   .harness-stack {
     position: relative;
-    padding: 16px 14px 14px;
+    margin: 0;
+    padding: 18px 16px;
     background: rgba(8, 8, 14, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
@@ -203,263 +122,18 @@ const layers = [
   .hs-corner-bl { bottom: -1px; left: -1px;    border-right: 0; border-top: 0; }
   .hs-corner-br { bottom: -1px; right: -1px;   border-left: 0;  border-top: 0; }
 
-  .hs-band {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 4px 8px;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.28em;
-    color: rgba(255, 255, 255, 0.45);
-    text-transform: uppercase;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-  .hs-band-top { margin-bottom: 8px; }
-  .hs-band-bottom {
-    border-bottom: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 8px 4px 0;
-    margin-top: 8px;
-    justify-content: space-between;
-  }
-  .hs-band-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--section-accent);
-    box-shadow: 0 0 10px var(--section-accent);
-    flex-shrink: 0;
-    animation: hs-band-pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes hs-band-pulse {
-    0%, 100% { opacity: 1;   transform: scale(1);    }
-    50%      { opacity: 0.4; transform: scale(0.85); }
-  }
-  .hs-band-meta { margin-left: auto; }
-  .hs-band-meta-mute { color: rgba(255, 255, 255, 0.35); }
-
-  .hs-layers {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  .hs-svg {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
-  /* Animated spine (vertical with travelling particles).
-     Gradient stops match the 4 layer accents top→bottom:
-     OneBrain magenta → Harness violet → LLM lime → Vault cyan. */
-  .hs-spine {
-    position: absolute;
-    left: 14px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    pointer-events: none;
-    background: linear-gradient(180deg,
-      rgba(255, 45, 146, 0.5) 0%,
-      rgba(188, 19, 254, 0.5) 33%,
-      rgba(200, 255, 0, 0.5) 66%,
-      rgba(0, 243, 255, 0.5) 100%);
-    mask-image: repeating-linear-gradient(180deg, #000 0 4px, transparent 4px 9px);
-    -webkit-mask-image: repeating-linear-gradient(180deg, #000 0 4px, transparent 4px 9px);
-  }
-  .hs-particle {
-    position: absolute;
-    left: -2px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 18px rgba(0, 243, 255, 0.6);
-  }
-  .hs-particle-down { animation: hs-travel-down 4.2s linear infinite; }
-  .hs-particle-up   { animation: hs-travel-up   5.6s linear infinite; }
-  @keyframes hs-travel-down {
-    0%   { top: -2%;  opacity: 0;   }
-    8%   {           opacity: 0.95; }
-    92%  {           opacity: 0.95; }
-    100% { top: 102%; opacity: 0;   }
-  }
-  @keyframes hs-travel-up {
-    0%   { top: 102%; opacity: 0;   }
-    8%   {           opacity: 0.85; }
-    92%  {           opacity: 0.85; }
-    100% { top: -2%;  opacity: 0;   }
-  }
-
-  /* Layer block */
-  .hs-layer {
-    position: relative;
-    display: grid;
-    /* glyph col + name col + desc col + chip col */
-    grid-template-columns: 32px 158px 1fr auto;
-    gap: 14px;
-    padding: 9px 14px 9px 30px;
-    background: linear-gradient(180deg, rgba(12, 12, 24, 0.92), rgba(6, 6, 13, 0.92));
-    border: 1px solid color-mix(in srgb, var(--layer-accent) 35%, transparent);
-    align-items: center;
-    overflow: hidden;
-    transition: transform 0.35s ease, border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
-    transform: translateX(20px);
-    opacity: 0;
-  }
-  .cyber-section.active .hs-layer {
-    animation: hs-layer-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: var(--layer-delay);
-  }
-  @keyframes hs-layer-in {
-    to { transform: translateX(0); opacity: 1; }
-  }
-
-  .hs-stripe {
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 2px;
-    background: linear-gradient(90deg,
-      var(--layer-accent) 0%,
-      color-mix(in srgb, var(--layer-accent) 40%, transparent) 60%,
-      transparent 100%);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--layer-accent) 75%, transparent);
-  }
-  .hs-stripe::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
-    transform: translateX(-100%);
-    animation: hs-stripe-sweep 6.5s ease-in-out infinite;
-    animation-delay: var(--layer-delay);
-  }
-  @keyframes hs-stripe-sweep {
-    0%, 70%, 100% { transform: translateX(-100%); }
-    85%           { transform: translateX(100%);  }
-  }
-
-  .hs-edge {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border: 1px solid var(--layer-accent);
-  }
-  .hs-edge-tl { top: 0;    left: 0;    border-right: 0; border-bottom: 0; }
-  .hs-edge-br { bottom: 0; right: 0;   border-left: 0;  border-top: 0; }
-
-  .hs-layer:hover {
-    transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--layer-accent) 75%, transparent);
-    background: linear-gradient(180deg,
-      color-mix(in srgb, var(--layer-accent) 8%, rgba(12, 12, 24, 0.92)),
-      rgba(6, 6, 13, 0.92));
-    box-shadow:
-      0 0 24px color-mix(in srgb, var(--layer-accent) 22%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, var(--layer-accent) 30%, transparent);
-  }
-
-  .hs-layer-glyph {
-    font-size: 22px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--layer-accent) 55%, transparent));
-  }
-
-  .hs-layer-idx {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    font-weight: 700;
-    color: var(--layer-accent);
-    letter-spacing: 0.1em;
-    margin-bottom: 2px;
-  }
-  .hs-layer-name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-style: italic;
-    font-size: 0.95rem;
-    color: #fff;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    line-height: 1.05;
-  }
-  .hs-layer-role {
-    margin-top: 3px;
-    font-family: var(--font-mono);
-    font-size: 8.5px;
-    letter-spacing: 0.26em;
-    color: var(--layer-accent);
-    text-transform: uppercase;
-  }
-  .hs-layer-desc {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.78);
-  }
-  .hs-layer-sub {
-    margin-top: 2px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.45);
-  }
-  .hs-chip {
-    display: inline-block;
-    padding: 3px 8px;
-    font-family: var(--font-mono);
-    font-size: 8.5px;
-    letter-spacing: 0.18em;
-    color: var(--layer-accent);
-    background: color-mix(in srgb, var(--layer-accent) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--layer-accent) 40%, transparent);
-  }
-
-  /* Tablet — drop the right chip column to give middle column more room */
-  @media (max-width: 1024px) {
-    .hs-layer { grid-template-columns: 32px 150px 1fr; }
-    .hs-layer-right { display: none; }
-  }
-
-  /* Mobile — collapse to a 2-col layout (glyph + content) so each layer
-     renders as `glyph · LAYER_NN / NAME / ROLE / DESC` for fast scan.
-     Sub line + bottom HUD band are dropped, manifesto trims to 2 rows.
-     Explicit grid placement: glyph sits row-1 col-1, the LAYER head
-     (idx/name/role) sits row-1 col-2, and the description spans both
-     columns on row-2 so it can use the full card width — without this
-     the auto-placement algorithm parked `.hs-layer-mid` into col-1
-     (28px wide) and the desc text wrapped one word per line. */
+  /* Mobile — trim manifesto to 2 rows so it stays balanced with the
+     diagram height when stacked vertically. */
   @media (max-width: 720px) {
-    .harness-stack { padding: 14px 12px 12px; }
-    .hs-layer {
-      grid-template-columns: 28px 1fr;
-      grid-template-rows: auto auto;
-      column-gap: 10px;
-      row-gap: 6px;
-      padding: 10px 14px 10px 26px;
-    }
-    .hs-layer-glyph { font-size: 18px; grid-column: 1; grid-row: 1; }
-    .hs-layer-left  { grid-column: 2; grid-row: 1; }
-    .hs-layer-mid   { grid-column: 1 / -1; grid-row: 2; }
-    .hs-layer-sub { display: none; }
-    .hs-band-meta-mute:last-child { display: none; }
-    .hs-band-bottom { justify-content: flex-start; }
     .manifesto-tag { width: 48px; font-size: 8px; }
     .manifesto-row:nth-child(1),
     .manifesto-row:nth-child(3) { display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    /* Belt-and-braces: skip the reveal keyframe AND set the visible
-       end-state directly, so any environment that suppresses keyframes
-       (reduced-motion, browser flags, reader mode) still shows the
-       diagram instead of a column of invisible layers. */
-    .hs-layer { opacity: 1; transform: none; }
-    .cyber-section.active .hs-layer { animation: none; }
-    .hs-band-dot,
-    .hs-particle,
-    .hs-stripe::after { animation: none; }
-    .hs-particle { display: none; }
   }
 
   /* Tighten section padding at desktop so the diagram + manifesto fit
