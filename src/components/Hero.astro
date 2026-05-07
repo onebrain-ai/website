@@ -728,10 +728,19 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   @media (min-width: 1024px) {
     .hero-shell { padding: 8rem 4rem 5rem; }
     .hero-grid-content {
-      /* 40:60 — terminal gets the larger column so the live agent
-         loop reads first, with text playing supporting role. */
-      grid-template-columns: 2fr 3fr;
+      /* Laptop (1024–1279px): 50:50 — both columns get equal room
+         since the headline is still tight and the terminal would
+         feel cramped at 40%. */
+      grid-template-columns: 1fr 1fr;
       gap: 4rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    .hero-grid-content {
+      /* Desktop (≥1280px): 40:60 — terminal takes the larger
+         column so the live agent loop reads first; headline + install
+         line still have plenty of room at 40%. */
+      grid-template-columns: 2fr 3fr;
     }
   }
 
