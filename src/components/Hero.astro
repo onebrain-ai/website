@@ -728,7 +728,9 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   @media (min-width: 1024px) {
     .hero-shell { padding: 8rem 4rem 5rem; }
     .hero-grid-content {
-      grid-template-columns: 1.25fr 1fr;
+      /* 40:60 — terminal gets the larger column so the live agent
+         loop reads first, with text playing supporting role. */
+      grid-template-columns: 2fr 3fr;
       gap: 4rem;
     }
   }
