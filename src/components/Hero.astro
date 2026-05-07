@@ -725,15 +725,17 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     width: 100%;
     align-items: center;
   }
-  @media (min-width: 1024px) {
-    .hero-shell { padding: 8rem 4rem 5rem; }
+  @media (min-width: 768px) {
     .hero-grid-content {
-      /* Laptop (1024–1279px): 50:50 — both columns get equal room
-         since the headline is still tight and the terminal would
-         feel cramped at 40%. */
+      /* Tablet+ (≥768px): 50:50 — terminal already shows up next
+         to the headline at iPad-landscape and small-laptop widths,
+         instead of stacking below. */
       grid-template-columns: 1fr 1fr;
       gap: 4rem;
     }
+  }
+  @media (min-width: 1024px) {
+    .hero-shell { padding: 8rem 4rem 5rem; }
   }
   @media (min-width: 1280px) {
     .hero-grid-content {
