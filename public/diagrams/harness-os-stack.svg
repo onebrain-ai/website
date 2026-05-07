@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 100 880 600" width="880" height="600" role="img" aria-labelledby="title desc" font-family="'Chakra Petch', 'Inter', ui-sans-serif, system-ui, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="55 105 790 585" width="790" height="585" role="img" aria-labelledby="title desc" font-family="'Chakra Petch', 'Inter', ui-sans-serif, system-ui, sans-serif">
   <title id="title">OneBrain Harness OS — 4-Layer Architecture</title>
   <desc id="desc">Four stacked layers from top to bottom: OneBrain (plugin and CLI — skills, hooks, vault sync, indexing, checkpoints), Harness (Claude Code, Gemini CLI, Codex, Qwen), LLM (local, cloud, or API), and Obsidian Vault as the source of truth (plain Markdown notes, memory, decisions, knowledge graph).</desc>
 

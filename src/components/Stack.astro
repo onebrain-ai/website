@@ -11,7 +11,7 @@
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid md:grid-cols-[1fr_1fr] xl:grid-cols-[2fr_3fr] gap-12 lg:gap-16 items-center">
+    <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
 
       <!-- LEFT: Headline + manifesto -->
       <header>
@@ -54,15 +54,25 @@
         <span class="hs-corner hs-corner-bl" aria-hidden="true"></span>
         <span class="hs-corner hs-corner-br" aria-hidden="true"></span>
 
+        <div class="hs-band" aria-hidden="true">
+          <span class="hs-band-dot"></span>
+          <span class="hs-band-label">HARNESS_OS_STACK · 4_LAYERS</span>
+          <span class="hs-band-meta">RUNS_LOCAL</span>
+        </div>
+
         <img
           src="/diagrams/harness-os-stack.svg"
           alt="OneBrain Harness OS — four stacked layers from top to bottom: OneBrain plugin and CLI (OS layer), Harness runtime, LLM intelligence source, and Obsidian Vault as the foundation."
           class="hs-svg"
-          width="880"
-          height="600"
+          width="790"
+          height="585"
           loading="lazy"
           decoding="async"
         />
+
+        <div class="hs-foot" aria-hidden="true">
+          <span class="hs-foot-mute">BYO_HARNESS · VAULT_STAYS_CONSTANT</span>
+        </div>
       </figure>
 
     </div>
@@ -70,6 +80,10 @@
 </section>
 
 <style>
+  /* Section-scoped sizing — match the 4rem cap used by other diagram
+     sections so headlines render at a consistent maximum across cyber-h2. */
+  #stack .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
+
   /* Manifesto rows (left column) */
   .manifesto {
     margin-top: 20px;
@@ -105,11 +119,15 @@
     border-top: 1px solid rgba(0, 243, 255, 0.18);
   }
 
-  /* Harness stack frame (right column) — corner brackets wrap the synced SVG */
+  /* Harness stack frame (right column) — corner brackets + band header
+     + foot caption wrap the synced SVG, mirroring the HowItWorks loop
+     diagram so the two cyber-frames feel like a matched pair. */
   .harness-stack {
     position: relative;
     margin: 0;
-    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 14px 12px;
     background: rgba(8, 8, 14, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
@@ -117,12 +135,40 @@
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border: 1px solid var(--section-accent);
   }
   .hs-corner-tl { top: -1px;    left: -1px;    border-right: 0; border-bottom: 0; }
   .hs-corner-tr { top: -1px;    right: -1px;   border-left: 0;  border-bottom: 0; }
   .hs-corner-bl { bottom: -1px; left: -1px;    border-right: 0; border-top: 0; }
   .hs-corner-br { bottom: -1px; right: -1px;   border-left: 0;  border-top: 0; }
+
+  .hs-band {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 6px;
+  }
+  .hs-band-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--section-accent);
+    box-shadow: 0 0 10px var(--section-accent);
+    flex-shrink: 0;
+    animation: hs-band-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes hs-band-pulse {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%      { opacity: 0.4; transform: scale(0.85); }
+  }
+  .hs-band-meta { margin-left: auto; }
 
   .hs-svg {
     display: block;
@@ -130,12 +176,31 @@
     height: auto;
   }
 
-  /* Mobile — trim manifesto to 2 rows so it stays balanced with the
-     diagram height when stacked vertically. */
+  .hs-foot {
+    margin-top: 6px;
+    padding: 8px 4px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* Mobile — hide band meta/foot caption + trim manifesto to 2 rows so the
+     diagram and manifesto stay balanced when the layout stacks vertically. */
   @media (max-width: 720px) {
+    .hs-band-meta,
+    .hs-foot { display: none; }
+    .harness-stack { padding: 12px 10px 10px; }
     .manifesto-tag { width: 48px; font-size: 8px; }
     .manifesto-row:nth-child(1),
     .manifesto-row:nth-child(3) { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hs-band-dot { animation: none; }
   }
 
   /* Tighten section padding at desktop so the diagram + manifesto fit

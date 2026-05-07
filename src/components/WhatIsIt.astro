@@ -24,18 +24,18 @@
           </p>
         </header>
 
-        <div class="mt-10 grid sm:grid-cols-2 gap-4">
+        <div class="synergy-cards mt-6 grid sm:grid-cols-2 gap-4">
           <div class="cyber-card synergy-card">
             <span class="cyber-card-meta">01</span>
-            <div class="synergy-icon" aria-hidden="true">🎓</div>
+            <div class="synergy-icon" aria-hidden="true">🧠</div>
             <h3 class="cyber-card-title">HUMAN → AGENT</h3>
-            <p class="cyber-card-desc">Every preference, decision, and correction becomes persistent memory. The agent calibrates to you with every interaction.</p>
+            <p class="cyber-card-desc">Every correction becomes lasting memory. The agent learns you over time.</p>
           </div>
           <div class="cyber-card synergy-card">
             <span class="cyber-card-meta">02</span>
             <div class="synergy-icon" aria-hidden="true">⚡</div>
             <h3 class="cyber-card-title">AGENT → HUMAN</h3>
-            <p class="cyber-card-desc">Captures, classifies, links, and synthesizes the noise of your day — so your attention stays on what only you can do.</p>
+            <p class="cyber-card-desc">Captures and links the noise of your day. You stay on what only you can do.</p>
           </div>
         </div>
       </div>
@@ -47,10 +47,20 @@
           <div class="nebula-corner nebula-corner-tr"></div>
           <div class="nebula-corner nebula-corner-bl"></div>
           <div class="nebula-corner nebula-corner-br"></div>
-          <canvas id="nebula-graph" aria-hidden="true"></canvas>
-          <div class="nebula-core" aria-hidden="true">
-            <div class="nebula-breath"></div>
+
+          <div class="nebula-band" aria-hidden="true">
+            <span class="nebula-band-dot"></span>
+            <span class="nebula-band-label">KNOWLEDGE_GRAPH · LIVE</span>
+            <span class="nebula-band-meta">CO_EVOLVING</span>
           </div>
+
+          <div class="nebula-stage">
+            <canvas id="nebula-graph" aria-hidden="true"></canvas>
+            <div class="nebula-core" aria-hidden="true">
+              <div class="nebula-breath"></div>
+            </div>
+          </div>
+
           <div class="nebula-readout">
             <span>NODES <strong id="nebula-nodes">000</strong></span>
             <span>EDGES <strong id="nebula-edges">000</strong></span>
@@ -73,8 +83,8 @@
     const edgesEl = document.getElementById('nebula-edges');
     let width, height, dpr;
     let nodes = [];
-    const maxNodes = 150;          // denser graph
-    const maxDist = 85;            // longer connection range → more cluster overlap
+    const maxNodes = 200;          // dense graph — full-circle fill
+    const maxDist = 85;            // connection range → cluster overlap
     // Tonal magenta palette so the nebula reads as the Synergy section's
     // accent (#ff2d92) rather than a rainbow that competes with every
     // other section's colour. White synapse sparks stay for contrast and
@@ -132,11 +142,10 @@
         x: cx + Math.cos(angle) * (radius + 18),
         y: cy + Math.sin(angle) * (radius + 18),
         angle,
-        orbitSpeed: 0.00064 + Math.random() * 0.00179,
+        orbitSpeed: 0.000512 + Math.random() * 0.001432,
         orbitRadius: radius,
         size: Math.random() * 1.4 + 1.1,
-        // Random pick from the full section-accent palette — so the synergy
-        // nebula visually echoes every section's identity at once.
+        // Random pick from the magenta-tonal palette — see SECTION_PALETTE comment above.
         color: SECTION_PALETTE[Math.floor(Math.random() * SECTION_PALETTE.length)],
         opacity: 0,                             // always fade in — never pop
         targetOpacity: 0.55 + Math.random() * 0.4,
@@ -304,13 +313,16 @@
 </script>
 
 <style>
+  /* Section-scoped sizing — keep left column compact so the square
+     nebula frame on the right can vertically center against it
+     without leaving large empty bands above/below. */
+  #synergy .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
+  #synergy .cyber-sub { margin-top: 0.5rem; }
+  .synergy-cards .cyber-card { padding: 14px 16px; }
+  .synergy-cards .cyber-card-desc { font-size: 11.5px; line-height: 1.5; }
+
   /* Synergy cards — emoji icon sits between the meta number and the
-     title so the box reads `01 // 🎓 // HUMAN → AGENT // desc` rather
-     than the previous `01 // HUMAN → ... // desc`. The icon glows
-     soft magenta to align with the section accent. */
-  .synergy-card {
-    position: relative;
-  }
+     title; glows soft magenta to align with the section accent. */
   .synergy-icon {
     font-size: 26px;
     line-height: 1;
@@ -321,9 +333,11 @@
   .nebula-frame {
     position: relative;
     aspect-ratio: 1 / 1;
-    background: rgba(8, 8, 14, 0.82);
-    border: 1px solid rgba(255, 45, 146, 0.25);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 14px 12px;
+    background: rgba(8, 8, 14, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
   .nebula-corner {
     position: absolute;
@@ -332,10 +346,45 @@
     border: 1px solid var(--section-accent);
     z-index: 3;
   }
-  .nebula-corner-tl { top: -3px;    left: -3px;    border-right: 0; border-bottom: 0; }
-  .nebula-corner-tr { top: -3px;    right: -3px;   border-left: 0;  border-bottom: 0; }
-  .nebula-corner-bl { bottom: -3px; left: -3px;    border-right: 0; border-top: 0; }
-  .nebula-corner-br { bottom: -3px; right: -3px;   border-left: 0;  border-top: 0; }
+  .nebula-corner-tl { top: -1px;    left: -1px;    border-right: 0; border-bottom: 0; }
+  .nebula-corner-tr { top: -1px;    right: -1px;   border-left: 0;  border-bottom: 0; }
+  .nebula-corner-bl { bottom: -1px; left: -1px;    border-right: 0; border-top: 0; }
+  .nebula-corner-br { bottom: -1px; right: -1px;   border-left: 0;  border-top: 0; }
+
+  .nebula-band {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 6px;
+  }
+  .nebula-band-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--section-accent);
+    box-shadow: 0 0 10px var(--section-accent);
+    flex-shrink: 0;
+    animation: nebula-band-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes nebula-band-pulse {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%      { opacity: 0.4; transform: scale(0.85); }
+  }
+  .nebula-band-meta { margin-left: auto; }
+
+  .nebula-stage {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
 
   #nebula-graph {
     position: absolute;
@@ -375,14 +424,13 @@
     50%      { opacity: 1;    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .nebula-breath { animation: none; opacity: 0.7; }
+    .nebula-breath  { animation: none; opacity: 0.7; }
+    .nebula-band-dot { animation: none; }
   }
   .nebula-readout {
-    position: absolute;
-    bottom: 14px;
-    left: 14px;
-    right: 14px;
-    z-index: 3;
+    margin-top: 6px;
+    padding: 8px 4px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     justify-content: space-between;
     font-family: var(--font-mono);
