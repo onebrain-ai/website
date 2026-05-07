@@ -81,9 +81,16 @@ const beats = [
     align-items: center;
   }
   @media (min-width: 1024px) {
+    /* Laptop: 50:50 — diagram and text get equal room. */
     .workflow-top {
-      grid-template-columns: 3fr 2fr;
+      grid-template-columns: 1fr 1fr;
       gap: 3rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    /* Desktop: 40:60 — diagram takes the larger half. */
+    .workflow-top {
+      grid-template-columns: 2fr 3fr;
     }
   }
 
