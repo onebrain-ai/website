@@ -133,6 +133,15 @@
       // setTimeout(init, ...) would re-fire with stale state.
       if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
       clearSpawnTimers();
+      // Re-baseline the 30fps throttle gate to "right now". Without
+      // this, post-IO/visibility re-entry the first 5s of draws ran
+      // at ~60fps (browser RAF coalescing was firing batches of
+      // queued frames in close succession; their deltas vs the stale
+      // pre-stopAll lastFrame were all > 32ms so every one passed
+      // the gate). Resetting to performance.now() forces frame 1 to
+      // wait the full 32ms and stabilises the cap from the very
+      // first post-init paint.
+      lastFrame = performance.now();
       dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = canvas.offsetWidth;
       height = canvas.offsetHeight;
