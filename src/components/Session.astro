@@ -9,26 +9,23 @@ const steps = [
     t: 'CAPTURE',
     d: 'Talk to the agent in natural language. It writes, classifies, and links your thoughts in real time.',
     code: '/braindump · /capture · /bookmark',
-    accent: '#c8e810',
   },
   {
     n: '02',
     t: 'EVOLVE',
     d: '/research and /distill expand your knowledge. /learn deepens the agent. The loop tightens.',
     code: '/research · /distill · /learn',
-    accent: '#a3d100',
   },
   {
     n: '03',
     t: 'WRAPUP',
     d: '/wrapup consolidates the session log. /recap promotes lessons to memory.',
     code: '/wrapup · /recap',
-    accent: '#7e9c00',
   },
 ];
 ---
 
-<section id="how" class="cyber-section reveal" style="--section-accent: #c8ff00;">
+<section id="session" class="cyber-section reveal" style="--section-accent: #c8ff00;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -47,13 +44,13 @@ const steps = [
             <span class="cyber-h2-stroke">Sharpens Both.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> runs as a tight 3-step loop. Each cycle, both sides sharpen.
+            <strong class="brand">OneBrain</strong> runs as a tight 3-step loop. Each cycle feeds the next — the agent gets smarter, the vault gets richer, every round.
           </p>
         </header>
 
         <ol class="how-steps">
           {steps.map((s) => (
-            <li class="how-step" style={`--step-accent: ${s.accent};`}>
+            <li class="how-step">
               <span class="how-step-num">{s.n}</span>
               <div class="how-step-body">
                 <h3 class="how-step-title">{s.t}</h3>
@@ -121,8 +118,9 @@ const steps = [
     font-weight: 700;
     font-size: 1.9rem;
     line-height: 1;
-    color: var(--step-accent);
-    text-shadow: 0 0 24px color-mix(in srgb, var(--step-accent) 45%, transparent);
+    color: var(--section-accent);
+    opacity: 0.85;
+    text-shadow: 0 0 24px color-mix(in srgb, var(--section-accent) 45%, transparent);
   }
   .how-step-title {
     font-family: var(--font-mono);
@@ -145,7 +143,7 @@ const steps = [
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.04em;
-    color: var(--step-accent);
+    color: var(--section-accent);
     opacity: 0.85;
   }
 
@@ -218,12 +216,12 @@ const steps = [
   }
 
   /* Section-scoped sizing — keep "Sharpens Both." on a single line at md+ */
-  #how .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
+  #session .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
 
   /* ── Responsive ───────────────────────────────────────── */
   @media (min-width: 1024px) {
-    #how { padding: 2.25rem 3rem 1.75rem; }
-    #how .cyber-section-head { margin-bottom: 0.75rem; }
+    #session { padding: 2.25rem 3rem 1.75rem; }
+    #session .cyber-section-head { margin-bottom: 0.75rem; }
   }
 
   @media (max-width: 720px) {
