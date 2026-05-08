@@ -25,26 +25,12 @@
   </style>
 
   <defs>
-    <marker id="ah-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c8e810"/>
+    <marker id="ah-node" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a8d000"/>
     </marker>
-    <marker id="ah-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a3d100"/>
-    </marker>
-    <marker id="ah-3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7e9c00"/>
-    </marker>
-    <radialGradient id="g-capture-fill" cx="0.32" cy="0.32" r="0.85">
-      <stop offset="0%"   stop-color="#7c9c00" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#6a8500" stop-opacity="1"/>
-    </radialGradient>
-    <radialGradient id="g-evolve-fill" cx="0.32" cy="0.32" r="0.85">
-      <stop offset="0%"   stop-color="#5e7800" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#4d6300" stop-opacity="1"/>
-    </radialGradient>
-    <radialGradient id="g-wrapup-fill" cx="0.32" cy="0.32" r="0.85">
-      <stop offset="0%"   stop-color="#3d4d00" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#2d3a00" stop-opacity="1"/>
+    <radialGradient id="g-node-fill" cx="0.32" cy="0.32" r="0.85">
+      <stop offset="0%"   stop-color="#d4ff45" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#a8d000" stop-opacity="1"/>
     </radialGradient>
   </defs>
 
@@ -53,41 +39,41 @@
        directly at the destination's center so the arrow vector is radial. -->
   <!-- 01→02 leg (top → bottom-right) -->
   <g class="leg">
-    <path id="leg-1" d="M 27 -83.2 L 85.6 18.2" fill="none" stroke="#c8e810" stroke-width="1.6" marker-end="url(#ah-1)"/>
+    <path id="leg-1" d="M 27 -83.2 L 85.6 18.2" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
   </g>
 
   <!-- 02→03 leg (bottom-right → bottom-left) -->
   <g class="leg leg-2">
-    <path id="leg-2" d="M 58.6 65 L -58.6 65" fill="none" stroke="#a3d100" stroke-width="1.6" marker-end="url(#ah-2)"/>
+    <path id="leg-2" d="M 58.6 65 L -58.6 65" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
   </g>
 
   <!-- 03→01 leg (bottom-left → top) -->
   <g class="leg leg-3">
-    <path id="leg-3" d="M -85.6 18.2 L -27 -83.2" fill="none" stroke="#7e9c00" stroke-width="1.6" marker-end="url(#ah-3)"/>
+    <path id="leg-3" d="M -85.6 18.2 L -27 -83.2" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
   </g>
 
   <!-- Node 01 — CAPTURE (top) -->
   <g transform="translate(0,-130)">
-    <circle class="core-1" cx="0" cy="0" r="54" fill="url(#g-capture-fill)"/>
-    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.18em">01</text>
-    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#ffffff">CAPTURE</text>
-    <text x="0" y="22" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="0.28em" fill="rgba(255,255,255,0.85)">/braindump</text>
+    <circle class="core-1" cx="0" cy="0" r="54" fill="url(#g-node-fill)"/>
+    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">01</text>
+    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">CAPTURE</text>
+    <text x="0" y="22" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="0.28em" fill="rgba(10,15,0,0.85)">/braindump</text>
   </g>
 
   <!-- Node 02 — EVOLVE (bottom-right) -->
   <g transform="translate(112.6,65)">
-    <circle class="core-2" cx="0" cy="0" r="54" fill="url(#g-evolve-fill)"/>
-    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.18em">02</text>
-    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#ffffff">EVOLVE</text>
-    <text x="0" y="68" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" letter-spacing="0.28em" fill="#c8ff00">/distill · /learn</text>
+    <circle class="core-2" cx="0" cy="0" r="54" fill="url(#g-node-fill)"/>
+    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">02</text>
+    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">EVOLVE</text>
+    <text x="0" y="68" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" letter-spacing="0.28em" fill="#a8d000">/distill · /learn</text>
   </g>
 
   <!-- Node 03 — WRAPUP (bottom-left) -->
   <g transform="translate(-112.6,65)">
-    <circle class="core-3" cx="0" cy="0" r="54" fill="url(#g-wrapup-fill)"/>
-    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="0.18em">03</text>
-    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#ffffff">WRAPUP</text>
-    <text x="0" y="68" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" letter-spacing="0.28em" fill="#c8ff00">/wrapup · /recap</text>
+    <circle class="core-3" cx="0" cy="0" r="54" fill="url(#g-node-fill)"/>
+    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">03</text>
+    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">WRAPUP</text>
+    <text x="0" y="68" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" letter-spacing="0.28em" fill="#a8d000">/wrapup · /recap</text>
   </g>
 
   <!-- Motion layer: particles flow clockwise around the triangle.
@@ -97,34 +83,34 @@
        Ring on the destination node bursts at the moment of arrival. -->
   <g class="motion-layer">
     <!-- Leg 1: CAPTURE → EVOLVE -->
-    <circle r="3.5" fill="#c8e810" opacity="0">
+    <circle r="3.5" fill="#a8d000" opacity="0">
       <animateMotion dur="5.4s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.333;1" repeatCount="indefinite" path="M 27 -83.2 L 85.6 18.2"/>
       <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.31;0.333;1" dur="5.4s" repeatCount="indefinite"/>
     </circle>
     <!-- Ring on EVOLVE — bursts at t=0.333 -->
-    <circle cx="112.6" cy="65" r="54" fill="none" stroke="#a3d100" stroke-width="2" opacity="0">
+    <circle cx="112.6" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" opacity="0">
       <animate attributeName="r" values="54;54;76;76" keyTimes="0;0.333;0.40;1" dur="5.4s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.333;0.36;0.40;1" dur="5.4s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Leg 2: EVOLVE → WRAPUP -->
-    <circle r="3.5" fill="#a3d100" opacity="0">
+    <circle r="3.5" fill="#a8d000" opacity="0">
       <animateMotion dur="5.4s" begin="1.8s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.333;1" repeatCount="indefinite" path="M 58.6 65 L -58.6 65"/>
       <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.31;0.333;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
     </circle>
     <!-- Ring on WRAPUP — bursts at t=0.333 of leg-2's cycle -->
-    <circle cx="-112.6" cy="65" r="54" fill="none" stroke="#7e9c00" stroke-width="2" opacity="0">
+    <circle cx="-112.6" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" opacity="0">
       <animate attributeName="r" values="54;54;76;76" keyTimes="0;0.333;0.40;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.333;0.36;0.40;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Leg 3: WRAPUP → CAPTURE -->
-    <circle r="3.5" fill="#7e9c00" opacity="0">
+    <circle r="3.5" fill="#a8d000" opacity="0">
       <animateMotion dur="5.4s" begin="3.6s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.333;1" repeatCount="indefinite" path="M -85.6 18.2 L -27 -83.2"/>
       <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.31;0.333;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
     </circle>
     <!-- Ring on CAPTURE — bursts at t=0.333 of leg-3's cycle -->
-    <circle cx="0" cy="-130" r="54" fill="none" stroke="#c8e810" stroke-width="2" opacity="0">
+    <circle cx="0" cy="-130" r="54" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" opacity="0">
       <animate attributeName="r" values="54;54;76;76" keyTimes="0;0.333;0.40;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.333;0.36;0.40;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
     </circle>
