@@ -78,13 +78,17 @@
     const canvas = document.getElementById('nebula-graph');
     if (!canvas) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     const nodesEl = document.getElementById('nebula-nodes');
     const edgesEl = document.getElementById('nebula-edges');
     let width, height, dpr;
     let nodes = [];
-    const maxNodes = 200;          // dense graph — full-circle fill
+    // 130 nodes ≈ 8.4k edge checks/frame (vs 200 = 19.9k). Visually still
+    // a dense cluster; cuts the O(n²) inner loop ~58%. Combined with the
+    // 30fps draw cap below this halves the per-second canvas work.
+    const maxNodes = 130;
     const maxDist = 85;            // connection range → cluster overlap
+    const maxDistSq = maxDist * maxDist;
     // Tonal magenta palette so the nebula reads as the Synergy section's
     // accent (#ff2d92) rather than a rainbow that competes with every
     // other section's colour. White synapse sparks stay for contrast and
@@ -96,12 +100,16 @@
       '#ff85c1', // pink wash
       '#ffffff', // white synapse spark
     ];
-    const seedCount = 26;          // pre-seed (staggered, not instant)
+    const seedCount = 18;          // pre-seed scaled with maxNodes
     const seedInterval = 60;       // gentler cadence for seed phase
-    const pulseDecay = 0.022;      // ~750ms full decay
+    // Per-frame constants doubled vs the 60fps original — the draw loop
+    // is now capped at 30fps below, so 0.022 → 0.044 preserves the
+    // original ~750ms halo decay, 0.013 → 0.026 preserves ~1.3s exhale,
+    // and the 0.04 → 0.08 fade-in (in draw()) preserves ~300ms.
+    const pulseDecay = 0.044;      // ~750ms full decay (at 30fps)
     const idleAfterFull = 1800;    // briefly admire the full cluster
     const fadeOutDuration = 1800;  // gentle exhale — matches fade rate below
-    const fadeOutRate = 0.013;     // per-frame opacity decay (~1.3s for 1.0→0 at 60fps)
+    const fadeOutRate = 0.026;     // per-frame opacity decay (~1.3s for 1.0→0 at 30fps)
     let spawnTimeout = null;       // recursive setTimeout handle for live phase
     const mouse = { x: null, y: null, radius: 110 };
     let spawnTimer = null;
@@ -111,19 +119,48 @@
     let rafId = 0;
     let running = true;
     let visible = true;
+    let lastFrame = 0;             // ms timestamp of last drawn frame (30fps gate)
 
     function init() {
-      dpr = window.devicePixelRatio || 1;
+      // Reduced-motion: leave canvas blank, skip every allocation. The
+      // .nebula-breath orb (CSS-static under reduced) is the visual.
+      if (reduced) return;
+      // Cancel any queued frame and any pending spawn timers — init()
+      // is the new source of truth. Both calls are idempotent + safe to
+      // run before the zero-size early-return; without doing them up-
+      // front, an init() that early-returns on `.hidden lg:block`
+      // collapse would leak the old timers/RAF, and the loop-reset
+      // setTimeout(init, ...) would re-fire with stale state.
+      if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+      clearSpawnTimers();
+      // Re-baseline the 30fps throttle gate to "right now". Without
+      // this, post-IO/visibility re-entry the first 5s of draws ran
+      // at ~60fps (browser RAF coalescing was firing batches of
+      // queued frames in close succession; their deltas vs the stale
+      // pre-stopAll lastFrame were all > 32ms so every one passed
+      // the gate). Resetting to performance.now() forces frame 1 to
+      // wait the full 32ms and stabilises the cap from the very
+      // first post-init paint.
+      lastFrame = performance.now();
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = canvas.offsetWidth;
       height = canvas.offsetHeight;
+      // Skip allocating a zero-sized GPU buffer — happens when the
+      // .hidden lg:block parent collapses on mobile. State is now
+      // fully quiesced (no RAF, no timers) so an IO/visibility re-
+      // enter at the next desktop-size paint cleanly re-inits.
+      if (!width || !height) return;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
       nodes = [];
-      if (spawnTimer) clearInterval(spawnTimer);
-      if (spawnTimeout) clearTimeout(spawnTimeout);
       startSpawning();
+      // Re-arm RAF here so every entry path (bootstrap, loop-reset
+      // setTimeout(init, ...), debounced resize, IO/visibility re-enter)
+      // automatically continues drawing. Without this, the loop-reset
+      // path would silently stop the animation after fadeOutDuration.
+      start();
     }
     // Random delay between live spawns — mimics actual OneBrain use:
     // mostly normal-paced thoughts, occasional thinking pauses, rare bursts of insight.
@@ -142,7 +179,10 @@
         x: cx + Math.cos(angle) * (radius + 18),
         y: cy + Math.sin(angle) * (radius + 18),
         angle,
-        orbitSpeed: 0.000512 + Math.random() * 0.001432,
+        // Doubled vs the 60fps original (0.000512 + 0.001432) so the
+        // perceived orbital speed survives the 30fps draw cap. Frame-
+        // rate-coupled — must change in lock-step with the gate above.
+        orbitSpeed: 0.001024 + Math.random() * 0.002864,
         orbitRadius: radius,
         size: Math.random() * 1.4 + 1.1,
         // Random pick from the magenta-tonal palette — see SECTION_PALETTE comment above.
@@ -188,43 +228,58 @@
       // Phase 2 (live): each new node fires synapses, with random timing — knowledge arriving naturally
       spawnTimer = setInterval(spawnSeed, seedInterval);
     }
-    function draw() {
+    // 30fps cap — nebula is ambient decoration, full 60 burns GPU for
+    // motion the eye can't distinguish. Mirrors the neural-canvas pattern.
+    function draw(now) {
+      rafId = 0;
+      if (!running || !visible || reduced) return;
+      if (now && now - lastFrame < 32) {
+        rafId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = now || 0;
       ctx.clearRect(0, 0, width, height);
       const cx = width / 2;
       const cy = height / 2;
+      const len = nodes.length;
       let edgeCount = 0;
 
       // Edges first — flashing layer driven by node pulses (max of either endpoint).
       // Base edge: soft cool-white network (Obsidian graph vibe) so clusters stay readable at rest.
       // Flash: bright white synapse fire, fades back into the cluster.
-      for (let i = 0; i < nodes.length; i++) {
+      for (let i = 0; i < len; i++) {
         const a = nodes[i];
-        for (let j = i + 1; j < nodes.length; j++) {
+        for (let j = i + 1; j < len; j++) {
           const b = nodes[j];
           const dx = a.x - b.x;
           const dy = a.y - b.y;
           const dsq = dx * dx + dy * dy;
-          if (dsq < maxDist * maxDist) {
+          if (dsq < maxDistSq) {
             edgeCount++;
             const d = Math.sqrt(dsq);
             const proximity = 1 - d / maxDist;
             const baseAlpha = proximity * 0.5 * a.opacity;
-            const pulse = Math.max(a.pulse, b.pulse);
+            const pulse = a.pulse > b.pulse ? a.pulse : b.pulse;
             const flashAlpha = baseAlpha + pulse * proximity * 0.55;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
             ctx.strokeStyle = pulse > 0.35 ? '#ffffff' : 'rgba(225, 235, 255, 1)';
             ctx.lineWidth = 0.85 + pulse * 1.1;
-            ctx.globalAlpha = Math.min(0.95, flashAlpha);
+            ctx.globalAlpha = flashAlpha < 0.95 ? flashAlpha : 0.95;
             ctx.stroke();
           }
         }
       }
 
       // Nodes + halo + decay
-      for (const n of nodes) {
-        if (!isResetting && n.opacity < n.targetOpacity) n.opacity += 0.04;
+      const mx = mouse.x;
+      const my = mouse.y;
+      const mr = mouse.radius;
+      const mrSq = mr * mr;
+      for (let k = 0; k < len; k++) {
+        const n = nodes[k];
+        if (!isResetting && n.opacity < n.targetOpacity) n.opacity += 0.08;
         if (isResetting && n.opacity > 0) n.opacity -= fadeOutRate;
         if (n.opacity < 0) n.opacity = 0;
         if (n.pulse > 0) {
@@ -234,16 +289,24 @@
         n.angle += n.orbitSpeed;
         const tx = cx + Math.cos(n.angle) * n.orbitRadius;
         const ty = cy + Math.sin(n.angle) * n.orbitRadius;
-        n.x += (tx - n.x) * 0.1;
-        n.y += (ty - n.y) * 0.1;
-        if (mouse.x !== null) {
-          const mdx = n.x - mouse.x;
-          const mdy = n.y - mouse.y;
-          const md = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (md < mouse.radius) {
-            const f = (mouse.radius - md) / mouse.radius;
-            n.x += (mdx / md) * f * 5;
-            n.y += (mdy / md) * f * 5;
+        // Lerp coefficient bumped from 0.1 → 0.19 to match the 30fps
+        // gate. Two 60fps lerps of 0.1 leave a residual of 0.81 of the
+        // gap; 1 − 0.9² = 0.19 gives the same per-second tracking. The
+        // original 0.1 felt visibly trail-y at 30fps.
+        n.x += (tx - n.x) * 0.19;
+        n.y += (ty - n.y) * 0.19;
+        if (mx !== null) {
+          const mdx = n.x - mx;
+          const mdy = n.y - my;
+          const mdSq = mdx * mdx + mdy * mdy;
+          if (mdSq < mrSq) {
+            const md = Math.sqrt(mdSq);
+            const f = (mr - md) / mr;
+            // Guard md=0 (cursor exactly on a node) to avoid NaN drift.
+            if (md > 0) {
+              n.x += (mdx / md) * f * 5;
+              n.y += (mdy / md) * f * 5;
+            }
           }
         }
         // Halo on freshly fired node — gives the "spark" feel
@@ -263,52 +326,75 @@
       ctx.globalAlpha = 1;
 
       if (edgesEl) edgesEl.textContent = String(edgeCount).padStart(3, '0');
-      if (running && visible && !reduced) rafId = requestAnimationFrame(draw);
-      else rafId = 0;
+      rafId = requestAnimationFrame(draw);
     }
     function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
     function clearSpawnTimers() {
       if (spawnTimer)   { clearInterval(spawnTimer);   spawnTimer = null; }
       if (spawnTimeout) { clearTimeout(spawnTimeout);  spawnTimeout = null; }
     }
+    function stopAll() {
+      clearSpawnTimers();
+      if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+    }
     // Tear down the spawn lifecycle when the section leaves the
     // viewport / tab is hidden, then restart it on re-show. The user
     // sees the network bloom from scratch each time they scroll back —
     // matches the "load + run again on screen" model the user asked
     // for. Restarting is cheap (init() resets nodes + reseeds).
+    // Always stopAll() then init() on re-entry — both are idempotent and
+    // the previous "skip init() when timers exist" optimization left a
+    // race window during the loop-reset's fadeOut: spawnTimeout was the
+    // pending init() reset, so re-entry skipped a fresh init() and
+    // re-armed RAF against stale `isResetting=true` state.
     document.addEventListener('visibilitychange', () => {
       visible = !document.hidden;
       if (visible && running) {
-        if (!spawnTimer && !spawnTimeout) init();
-        start();
+        stopAll();
+        init();
       } else {
-        clearSpawnTimers();
+        stopAll();
       }
     });
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         const wasRunning = running;
         running = entries[0].isIntersecting;
-        if (running && !wasRunning) {
-          if (visible) {
-            if (!spawnTimer && !spawnTimeout) init();
-            start();
-          }
+        if (running && !wasRunning && visible) {
+          stopAll();
+          init();
         } else if (!running) {
-          clearSpawnTimers();
+          stopAll();
         }
       }, { rootMargin: '0px' });
       io.observe(canvas);
     }
-    window.addEventListener('resize', init);
+    // Debounced resize — every mobile address-bar slide / dev-tools
+    // toggle would otherwise re-allocate the GPU buffer + reset nodes
+    // on every event. 200ms swallow window keeps the actual work to
+    // one init() per resize gesture.
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(init, 200);
+    }, { passive: true });
+    // event.offsetX/Y are already canvas-local — drop the per-event
+    // getBoundingClientRect() (forced layout). Throttle to ~30Hz so
+    // the repulsion math doesn't run on every native pointer event.
+    // Assumption: no CSS transform on the canvas or any ancestor of
+    // .nebula-stage. Adding one would make offsetX/Y disagree with
+    // the canvas's local coordinate space — switch back to a cached
+    // getBoundingClientRect path if that ever changes.
+    let mouseTick = 0;
     canvas.addEventListener('mousemove', (e) => {
-      const r = canvas.getBoundingClientRect();
-      mouse.x = (e.clientX - r.left) * (width / r.width);
-      mouse.y = (e.clientY - r.top) * (height / r.height);
-    });
+      const now = performance.now();
+      if (now - mouseTick < 32) return;
+      mouseTick = now;
+      mouse.x = e.offsetX;
+      mouse.y = e.offsetY;
+    }, { passive: true });
     canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
     init();
-    start();
   })();
 </script>
 

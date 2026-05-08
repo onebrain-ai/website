@@ -133,18 +133,25 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // 1. Particle field — pauses when tab hidden or hero scrolls offscreen.
+      // 30fps cap and debounced resize match the neural-canvas + nebula
+      // patterns: ambient decoration, no benefit from a 60fps redraw,
+      // and mobile address-bar slides shouldn't churn the GPU buffer.
       (function () {
         const canvas = document.getElementById('hero-particles');
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: true });
         let w, h, dpr, particles = [];
         let running = true;
         let visible = true;
         let rafId = 0;
+        let lastFrame = 0;
         function init() {
+          if (reduced) return;
+          if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
           dpr = Math.min(window.devicePixelRatio || 1, 1.5);
           w = canvas.parentElement.clientWidth;
           h = canvas.parentElement.clientHeight;
+          if (!w || !h) return;
           canvas.width = w * dpr;
           canvas.height = h * dpr;
           ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -166,11 +173,18 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
             });
           }
         }
-        function draw() {
+        function draw(now) {
           rafId = 0;
           if (!running || !visible || reduced) return;
+          if (now && now - lastFrame < 32) {
+            rafId = requestAnimationFrame(draw);
+            return;
+          }
+          lastFrame = now || 0;
           ctx.clearRect(0, 0, w, h);
-          for (const p of particles) {
+          const len = particles.length;
+          for (let i = 0; i < len; i++) {
+            const p = particles[i];
             p.x += p.vx; p.y += p.vy;
             if (p.x < 0 || p.x > w) p.vx *= -1;
             if (p.y < 0 || p.y > h) p.vy *= -1;
@@ -184,18 +198,23 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
           rafId = requestAnimationFrame(draw);
         }
         function start() { if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw); }
+        function stopRaf() { if (rafId) { cancelAnimationFrame(rafId); rafId = 0; } }
         document.addEventListener('visibilitychange', () => {
           visible = !document.hidden;
-          if (visible) start();
+          if (visible) start(); else stopRaf();
         });
         if ('IntersectionObserver' in window) {
           const io = new IntersectionObserver((entries) => {
             running = entries[0].isIntersecting;
-            if (running) start();
+            if (running) start(); else stopRaf();
           }, { rootMargin: '0px' });
           io.observe(canvas);
         }
-        window.addEventListener('resize', init);
+        let resizeTimer = 0;
+        window.addEventListener('resize', () => {
+          if (resizeTimer) clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(init, 200);
+        }, { passive: true });
         init();
         start();
       })();

@@ -175,14 +175,21 @@ const ogImageUrl = `https://onebrain.run${image}`;
         const nodeCount = 28;
         const maxDistanceSq = 200 * 200;
         const mouse = { x: null, y: null, radius: 150 };
+        // Derive from mouse.radius so a future tweak doesn't drift —
+        // dropped a hand-coded `150 * 150` literal that could go stale.
+        const mouseRadiusSq = mouse.radius * mouse.radius;
         let running = true;
         let visible = true;
         let rafId = 0;
+        let lastFrame = 0;
 
         function init() {
+          if (reduced) return;
+          if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
           dpr = Math.min(window.devicePixelRatio || 1, 1.5);
           width = window.innerWidth;
           height = window.innerHeight;
+          if (!width || !height) return;
           canvas.width = width * dpr;
           canvas.height = height * dpr;
           ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -201,7 +208,6 @@ const ogImageUrl = `https://onebrain.run${image}`;
         }
 
         // Throttle to ~30 fps. Background ambience doesn't need 60.
-        let lastFrame = 0;
         function draw(now) {
           rafId = 0;
           if (!running || !visible || reduced) return;
@@ -211,16 +217,22 @@ const ogImageUrl = `https://onebrain.run${image}`;
           }
           lastFrame = now || 0;
           ctx.clearRect(0, 0, width, height);
-          for (const node of nodes) {
+          const len = nodes.length;
+          const mx = mouse.x;
+          const my = mouse.y;
+          const mr = mouse.radius;
+          for (let i = 0; i < len; i++) {
+            const node = nodes[i];
             node.x += node.vx;
             node.y += node.vy;
-            if (mouse.x !== null) {
-              const dx = node.x - mouse.x;
-              const dy = node.y - mouse.y;
+            if (mx !== null) {
+              const dx = node.x - mx;
+              const dy = node.y - my;
               const distSq = dx * dx + dy * dy;
-              if (distSq < mouse.radius * mouse.radius) {
+              // distSq > 0 guards a NaN drift if cursor lands exactly on a node.
+              if (distSq < mouseRadiusSq && distSq > 0) {
                 const dist = Math.sqrt(distSq);
-                const force = (mouse.radius - dist) / mouse.radius;
+                const force = (mr - dist) / mr;
                 node.x += (dx / dist) * force * 2;
                 node.y += (dy / dist) * force * 2;
               }
@@ -233,9 +245,9 @@ const ogImageUrl = `https://onebrain.run${image}`;
             ctx.fill();
           }
           ctx.lineWidth = 0.5;
-          for (let i = 0; i < nodes.length; i++) {
+          for (let i = 0; i < len; i++) {
             const ni = nodes[i];
-            for (let j = i + 1; j < nodes.length; j++) {
+            for (let j = i + 1; j < len; j++) {
               const nj = nodes[j];
               const dx = ni.x - nj.x;
               const dy = ni.y - nj.y;
@@ -256,11 +268,12 @@ const ogImageUrl = `https://onebrain.run${image}`;
         function start() {
           if (!rafId && running && visible && !reduced) rafId = requestAnimationFrame(draw);
         }
+        function stopRaf() { if (rafId) { cancelAnimationFrame(rafId); rafId = 0; } }
 
         // Pause when tab is hidden — Safari especially benefits.
         document.addEventListener('visibilitychange', () => {
           visible = !document.hidden;
-          if (visible) start();
+          if (visible) start(); else stopRaf();
         });
         // The canvas itself is fixed/viewport-sized so it would always be
         // "intersecting" — observe the hero element instead. Once the user
@@ -271,7 +284,7 @@ const ogImageUrl = `https://onebrain.run${image}`;
           const heroEl = document.getElementById('top') || canvas;
           const io = new IntersectionObserver((entries) => {
             running = entries[0].isIntersecting;
-            if (running) start();
+            if (running) start(); else stopRaf();
           }, { rootMargin: '0px' });
           io.observe(heroEl);
         }
@@ -284,7 +297,14 @@ const ogImageUrl = `https://onebrain.run${image}`;
           mouse.x = e.clientX;
           mouse.y = e.clientY;
         }, { passive: true });
-        window.addEventListener('resize', init);
+        // Debounced resize — mobile address-bar slides + dev-tools
+        // toggles otherwise reallocate the GPU buffer + re-randomise
+        // nodes on every event.
+        let resizeTimer = 0;
+        window.addEventListener('resize', () => {
+          if (resizeTimer) clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(init, 200);
+        }, { passive: true });
         init();
         start();
       }
@@ -438,7 +458,13 @@ const ogImageUrl = `https://onebrain.run${image}`;
             const idx = sections.indexOf(best.target);
             if (idx >= 0) setActive(idx);
           }
-        }, { threshold: [0.25, 0.5, 0.75] });
+          // threshold: [0.5] means each section fires its callback once
+          // crossing the 50% mark instead of three times (25/50/75).
+          // Cuts spine-IO callback volume per scroll transit by ~3×;
+          // visual behavior identical because setActive() always picks
+          // the section with the highest ratio, and a section only
+          // becomes "active" once it owns ≥50% of the viewport anyway.
+        }, { threshold: 0.5 });
         sections.forEach((s) => io.observe(s));
 
         // Click-to-jump uses the warp transition.
@@ -578,16 +604,16 @@ const ogImageUrl = `https://onebrain.run${image}`;
           n.style.pointerEvents = _pe;
         }));
         document.body.classList.add('suppress-hover');
-      });
-      // First pointer move clears the suppression — at that point the
-      // browser has either dropped the sticky :hover on its own or
-      // re-evaluated it against the new cursor position, so the gate
-      // is no longer needed.
-      document.addEventListener('mousemove', () => {
-        if (document.body.classList.contains('suppress-hover')) {
+        // First pointer move clears the suppression class — by then
+        // the browser has dropped sticky :hover or re-evaluated it
+        // against the new cursor position. Bound here with `once: true`
+        // so it self-removes after firing, instead of running a no-op
+        // classList check on every mousemove for the rest of the
+        // session.
+        document.addEventListener('mousemove', () => {
           document.body.classList.remove('suppress-hover');
-        }
-      }, { passive: true });
+        }, { passive: true, once: true });
+      });
 
       // External / initial hash navigation also plays the warp:
       //   - URL with a hash on first load (stashed in <head>, replayed here)
