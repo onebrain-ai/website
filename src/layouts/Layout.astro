@@ -13,7 +13,7 @@ const {
   description = "OneBrain is a living intelligence layer inside your Obsidian vault — you teach the agent, the agent extends you, both evolve.",
   image = "/og.jpg",
 } = Astro.props;
-const canonical = "https://onebrain.run/";
+const canonical = new URL(Astro.url.pathname, "https://onebrain.run").href;
 const ogImageUrl = `https://onebrain.run${image}`;
 ---
 
@@ -23,6 +23,9 @@ const ogImageUrl = `https://onebrain.run${image}`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/brain.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#050507" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
@@ -34,6 +37,9 @@ const ogImageUrl = `https://onebrain.run${image}`;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@onebrain_run" />
@@ -121,23 +127,24 @@ const ogImageUrl = `https://onebrain.run${image}`;
     </script>
   </head>
   <body>
+    <a href="#top" class="skip-to-content">Skip to content</a>
     <!-- Neutral background base -->
     <div class="fixed inset-0 bg-[#020204] -z-[10]"></div>
     <canvas id="neural-canvas"></canvas>
 
     <!-- Section spine — fixed right-edge HUD that visualizes scroll position
          and ties every section together with a gradient through their accents. -->
-    <aside id="page-spine" class="page-spine" aria-hidden="true">
+    <aside id="page-spine" class="page-spine" aria-label="Section navigation">
       <div class="page-spine-track"></div>
       <ol class="page-spine-dots">
-        <li data-target="#top"      style="--dot-accent: #ff2d92;"><span></span></li>
-        <li data-target="#features" style="--dot-accent: #00ff9d;"><span></span></li>
-        <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><span></span></li>
-        <li data-target="#stack"    style="--dot-accent: #00f3ff;"><span></span></li>
-        <li data-target="#workflow" style="--dot-accent: #7c3aed;"><span></span></li>
-        <li data-target="#session"  style="--dot-accent: #c8ff00;"><span></span></li>
-        <li data-target="#commands" style="--dot-accent: #ff5e3a;"><span></span></li>
-        <li data-target="#cloud"    style="--dot-accent: #00bfff;"><span></span></li>
+        <li data-target="#top"      style="--dot-accent: #ff2d92;" role="button" tabindex="0" aria-label="Hero section"><span></span></li>
+        <li data-target="#features" style="--dot-accent: #00ff9d;" role="button" tabindex="0" aria-label="Features section"><span></span></li>
+        <li data-target="#synergy"  style="--dot-accent: #ff2d92;" role="button" tabindex="0" aria-label="Synergy section"><span></span></li>
+        <li data-target="#stack"    style="--dot-accent: #00f3ff;" role="button" tabindex="0" aria-label="Stack section"><span></span></li>
+        <li data-target="#workflow" style="--dot-accent: #7c3aed;" role="button" tabindex="0" aria-label="Workflow section"><span></span></li>
+        <li data-target="#session"  style="--dot-accent: #c8ff00;" role="button" tabindex="0" aria-label="Session section"><span></span></li>
+        <li data-target="#commands" style="--dot-accent: #ff5e3a;" role="button" tabindex="0" aria-label="Commands section"><span></span></li>
+        <li data-target="#cloud"    style="--dot-accent: #00bfff;" role="button" tabindex="0" aria-label="Cloud section"><span></span></li>
       </ol>
     </aside>
 
@@ -470,6 +477,12 @@ const ogImageUrl = `https://onebrain.run${image}`;
         // Click-to-jump uses the warp transition.
         dots.forEach((d) => {
           d.addEventListener('click', () => warpTo(d.dataset.target));
+          d.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              warpTo(d.dataset.target);
+            }
+          });
         });
       })();
 
