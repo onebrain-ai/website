@@ -184,9 +184,15 @@
     0 0 10px var(--dot-accent),
     0 0 22px var(--dot-accent);
 }
-.page-spine-dots li:focus-visible {
+.page-spine-dots button {
+  all: unset;
+  display: inline-flex;
+  cursor: pointer;
+}
+.page-spine-dots button:focus-visible {
   outline: 2px solid var(--dot-accent, #fff);
   outline-offset: 4px;
+  border-radius: 50%;
 }
 
 /* Skip-to-content link — hidden off-screen until focused via Tab.
@@ -791,6 +797,9 @@ body.suppress-hover .nav-glass a:not(.is-active) > span {
   .cyber-pill[data-typing="1"] > span:not(.cyber-pill-dot)::after {
     animation: none;
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cyber-pill-dot { animation: none; }
 }
 
 .cyber-h2 {

@@ -18,7 +18,10 @@ export function getCliVersion(): Promise<string> {
   if (cachedPromise) return cachedPromise;
   cachedPromise = (async () => {
     try {
-      const res = await fetch(REGISTRY, { headers: { Accept: 'application/json' } });
+      const res = await fetch(REGISTRY, {
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(5000),
+      });
       if (!res.ok) {
         console.warn('[version] registry returned non-ok, using FALLBACK', res.status);
         return FALLBACK;
