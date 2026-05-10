@@ -213,6 +213,13 @@
   outline-offset: 2px;
 }
 
+/* Skip-link target gets focused programmatically (tabindex="-1" + .focus());
+   :focus-visible should not fire for that path, but suppress any browser
+   quirk that paints the global :focus-visible outline on the wrapping main. */
+main:focus {
+  outline: none;
+}
+
 /* Hide the spine on narrow viewports — it would crowd the mobile drawer. */
 @media (max-width: 1023px) {
   .page-spine { display: none; }

@@ -62,7 +62,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return json({ ok: false, error: 'invalid_email' }, 400);
   }
 
-  // clientAddress absent in local dev (no incoming Cloudflare ip header) — skip rate limit
+  // clientAddress absent in local dev (no incoming Cloudflare ip header) — skip rate limit.
+  // In production, clientAddress should always populate from cf-connecting-ip; if it's
+  // missing, fail closed rather than serving an unlimited path silently.
   if (clientAddress) {
     const now = Date.now();
     const ts = (hits.get(clientAddress) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
@@ -72,8 +74,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     ts.push(now);
     hits.set(clientAddress, ts);
 
-    // Opportunistic prune: drop a random other IP whose entries have all aged out.
-    // Bounds the Map size without a separate timer.
+    // Opportunistic prune: when the Map crosses 1024 entries, walk in insertion
+    // order until we find the first other IP whose entries have all aged out and
+    // drop it. Bounds Map size without setInterval (which would keep the isolate
+    // alive) and without an LRU (which would need a second structure). 1024 is
+    // well above realistic concurrent-IP fan-out for a waitlist endpoint; entries
+    // also self-expire because the next hit from the same IP recomputes `ts` from
+    // a filtered slice.
     if (hits.size > 1024) {
       for (const [ip, arr] of hits) {
         if (ip === clientAddress) continue;
@@ -85,6 +92,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         if (fresh.length !== arr.length) hits.set(ip, fresh);
       }
     }
+  } else if (!import.meta.env.DEV) {
+    console.error('[waitlist] clientAddress missing in production — refusing to serve unlimited path');
+    return json({ ok: false, error: 'server_error' }, 500);
   }
 
   const email = emailRaw.trim().toLowerCase();
@@ -113,7 +123,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     try {
       ipHash = await hashIp(clientAddress);
     } catch (e) {
-      if (import.meta.env.DEV) console.warn('[waitlist] hashIp failed:', e);
+      console.warn('[waitlist] hashIp failed; proceeding with ip_hash=null:', e);
     }
   }
 
@@ -127,7 +137,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     return json({ ok: true }, 200);
   } catch (e) {
-    if (import.meta.env.DEV) console.error('[waitlist] insert failed:', e);
+    console.error('[waitlist] insert failed:', e);
     return json({ ok: false, error: 'server_error' }, 500);
   }
 };

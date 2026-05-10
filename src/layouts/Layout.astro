@@ -15,6 +15,7 @@ const {
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, "https://onebrain.run").href;
 const ogImageUrl = `https://onebrain.run${image}`;
+const isHome = Astro.url.pathname === '/';
 ---
 
 <!doctype html>
@@ -127,26 +128,30 @@ const ogImageUrl = `https://onebrain.run${image}`;
     </script>
   </head>
   <body>
-    <a href="#top" class="skip-to-content">Skip to content</a>
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
     <!-- Neutral background base -->
     <div class="fixed inset-0 bg-[#020204] -z-[10]"></div>
     <canvas id="neural-canvas"></canvas>
 
     <!-- Section spine — fixed right-edge HUD that visualizes scroll position
-         and ties every section together with a gradient through their accents. -->
-    <aside id="page-spine" class="page-spine" aria-label="Section navigation">
-      <div class="page-spine-track"></div>
-      <ol class="page-spine-dots">
-        <li data-target="#top"      style="--dot-accent: #ff2d92;" role="button" tabindex="0" aria-label="Hero section"><span></span></li>
-        <li data-target="#features" style="--dot-accent: #00ff9d;" role="button" tabindex="0" aria-label="Features section"><span></span></li>
-        <li data-target="#synergy"  style="--dot-accent: #ff2d92;" role="button" tabindex="0" aria-label="Synergy section"><span></span></li>
-        <li data-target="#stack"    style="--dot-accent: #00f3ff;" role="button" tabindex="0" aria-label="Stack section"><span></span></li>
-        <li data-target="#workflow" style="--dot-accent: #7c3aed;" role="button" tabindex="0" aria-label="Workflow section"><span></span></li>
-        <li data-target="#session"  style="--dot-accent: #c8ff00;" role="button" tabindex="0" aria-label="Session section"><span></span></li>
-        <li data-target="#commands" style="--dot-accent: #ff5e3a;" role="button" tabindex="0" aria-label="Commands section"><span></span></li>
-        <li data-target="#cloud"    style="--dot-accent: #00bfff;" role="button" tabindex="0" aria-label="Cloud section"><span></span></li>
-      </ol>
-    </aside>
+         and ties every section together with a gradient through their accents.
+         Only rendered on the home page; on /privacy and /404 the dots' targets
+         don't exist and the spine becomes inert/keyboard-trap clutter. -->
+    {isHome && (
+      <aside id="page-spine" class="page-spine" aria-label="Section navigation">
+        <div class="page-spine-track"></div>
+        <ol class="page-spine-dots">
+          <li data-target="#top"      style="--dot-accent: #ff2d92;" role="button" tabindex="0" aria-label="Hero section"><span></span></li>
+          <li data-target="#features" style="--dot-accent: #00ff9d;" role="button" tabindex="0" aria-label="Features section"><span></span></li>
+          <li data-target="#synergy"  style="--dot-accent: #ff2d92;" role="button" tabindex="0" aria-label="Synergy section"><span></span></li>
+          <li data-target="#stack"    style="--dot-accent: #00f3ff;" role="button" tabindex="0" aria-label="Stack section"><span></span></li>
+          <li data-target="#workflow" style="--dot-accent: #7c3aed;" role="button" tabindex="0" aria-label="Workflow section"><span></span></li>
+          <li data-target="#session"  style="--dot-accent: #c8ff00;" role="button" tabindex="0" aria-label="Session section"><span></span></li>
+          <li data-target="#commands" style="--dot-accent: #ff5e3a;" role="button" tabindex="0" aria-label="Commands section"><span></span></li>
+          <li data-target="#cloud"    style="--dot-accent: #00bfff;" role="button" tabindex="0" aria-label="Cloud section"><span></span></li>
+        </ol>
+      </aside>
+    )}
 
     <!-- Warp overlay — fullscreen scanline that sweeps up to clear the current
          section, then a hash jump teleports to the target. The new section's

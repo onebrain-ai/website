@@ -11,7 +11,7 @@ const updated = '2026-05-06';
   description="OneBrain runs in your local Obsidian vault. Here's the short list of what we don't store, what we do, and how to reach us."
 >
   <Nav />
-  <main>
+  <main id="main-content" tabindex="-1">
     <section class="legal-section">
       <div class="legal-shell">
         <header class="legal-head">
@@ -77,7 +77,7 @@ const updated = '2026-05-06';
     /* The cyber-pill in <header> reads `var(--section-accent)` for its
        color/background/border — without a value here, color-mix() can't
        resolve and the pill collapses to just its corner brackets +
-       dot. Set the accent (matches prose links + cyber-pill). */
+       dot. Set the accent (the cyber-pill reads --section-accent; .legal-prose a, .legal-prose h2, and .legal-back a:hover hard-code the same #c8ff00 — keep them in sync). */
     --section-accent: #c8ff00;
 
     position: relative;

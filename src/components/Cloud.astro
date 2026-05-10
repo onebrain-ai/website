@@ -150,7 +150,6 @@ const showStars = stars > 0;
 
 <script is:inline>
   (function () {
-    const __isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const form = document.getElementById('waitlist-form');
     const banner = document.getElementById('waitlist-banner');
     const input = form && form.querySelector('input[type="email"]');
@@ -184,7 +183,7 @@ const showStars = stars > 0;
         try {
           data = await res.json();
         } catch (parseErr) {
-          if (__isDev) console.error('[waitlist] response not JSON:', res.status, parseErr);
+          console.error('[waitlist] response not JSON:', res.status, parseErr);
           data = {};
         }
         if (res.ok && data.ok) {
@@ -193,11 +192,11 @@ const showStars = stars > 0;
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
         } else {
-          if (__isDev) console.error('[waitlist] submission failed:', res.status, data);
+          console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');
         }
       } catch (err) {
-        if (__isDev) console.error('[waitlist] network error:', err);
+        console.error('[waitlist] network error:', err);
         showBanner('error', '✗ Network error. Try again.');
       } finally {
         button.disabled = false;
