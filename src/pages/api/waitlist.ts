@@ -18,6 +18,10 @@ interface D1PreparedStatement {
   run(): Promise<unknown>;
 }
 
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT = 5;
+const hits = new Map<string, number[]>();
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -57,6 +61,32 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (emailRaw === undefined) {
     return json({ ok: false, error: 'invalid_email' }, 400);
   }
+
+  // clientAddress absent in local dev (no incoming Cloudflare ip header) — skip rate limit
+  if (clientAddress) {
+    const now = Date.now();
+    const ts = (hits.get(clientAddress) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+    if (ts.length >= RATE_LIMIT) {
+      return json({ ok: false, error: 'rate_limited' }, 429);
+    }
+    ts.push(now);
+    hits.set(clientAddress, ts);
+
+    // Opportunistic prune: drop a random other IP whose entries have all aged out.
+    // Bounds the Map size without a separate timer.
+    if (hits.size > 1024) {
+      for (const [ip, arr] of hits) {
+        if (ip === clientAddress) continue;
+        const fresh = arr.filter((t) => now - t < RATE_WINDOW_MS);
+        if (fresh.length === 0) {
+          hits.delete(ip);
+          break;
+        }
+        if (fresh.length !== arr.length) hits.set(ip, fresh);
+      }
+    }
+  }
+
   const email = emailRaw.trim().toLowerCase();
   if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
     return json({ ok: false, error: 'invalid_email' }, 400);
@@ -68,7 +98,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     // round-trips. In production this means the binding is missing
     // from wrangler.jsonc — fail loud so a deploy regression doesn't
     // silently lose every signup while users see "Got it".
-    console.error('[waitlist] WAITLIST_DB binding missing for:', email);
+    // Unguarded — operational misconfiguration MUST surface in prod logs (no PII).
+    console.error('[waitlist] WAITLIST_DB binding missing');
     if (!import.meta.env.DEV) {
       return json({ ok: false, error: 'server_misconfigured' }, 503);
     }
@@ -82,7 +113,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     try {
       ipHash = await hashIp(clientAddress);
     } catch (e) {
-      console.warn('[waitlist] hashIp failed; proceeding with ip_hash=null:', e);
+      if (import.meta.env.DEV) console.warn('[waitlist] hashIp failed:', e);
     }
   }
 
@@ -96,7 +127,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     return json({ ok: true }, 200);
   } catch (e) {
-    console.error('[waitlist] insert failed:', e);
+    if (import.meta.env.DEV) console.error('[waitlist] insert failed:', e);
     return json({ ok: false, error: 'server_error' }, 500);
   }
 };
