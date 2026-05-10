@@ -7,7 +7,7 @@ import Brain from "../components/Brain.astro";
   title="404 — Signal Lost · OneBrain"
   description="The route you tried to reach never made it to the OneBrain vault."
 >
-  <main class="nf">
+  <main id="main-content" tabindex="-1" class="nf">
     <!-- Background ambient -->
     <div class="nf-grid" aria-hidden="true"></div>
     <div class="nf-orb-a" aria-hidden="true"></div>
@@ -125,34 +125,35 @@ import Brain from "../components/Brain.astro";
   .nf-orb-a,
   .nf-orb-b {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(110px);
     pointer-events: none;
-    opacity: 0.5;
+    will-change: opacity;
+  }
+  .nf-orb-a, .nf-orb-b {
+    background: radial-gradient(closest-side, var(--orb-color) 0%, transparent 70%);
   }
   .nf-orb-a {
     top: 22%;
     left: 28%;
     width: 380px;
     height: 380px;
-    background: rgba(255, 45, 146, 0.4);
-    animation: nf-orb-drift-a 14s ease-in-out infinite;
+    --orb-color: rgba(255, 45, 146, 0.4);
+    animation: nf-orb-pulse-a 14s ease-in-out infinite;
   }
   .nf-orb-b {
     bottom: 18%;
     right: 22%;
     width: 320px;
     height: 320px;
-    background: rgba(0, 243, 255, 0.28);
-    animation: nf-orb-drift-b 18s ease-in-out infinite;
+    --orb-color: rgba(0, 243, 255, 0.28);
+    animation: nf-orb-pulse-b 18s ease-in-out infinite;
   }
-  @keyframes nf-orb-drift-a {
-    0%, 100% { transform: translate(0, 0)     scale(1);   }
-    50%      { transform: translate(40px, -30px) scale(1.08); }
+  @keyframes nf-orb-pulse-a {
+    0%, 100% { opacity: 0.45; }
+    50%      { opacity: 0.65; }
   }
-  @keyframes nf-orb-drift-b {
-    0%, 100% { transform: translate(0, 0)      scale(1);   }
-    50%      { transform: translate(-30px, 40px) scale(1.1); }
+  @keyframes nf-orb-pulse-b {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 0.6; }
   }
 
   /* ── HUD frame corners ── */

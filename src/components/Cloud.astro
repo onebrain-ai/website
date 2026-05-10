@@ -191,6 +191,8 @@ const showStars = stars > 0;
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
+        } else if (data.error === 'rate_limited' || res.status === 429) {
+          showBanner('error', '✗ Too many attempts. Wait a few minutes and try again.');
         } else {
           console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');
@@ -340,6 +342,8 @@ const showStars = stars > 0;
   }
   @media (prefers-reduced-motion: reduce) {
     .tier-card.tier-card-soon .tier-status { animation: none; }
+    .tier-status-dot { animation: none; }
+    .waitlist-rec-dot { animation: none; }
   }
 
   /* Waitlist console */
@@ -452,15 +456,6 @@ const showStars = stars > 0;
     color: var(--section-accent);
     font-weight: 700;
   }
-  .waitlist-blurb {
-    /* Match .cyber-sub vocabulary — JetBrains Mono body. */
-    margin: 0 0 2rem;
-    font-family: 'JetBrains Mono', var(--font-mono), monospace;
-    font-size: 12.5px;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 44ch;
-  }
   .waitlist-form {
     display: flex;
     flex-direction: column;
@@ -489,7 +484,12 @@ const showStars = stars > 0;
     letter-spacing: 0.02em;
     transition: border-color 0.25s ease;
   }
-  .waitlist-input:focus {
+  .waitlist-input:focus-visible {
+    outline: 2px solid var(--section-accent);
+    outline-offset: 2px;
+    border-color: var(--section-accent);
+  }
+  .waitlist-input:focus:not(:focus-visible) {
     outline: none;
     border-color: var(--section-accent);
   }
@@ -554,7 +554,6 @@ const showStars = stars > 0;
     background: rgba(255, 95, 87, 0.06);
     color: #ff8b85;
   }
-  .waitlist-link:hover { color: var(--section-accent); }
   .waitlist-btn:disabled { opacity: 0.5; cursor: wait; }
 
   .waitlist-foot {

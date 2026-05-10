@@ -18,6 +18,10 @@ interface D1PreparedStatement {
   run(): Promise<unknown>;
 }
 
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT = 5;
+const hits = new Map<string, number[]>();
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -57,6 +61,42 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (emailRaw === undefined) {
     return json({ ok: false, error: 'invalid_email' }, 400);
   }
+
+  // clientAddress absent in local dev (no incoming Cloudflare ip header) — skip rate limit.
+  // In production, clientAddress should always populate from cf-connecting-ip; if it's
+  // missing, fail closed rather than serving an unlimited path silently.
+  if (clientAddress) {
+    const now = Date.now();
+    const ts = (hits.get(clientAddress) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+    if (ts.length >= RATE_LIMIT) {
+      return json({ ok: false, error: 'rate_limited' }, 429);
+    }
+    ts.push(now);
+    hits.set(clientAddress, ts);
+
+    // Opportunistic prune: when the Map crosses 1024 entries, walk in insertion
+    // order until we find the first other IP whose entries have all aged out and
+    // drop it. Bounds Map size without setInterval (which would keep the isolate
+    // alive) and without an LRU (which would need a second structure). 1024 is
+    // well above realistic concurrent-IP fan-out for a waitlist endpoint; entries
+    // also self-expire because the next hit from the same IP recomputes `ts` from
+    // a filtered slice.
+    if (hits.size > 1024) {
+      for (const [ip, arr] of hits) {
+        if (ip === clientAddress) continue;
+        const fresh = arr.filter((t) => now - t < RATE_WINDOW_MS);
+        if (fresh.length === 0) {
+          hits.delete(ip);
+          break;
+        }
+        if (fresh.length !== arr.length) hits.set(ip, fresh);
+      }
+    }
+  } else if (!import.meta.env.DEV) {
+    console.error('[waitlist] clientAddress missing in production — refusing to serve unlimited path');
+    return json({ ok: false, error: 'server_error' }, 500);
+  }
+
   const email = emailRaw.trim().toLowerCase();
   if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
     return json({ ok: false, error: 'invalid_email' }, 400);
@@ -68,7 +108,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     // round-trips. In production this means the binding is missing
     // from wrangler.jsonc — fail loud so a deploy regression doesn't
     // silently lose every signup while users see "Got it".
-    console.error('[waitlist] WAITLIST_DB binding missing for:', email);
+    // Unguarded — operational misconfiguration MUST surface in prod logs (no PII).
+    console.error('[waitlist] WAITLIST_DB binding missing');
     if (!import.meta.env.DEV) {
       return json({ ok: false, error: 'server_misconfigured' }, 503);
     }

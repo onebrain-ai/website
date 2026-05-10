@@ -34,6 +34,15 @@
   border: 0;
 }
 
+/* Base keyboard focus indicator — Tailwind preflight removes outlines, so
+   we add a global default for :focus-visible. More specific rules
+   (e.g. .page-spine-dots li:focus-visible, .skip-to-content:focus-visible)
+   win by specificity. */
+:focus-visible {
+  outline: 2px solid var(--color-accent-2, #00f3ff);
+  outline-offset: 3px;
+}
+
 @layer base {
   html {
     background: var(--color-bg);
@@ -174,6 +183,47 @@
   box-shadow:
     0 0 10px var(--dot-accent),
     0 0 22px var(--dot-accent);
+}
+.page-spine-dots button {
+  all: unset;
+  display: inline-flex;
+  cursor: pointer;
+}
+.page-spine-dots button:focus-visible {
+  outline: 2px solid var(--dot-accent, #fff);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+/* Skip-to-content link — hidden off-screen until focused via Tab.
+   Pairs with the warpTo handler at #top on activation. */
+.skip-to-content {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.625rem 1rem;
+  background: var(--color-bg);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: top 120ms ease-out;
+}
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  top: 1rem;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Skip-link target gets focused programmatically (tabindex="-1" + .focus());
+   :focus-visible should not fire for that path, but suppress any browser
+   quirk that paints the global :focus-visible outline on the wrapping main. */
+main:focus {
+  outline: none;
 }
 
 /* Hide the spine on narrow viewports — it would crowd the mobile drawer. */
@@ -747,6 +797,9 @@ body.suppress-hover .nav-glass a:not(.is-active) > span {
   .cyber-pill[data-typing="1"] > span:not(.cyber-pill-dot)::after {
     animation: none;
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cyber-pill-dot { animation: none; }
 }
 
 .cyber-h2 {

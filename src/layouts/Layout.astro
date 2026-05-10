@@ -13,8 +13,9 @@ const {
   description = "OneBrain is a living intelligence layer inside your Obsidian vault — you teach the agent, the agent extends you, both evolve.",
   image = "/og.jpg",
 } = Astro.props;
-const canonical = "https://onebrain.run/";
+const canonical = new URL(Astro.url.pathname, "https://onebrain.run").href;
 const ogImageUrl = `https://onebrain.run${image}`;
+const isHome = Astro.url.pathname === '/';
 ---
 
 <!doctype html>
@@ -23,6 +24,9 @@ const ogImageUrl = `https://onebrain.run${image}`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/brain.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#050507" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
@@ -34,6 +38,10 @@ const ogImageUrl = `https://onebrain.run${image}`;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:site_name" content="OneBrain" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@onebrain_run" />
@@ -41,6 +49,7 @@ const ogImageUrl = `https://onebrain.run${image}`;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={title} />
 
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -121,25 +130,30 @@ const ogImageUrl = `https://onebrain.run${image}`;
     </script>
   </head>
   <body>
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
     <!-- Neutral background base -->
     <div class="fixed inset-0 bg-[#020204] -z-[10]"></div>
     <canvas id="neural-canvas"></canvas>
 
     <!-- Section spine — fixed right-edge HUD that visualizes scroll position
-         and ties every section together with a gradient through their accents. -->
-    <aside id="page-spine" class="page-spine" aria-hidden="true">
-      <div class="page-spine-track"></div>
-      <ol class="page-spine-dots">
-        <li data-target="#top"      style="--dot-accent: #ff2d92;"><span></span></li>
-        <li data-target="#features" style="--dot-accent: #00ff9d;"><span></span></li>
-        <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><span></span></li>
-        <li data-target="#stack"    style="--dot-accent: #00f3ff;"><span></span></li>
-        <li data-target="#workflow" style="--dot-accent: #7c3aed;"><span></span></li>
-        <li data-target="#session"  style="--dot-accent: #c8ff00;"><span></span></li>
-        <li data-target="#commands" style="--dot-accent: #ff5e3a;"><span></span></li>
-        <li data-target="#cloud"    style="--dot-accent: #00bfff;"><span></span></li>
-      </ol>
-    </aside>
+         and ties every section together with a gradient through their accents.
+         Only rendered on the home page; on /privacy and /404 the dots' targets
+         don't exist and the spine becomes inert/keyboard-trap clutter. -->
+    {isHome && (
+      <aside id="page-spine" class="page-spine" aria-label="Section navigation">
+        <div class="page-spine-track"></div>
+        <ol class="page-spine-dots">
+          <li data-target="#top"      style="--dot-accent: #ff2d92;"><button type="button" aria-label="Hero section"><span></span></button></li>
+          <li data-target="#features" style="--dot-accent: #00ff9d;"><button type="button" aria-label="Features section"><span></span></button></li>
+          <li data-target="#synergy"  style="--dot-accent: #ff2d92;"><button type="button" aria-label="Synergy section"><span></span></button></li>
+          <li data-target="#stack"    style="--dot-accent: #00f3ff;"><button type="button" aria-label="Stack section"><span></span></button></li>
+          <li data-target="#workflow" style="--dot-accent: #7c3aed;"><button type="button" aria-label="Workflow section"><span></span></button></li>
+          <li data-target="#session"  style="--dot-accent: #c8ff00;"><button type="button" aria-label="Session section"><span></span></button></li>
+          <li data-target="#commands" style="--dot-accent: #ff5e3a;"><button type="button" aria-label="Commands section"><span></span></button></li>
+          <li data-target="#cloud"    style="--dot-accent: #00bfff;"><button type="button" aria-label="Cloud section"><span></span></button></li>
+        </ol>
+      </aside>
+    )}
 
     <!-- Warp overlay — fullscreen scanline that sweeps up to clear the current
          section, then a hash jump teleports to the target. The new section's
@@ -417,9 +431,12 @@ const ogImageUrl = `https://onebrain.run${image}`;
       (function () {
         const spine = document.getElementById('page-spine');
         if (!spine) return;
-        const dots = Array.from(spine.querySelectorAll('.page-spine-dots li'));
-        const sections = dots.map((d) => document.querySelector(d.dataset.target)).filter(Boolean);
-        if (!sections.length) return;
+        const dotSectionPairs = Array.from(spine.querySelectorAll('.page-spine-dots li'))
+          .map((d) => ({ dot: d, section: document.querySelector(d.dataset.target) }))
+          .filter((p) => p.section);
+        if (!dotSectionPairs.length) return;
+        const dots = dotSectionPairs.map((p) => p.dot);
+        const sections = dotSectionPairs.map((p) => p.section);
 
         // Every header nav link (desktop + mobile drawer) tagged with
         // its href, so the active-section observer can highlight the
@@ -467,9 +484,11 @@ const ogImageUrl = `https://onebrain.run${image}`;
         }, { threshold: 0.5 });
         sections.forEach((s) => io.observe(s));
 
-        // Click-to-jump uses the warp transition.
+        // Click handler attaches to the inner <button>; native focus + Enter/Space
+        // activation come for free, so we no longer need a manual keydown handler.
         dots.forEach((d) => {
-          d.addEventListener('click', () => warpTo(d.dataset.target));
+          const btn = d.querySelector('button');
+          if (btn) btn.addEventListener('click', () => warpTo(d.dataset.target));
         });
       })();
 
@@ -623,12 +642,15 @@ const ogImageUrl = `https://onebrain.run${image}`;
       // doesn't update location.hash, so it never reaches this listener.
       (function () {
         const pending = window.__obPendingHash;
-        if (pending && document.querySelector(pending)) {
+        if (pending && pending !== '#main-content' && document.querySelector(pending)) {
           // Hero is the natural starting frame for the warp-in.
           window.scrollTo(0, 0);
           requestAnimationFrame(() => warpTo(pending));
         }
         window.addEventListener('hashchange', () => {
+          // Skip-link target — let the browser handle focus/scroll natively. The warp
+          // animation would defeat the bypass-block purpose (WCAG 2.4.1).
+          if (location.hash === '#main-content') return;
           if (location.hash && document.querySelector(location.hash)) {
             warpTo(location.hash);
           }
