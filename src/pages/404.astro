@@ -128,12 +128,15 @@ import Brain from "../components/Brain.astro";
     pointer-events: none;
     will-change: opacity;
   }
+  .nf-orb-a, .nf-orb-b {
+    background: radial-gradient(closest-side, var(--orb-color) 0%, transparent 70%);
+  }
   .nf-orb-a {
     top: 22%;
     left: 28%;
     width: 380px;
     height: 380px;
-    background: radial-gradient(closest-side, rgba(255, 45, 146, 0.4) 0%, rgba(255, 45, 146, 0) 70%);
+    --orb-color: rgba(255, 45, 146, 0.4);
     animation: nf-orb-pulse-a 14s ease-in-out infinite;
   }
   .nf-orb-b {
@@ -141,7 +144,7 @@ import Brain from "../components/Brain.astro";
     right: 22%;
     width: 320px;
     height: 320px;
-    background: radial-gradient(closest-side, rgba(0, 243, 255, 0.28) 0%, rgba(0, 243, 255, 0) 70%);
+    --orb-color: rgba(0, 243, 255, 0.28);
     animation: nf-orb-pulse-b 18s ease-in-out infinite;
   }
   @keyframes nf-orb-pulse-a {

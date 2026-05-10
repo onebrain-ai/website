@@ -191,6 +191,8 @@ const showStars = stars > 0;
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
+        } else if (data.error === 'rate_limited' || res.status === 429) {
+          showBanner('error', '✗ Too many attempts. Wait a few minutes and try again.');
         } else {
           console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');

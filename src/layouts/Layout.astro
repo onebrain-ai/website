@@ -429,9 +429,12 @@ const isHome = Astro.url.pathname === '/';
       (function () {
         const spine = document.getElementById('page-spine');
         if (!spine) return;
-        const dots = Array.from(spine.querySelectorAll('.page-spine-dots li'));
-        const sections = dots.map((d) => document.querySelector(d.dataset.target)).filter(Boolean);
-        if (!sections.length) return;
+        const dotSectionPairs = Array.from(spine.querySelectorAll('.page-spine-dots li'))
+          .map((d) => ({ dot: d, section: document.querySelector(d.dataset.target) }))
+          .filter((p) => p.section);
+        if (!dotSectionPairs.length) return;
+        const dots = dotSectionPairs.map((p) => p.dot);
+        const sections = dotSectionPairs.map((p) => p.section);
 
         // Every header nav link (desktop + mobile drawer) tagged with
         // its href, so the active-section observer can highlight the
@@ -641,12 +644,15 @@ const isHome = Astro.url.pathname === '/';
       // doesn't update location.hash, so it never reaches this listener.
       (function () {
         const pending = window.__obPendingHash;
-        if (pending && document.querySelector(pending)) {
+        if (pending && pending !== '#main-content' && document.querySelector(pending)) {
           // Hero is the natural starting frame for the warp-in.
           window.scrollTo(0, 0);
           requestAnimationFrame(() => warpTo(pending));
         }
         window.addEventListener('hashchange', () => {
+          // Skip-link target — let the browser handle focus/scroll natively. The warp
+          // animation would defeat the bypass-block purpose (WCAG 2.4.1).
+          if (location.hash === '#main-content') return;
           if (location.hash && document.querySelector(location.hash)) {
             warpTo(location.hash);
           }
