@@ -95,42 +95,47 @@ const commands = [
            the trigger meaning, and role=listitem on a <button> is
            invalid ARIA. -->
       <div class="cmd-grid-cards">
-        {commands.map((c) => (
-          <button
-            type="button"
-            class:list={[
-              'cyber-card cmd-card skill-trigger',
-              c.featured && 'cmd-card-featured',
-              c.isNew && !c.featured && 'cmd-card-new',
-            ]}
-            aria-haspopup="dialog"
-            aria-controls="skill-modal"
-            data-cmd={c.cmd}
-            data-desc={c.desc}
-            data-usecase={c.usecase}
-          >
-            {c.isNew && (
-              /* aria-hidden — the visible "NEW" badge is decorative.
-                 Without it, SR users hear "NEW /search ..." which
-                 front-loads marketing chrome before the command name.
-                 Hiding from AT lets the button announce as just the
-                 command + description; sighted users still get the
-                 NEW signal visually. */
-              <span
-                class:list={[
-                  'cmd-featured-tag',
-                  !c.featured && 'cmd-featured-tag-mini',
-                ]}
-                aria-hidden="true"
-              >NEW</span>
-            )}
-            <div class="cmd-row">
-              <span class="cmd-prompt">»</span>
-              <code class="cmd-name">{c.cmd}</code>
-            </div>
-            <p class="cyber-card-desc cmd-desc">{c.desc}</p>
-          </button>
-        ))}
+        {commands.map((c) => {
+          // Mini = NEW badge inside the 3×3 (currently /pause).
+          // Computed once so the card's positioning class and the
+          // badge's size modifier stay in lockstep — flipping one
+          // without the other would unanchor the badge from the
+          // mini card.
+          const isMini = c.isNew && !c.featured;
+          return (
+            <button
+              type="button"
+              class:list={[
+                'cyber-card cmd-card skill-trigger',
+                c.featured && 'cmd-card-featured',
+                isMini && 'cmd-card-new',
+              ]}
+              aria-haspopup="dialog"
+              aria-controls="skill-modal"
+              data-cmd={c.cmd}
+              data-desc={c.desc}
+              data-usecase={c.usecase}
+            >
+              {c.isNew && (
+                /* aria-hidden — the visible "NEW" badge is decorative.
+                   Without it, SR users hear "NEW /search ..." which
+                   front-loads marketing chrome before the command name.
+                   Hiding from AT lets the button announce as just the
+                   command + description; sighted users still get the
+                   NEW signal visually. */
+                <span
+                  class:list={['cmd-featured-tag', isMini && 'cmd-featured-tag-mini']}
+                  aria-hidden="true"
+                >NEW</span>
+              )}
+              <div class="cmd-row">
+                <span class="cmd-prompt">»</span>
+                <code class="cmd-name">{c.cmd}</code>
+              </div>
+              <p class="cyber-card-desc cmd-desc">{c.desc}</p>
+            </button>
+          );
+        })}
       </div>
 
     </div>
