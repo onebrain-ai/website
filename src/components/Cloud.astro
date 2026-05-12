@@ -131,6 +131,25 @@ const showStars = stars > 0;
             />
           </label>
 
+          {/* Honeypot — naive bots fill every <input>; humans never see it
+              (visually offscreen, tab-skipped, aria-hidden, autocomplete
+              off). A non-empty value triggers a silent 200 server-side
+              (no row written, attacker can't distinguish "blocked" from
+              "accepted"). 60-80% of script-kiddie spam blocked at zero
+              UX cost. */}
+          <div class="waitlist-hp" aria-hidden="true">
+            <label>
+              Company (leave blank)
+              <input
+                type="text"
+                name="company"
+                tabindex="-1"
+                autocomplete="off"
+                value=""
+              />
+            </label>
+          </div>
+
           <button type="submit" class="waitlist-btn">
             <span>NOTIFY ME AT LAUNCH</span>
             <span class="waitlist-btn-arrow">→</span>
@@ -157,7 +176,43 @@ const showStars = stars > 0;
     const banner = document.getElementById('waitlist-banner');
     const input = form && form.querySelector('input[type="email"]');
     const button = form && form.querySelector('button[type="submit"]');
+    const honeypot = form && form.querySelector('input[name="company"]');
     if (!form || !banner || !input || !button) return;
+
+    // Form-render timestamp — server compares against submission time
+    // to reject sub-1.5s submits. Humans need >1.5s to focus + type +
+    // click; bots usually fire under 300ms.
+    //
+    // Reset the clock on first user interaction (focus/input/keydown
+    // on the email field). Without this, returning users with browser
+    // autofill saved would land on the page, the form auto-populates
+    // instantly, they click submit ~500ms after load — silent reject,
+    // never reach D1. By restarting the clock at first-interaction,
+    // autofill users get the full 1.5s budget from when they actually
+    // engage with the form, while programmatic-submit bots that never
+    // dispatch a real user event still hit the original timer.
+    let renderedAt = Date.now();
+    let armed = false;
+    const armOnInteraction = () => {
+      if (armed) return;
+      armed = true;
+      renderedAt = Date.now();
+    };
+    // Listen at the FORM level (not just the email input) — Chrome
+    // and Safari native autofill on page load does NOT fire `input`
+    // on the email field until the user interacts. A returning user
+    // with saved autofill who clicks submit directly never focuses
+    // the email input, so an input-only listener would miss them and
+    // they'd still get silent-rejected by the <1.5s gate.
+    //
+    // `focusin` bubbles (unlike `focus`), so it catches focus on any
+    // descendant — submit button focus on click counts. `pointerdown`
+    // covers tap/click anywhere in the form before submit fires.
+    // Shared `armed` flag means whichever event lands first re-arms,
+    // subsequent ones short-circuit.
+    form.addEventListener('focusin', armOnInteraction, { passive: true });
+    form.addEventListener('pointerdown', armOnInteraction, { passive: true });
+    form.addEventListener('keydown', armOnInteraction, { passive: true });
 
     function showBanner(state, message) {
       banner.dataset.state = state;
@@ -188,7 +243,15 @@ const showStars = stars > 0;
         const res = await fetch('/api/waitlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({
+            email,
+            // Anti-spam signals. Honeypot value is normally '' for
+            // humans; t is ms elapsed from form render to submit.
+            // Server treats both as silent-accept on tamper — we don't
+            // surface the rejection to the bot.
+            company: honeypot ? honeypot.value : '',
+            t: Date.now() - renderedAt,
+          }),
         });
         let data;
         try {
@@ -472,6 +535,19 @@ const showStars = stars > 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+  /* Honeypot — visually hidden but in the DOM so naive bots fill it.
+     Pure off-screen positioning is intentional: avoid `display:none`,
+     `visibility:hidden`, `opacity:0`, and `pointer-events:none` —
+     modern headless tooling explicitly skips fields with those signals.
+     Keyboard skip is handled by `tabindex="-1"` on the input; AT skip
+     by `aria-hidden` on the wrapper. */
+  .waitlist-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
   .waitlist-label {
     display: block;
