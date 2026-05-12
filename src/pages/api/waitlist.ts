@@ -61,9 +61,20 @@ function asString(v: unknown): string | undefined {
   return typeof v === 'string' ? v : undefined;
 }
 
-async function hashIp(ip: string): Promise<string> {
+// Dev-only fallback salt. Production MUST set WAITLIST_IP_SALT via
+// `wrangler secret put WAITLIST_IP_SALT` — without it, anyone with
+// the public source can rainbow-table the entire IPv4 space in
+// seconds (2^32 SHA-256 hashes, ~1 minute on a modern GPU) and
+// reverse the stored ip_hash back to "did Alice's IP X.Y.Z.W sign
+// up?". In prod-missing-secret we log loudly and degrade ip_hash to
+// null — signups still land, only the attribution column is lost
+// until the secret is bound. A null is recoverable; a leaked weak
+// hash is not.
+const DEV_FALLBACK_SALT = '|onebrain-dev-only';
+
+async function hashIp(ip: string, salt: string): Promise<string> {
   // Privacy-preserving — store a one-way hash, never the raw IP.
-  const data = new TextEncoder().encode(ip + '|onebrain');
+  const data = new TextEncoder().encode(ip + salt);
   const buf = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(buf))
     .slice(0, 12)
@@ -223,12 +234,41 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return json({ ok: true, note: 'received_no_persistence' }, 200);
   }
 
+  // Resolve IP-hash salt from Cloudflare secret. Production MUST bind
+  // WAITLIST_IP_SALT via `wrangler secret put WAITLIST_IP_SALT` (use
+  // `openssl rand -base64 32` for the value — anything shorter loses
+  // collision resistance against a determined rainbow-table).
+  //
+  // Failure mode tree:
+  //  - secret present                 → hash with it (normal path)
+  //  - dev (import.meta.env.DEV)      → hash with DEV_FALLBACK_SALT
+  //  - prod with secret missing       → store ip_hash=null + log
+  //
+  // The prod-missing path deliberately writes null instead of falling
+  // through to DEV_FALLBACK_SALT: a deterministic published-source
+  // salt is worse than no hash, because it lets the attacker rainbow-
+  // table back to "did Alice's IP sign up?". A null is recoverable
+  // (operator can re-derive from raw IP later if needed, or just
+  // accept the temporary loss of attribution); a leaked weak hash is
+  // not. Signups still land — only the ip_hash column goes null until
+  // the secret is bound.
+  const ipSalt = (env as { WAITLIST_IP_SALT?: string }).WAITLIST_IP_SALT;
+  let activeSalt: string | null;
+  if (ipSalt) {
+    activeSalt = ipSalt;
+  } else if (import.meta.env.DEV) {
+    activeSalt = DEV_FALLBACK_SALT;
+  } else {
+    console.error('[waitlist] WAITLIST_IP_SALT secret missing in production — storing ip_hash=null');
+    activeSalt = null;
+  }
+
   // Compute IP hash outside the DB try so a hash failure doesn't poison
   // an otherwise-valid insert; we still record the row with ip_hash=null.
   let ipHash: string | null = null;
-  if (clientAddress) {
+  if (clientAddress && activeSalt) {
     try {
-      ipHash = await hashIp(clientAddress);
+      ipHash = await hashIp(clientAddress, activeSalt);
     } catch (e) {
       console.warn('[waitlist] hashIp failed; proceeding with ip_hash=null:', safeErr(e));
     }
