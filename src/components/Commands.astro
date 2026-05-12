@@ -1,15 +1,11 @@
 ---
-// 11 signature skills, ordered as a capture → organise → compound →
-// retrieve → automate journey. The 3×3 grid carries the first three
-// verbs; the bottom two featured wide rows (each spanning all 3
-// columns) carry the newest verbs that don't fit a 3-card rhythm —
-// /search for retrieval and /schedule-add for local automation.
-//
-// Mini cards in the 3×3 can also carry a NEW badge — `isNew: true`
-// renders a smaller top-right tag mirroring the featured-row style.
-// Used to flag /pause as freshly shipped without spending a wide row
-// on a single command from a pair (its sibling /resume lives in
-// "See full list ↗").
+// 9 signature skills laid out as a 3×3 capture → organise → operate
+// journey. Row 3 is the freshly-shipped trio — /search, /pause,
+// /schedule-add — each carrying a NEW badge. Older flagship verbs
+// (/learn, /weekly, /doctor) still ship in the plugin and live at
+// "See full list ↗"; they made way here so the operate row reads
+// as a contemporary "use the brain you built" triad: recall,
+// persist across sessions, automate on a cron.
 //
 // Full lineup is 30+ user-facing skills (see repo); this grid is the
 // curated subset that maps best to a first-time visitor's mental
@@ -29,23 +25,15 @@ const commands = [
     usecase: "Building a knowledge base? /connect reveals 'hidden' relationships between notes you wrote months apart, creating a dense neural web." },
   { cmd: '/distill',       desc: 'Aggregate sessions on a topic into a structured digest.',
     usecase: "After 5 days of research on a project, /distill synthesizes all session logs into a single 'Source of Truth' knowledge note." },
-  // Row 3 — COMPOUND
-  { cmd: '/learn',         desc: 'Teach the agent a fact or preference; persists to memory.',
-    usecase: "Tell the agent: '/learn I prefer my research reports in bullet points.' It will follow this for all future /research tasks." },
+  // Row 3 — OPERATE (all newly shipped)
+  { cmd: '/search',        desc: 'Ask "what" and "why" — qmd-powered retrieval across vault + memory + session logs.',
+    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes — qmd hybrid (lex + vec + hyde) under the hood, grep fallback if qmd isn't indexed.",
+    isNew: true },
   { cmd: '/pause',         desc: 'Snapshot a long task; resume across sessions without re-orienting.',
     usecase: "Halfway through a 3-day research thread? Run /pause before logging off. Tomorrow's session opens with /resume, and OneBrain replays exactly where you left off — open files, decisions, next step intact.",
     isNew: true },
-  { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
-    usecase: 'Run /doctor to spot broken wikilinks, orphan notes, and stale memory files. Add --fix to auto-repair them.' },
-  // Row 4 — RETRIEVE (featured wide row, spans all columns)
-  { cmd: '/search',        desc: 'Ask "what" and "why" — qmd-powered retrieval across vault + memory + session logs.',
-    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes — qmd hybrid (lex + vec + hyde) under the hood, grep fallback if qmd isn't indexed.",
-    featured: true,
-    isNew: true },
-  // Row 5 — AUTOMATE (featured wide row, spans all columns)
-  { cmd: '/schedule-add',  desc: 'Cron-schedule any skill on your machine — /daily brief, /weekly review, /doctor audit.',
+  { cmd: '/schedule-add',  desc: 'Cron-schedule any skill on your machine — /daily brief, /weekly review.',
     usecase: "Want a 9am daily briefing every morning? Run /schedule-add, pick /daily, set the time. OneBrain writes a launchd job locally — runs on your machine, no cloud, no subscription, output lands back in your vault automatically.",
-    featured: true,
     isNew: true },
 ];
 ---
@@ -83,59 +71,40 @@ const commands = [
         </a>
       </div>
 
-      <!-- RIGHT: 3-col card grid with two featured wide rows (4 +
-           5) for /search (RETRIEVE) and /schedule-add (AUTOMATE).
-           The first 9 cards lay out as a 3×3 control panel; the
-           featured cards add `.cmd-card-featured` which spans all
-           3 columns and uses a horizontal layout (name + desc on
-           one line). Mini cards in the 3×3 can also carry a NEW
-           badge via `isNew: true` (currently /pause) — same tag
-           element, scaled down by `.cmd-featured-tag-mini`.
+      <!-- RIGHT: 3×3 card grid. All cards are equal-sized 1:1
+           squares; cards flagged `isNew: true` add `.cmd-card-new`
+           which sets `position: relative` so the absolutely
+           positioned `.cmd-new-tag` anchors to the card's top-right.
            No forced role=list — the native <button> semantics carry
            the trigger meaning, and role=listitem on a <button> is
            invalid ARIA. -->
       <div class="cmd-grid-cards">
-        {commands.map((c) => {
-          // Mini = NEW badge inside the 3×3 (currently /pause).
-          // Computed once so the card's positioning class and the
-          // badge's size modifier stay in lockstep — flipping one
-          // without the other would unanchor the badge from the
-          // mini card.
-          const isMini = c.isNew && !c.featured;
-          return (
-            <button
-              type="button"
-              class:list={[
-                'cyber-card cmd-card skill-trigger',
-                c.featured && 'cmd-card-featured',
-                isMini && 'cmd-card-new',
-              ]}
-              aria-haspopup="dialog"
-              aria-controls="skill-modal"
-              data-cmd={c.cmd}
-              data-desc={c.desc}
-              data-usecase={c.usecase}
-            >
-              {c.isNew && (
-                /* aria-hidden — the visible "NEW" badge is decorative.
-                   Without it, SR users hear "NEW /search ..." which
-                   front-loads marketing chrome before the command name.
-                   Hiding from AT lets the button announce as just the
-                   command + description; sighted users still get the
-                   NEW signal visually. */
-                <span
-                  class:list={['cmd-featured-tag', isMini && 'cmd-featured-tag-mini']}
-                  aria-hidden="true"
-                >NEW</span>
-              )}
-              <div class="cmd-row">
-                <span class="cmd-prompt">»</span>
-                <code class="cmd-name">{c.cmd}</code>
-              </div>
-              <p class="cyber-card-desc cmd-desc">{c.desc}</p>
-            </button>
-          );
-        })}
+        {commands.map((c) => (
+          <button
+            type="button"
+            class:list={['cyber-card cmd-card skill-trigger', c.isNew && 'cmd-card-new']}
+            aria-haspopup="dialog"
+            aria-controls="skill-modal"
+            data-cmd={c.cmd}
+            data-desc={c.desc}
+            data-usecase={c.usecase}
+          >
+            {c.isNew && (
+              /* aria-hidden — the NEW badge is decorative marketing
+                 chrome. Without it, SR users hear "NEW /search ..."
+                 which front-loads the badge before the command name.
+                 Hiding from AT lets the button announce as just the
+                 command + description; sighted users still get the
+                 NEW signal visually. */
+              <span class="cmd-new-tag" aria-hidden="true">NEW</span>
+            )}
+            <div class="cmd-row">
+              <span class="cmd-prompt">»</span>
+              <code class="cmd-name">{c.cmd}</code>
+            </div>
+            <p class="cyber-card-desc cmd-desc">{c.desc}</p>
+          </button>
+        ))}
       </div>
 
     </div>
@@ -354,60 +323,29 @@ const commands = [
     line-height: 1.5;
   }
 
-  /* Featured wide card — spans all 3 columns on row 4 to highlight
-     /search as the RETRIEVE verb. Drops the 1:1 aspect ratio so the
-     card stays short (single-row height instead of stacking under a
-     normal grid cell), uses a horizontal layout (name + desc inline),
-     and gets a NEW tag in the top-right. */
-  .cmd-card-featured {
-    grid-column: 1 / -1;
-    aspect-ratio: auto;
-    padding: 1rem 1.1rem;
+  /* NEW badge anchored top-right of a mini 1:1 card. `.cmd-card-new`
+     sets `position: relative` so the absolutely-positioned tag pins
+     to the corner. Padding/size tuned to sit inside the 1:1 square
+     without crowding extra-long cmd names like /schedule-add. */
+  .cmd-card-new {
     position: relative;
-    background: color-mix(in srgb, var(--section-accent) 8%, rgba(8, 8, 14, 0.6));
-    border-color: color-mix(in srgb, var(--section-accent) 45%, transparent);
   }
-  .cmd-card-featured .cmd-row { gap: 8px; }
-  .cmd-card-featured .cmd-name { font-size: 14px; }
-  .cmd-card-featured .cmd-desc {
-    margin-top: 6px;
-    font-size: 11.5px;
-    line-height: 1.55;
-  }
-  .cmd-featured-tag {
+  .cmd-new-tag {
     position: absolute;
-    top: 8px;
-    right: 10px;
-    padding: 2px 6px;
+    top: 6px;
+    right: 6px;
+    padding: 1px 5px;
     font-family: var(--font-mono);
-    font-size: 8.5px;
+    font-size: 7.5px;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     color: var(--section-accent);
     background: color-mix(in srgb, var(--section-accent) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--section-accent) 45%, transparent);
   }
 
-  /* NEW badge on mini cards in the 3×3. Anchored by .cmd-card-new
-     (sets position: relative). Smaller padding + slightly smaller
-     glyphs to sit inside the 1:1 square without crowding the cmd
-     name; padding shrinks the badge enough that an extra-long name
-     (like /schedule-remove) still leaves a clean gap. */
-  .cmd-card-new {
-    position: relative;
-  }
-  .cmd-featured-tag-mini {
-    top: 6px;
-    right: 6px;
-    padding: 1px 5px;
-    font-size: 7.5px;
-    letter-spacing: 0.18em;
-  }
-
-  /* Mobile / tablet — drop the 50:50 split and the aspect-ratio. The
-     cards revert to the original 2/3-col rows-of-rectangles flow.
-     The featured card still spans the full row width via the
-     `grid-column: 1 / -1` rule above, which works at any column count. */
+  /* Mobile / tablet — drop the 50:50 split and the aspect-ratio.
+     Cards become rectangles in a 2-col / 1-col flow. */
   @media (max-width: 1023px) {
     .cmd-grid-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .cmd-card { aspect-ratio: auto; padding: 0.85rem 1rem 0.95rem; }
@@ -415,15 +353,7 @@ const commands = [
   }
   @media (max-width: 540px) {
     .cmd-grid-cards { grid-template-columns: 1fr; }
-    /* On single-column mobile every card is full-width, so the row-
-       spanning behavior alone no longer differentiates the featured
-       card from the other 9. Add a left accent stripe + bump the NEW
-       tag font size so the row reads as featured at a glance. */
-    .cmd-card-featured {
-      border-left: 3px solid var(--section-accent);
-      padding-left: 0.85rem;
-    }
-    .cmd-featured-tag { font-size: 10px; padding: 3px 7px; }
+    .cmd-new-tag { font-size: 8.5px; padding: 2px 6px; }
   }
 
   /* ── Skill Modal ───────────────────────── */
