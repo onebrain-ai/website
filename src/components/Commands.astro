@@ -1,7 +1,14 @@
 ---
-// 9 signature skills, ordered as a capture → organise → compound journey.
-// Cut from 12: dropped /bookmark (overlaps with /capture), /summarize
-// (overlaps with /research), and /daily (overlaps with /weekly).
+// 10 signature skills, ordered as a capture → organise → compound →
+// retrieve journey. /search is the newest, promoted as a featured
+// wide row (row 4 spans all 3 columns) because retrieval — answering
+// "what" and "why" questions across MEMORY.md + memory/ + session
+// logs + plan files + vault notes — is the verb most directly tied
+// to "AI thinking partner" framing.
+//
+// Full lineup is 26 user-facing skills (see repo); this grid is the
+// curated subset that maps best to a first-time visitor's mental
+// model. Anything more would be a docs page, not marketing.
 const commands = [
   // Row 1 — CAPTURE
   { cmd: '/braindump',     desc: 'Capture raw thoughts; agent splits threads and files them.',
@@ -9,7 +16,7 @@ const commands = [
   { cmd: '/capture',       desc: 'Quick titled note with auto-linking to related ideas.',
     usecase: 'Reading an interesting article? Use /capture to save a thought about it. OneBrain will automatically link it to your existing research notes on the same topic.' },
   { cmd: '/research',      desc: 'Web research synthesized into a vault note with citations.',
-    usecase: "Need to understand 'Large World Models'? Run /research. The agent fetches the latest papers and blog posts, then writes a comprehensive report in your vault." },
+    usecase: "Need to understand 'AI agent memory architectures'? Run /research. The agent fetches the latest papers and blog posts, then writes a comprehensive report in your vault." },
   // Row 2 — ORGANISE
   { cmd: '/consolidate',   desc: 'Process inbox into Projects / Areas / Knowledge with one pass.',
     usecase: 'Your inbox is full after a week of work. /consolidate reviews every note and moves them to the correct PARA folders.' },
@@ -23,7 +30,11 @@ const commands = [
   { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
     usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
   { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
-    usecase: 'Run /doctor to identify broken wikilinks or stale memory entries, then use --fix to auto-repair stale confidence scores and broken wikilinks.' },
+    usecase: 'Run /doctor to spot broken wikilinks, orphan notes, and stale memory files. Add --fix to auto-repair them.' },
+  // Row 4 — RETRIEVE (featured wide row, spans all columns)
+  { cmd: '/search',        desc: 'Ask "what" and "why" — qmd-powered retrieval across vault + memory + session logs.',
+    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes — qmd hybrid (lex + vec + hyde) under the hood, grep fallback if qmd isn't indexed.",
+    featured: true },
 ];
 ---
 
@@ -42,11 +53,11 @@ const commands = [
             <span>ONEBRAIN // COMMANDS</span>
           </div>
           <h2 class="cyber-h2">
-            24+ Commands<br/>
+            26 Commands<br/>
             <span class="cyber-h2-stroke">That Think.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> ships 24+ slash commands — vault-aware verbs that wrap deep workflows like research, distill, and weekly review. Tap any card to see what it does.
+            <strong class="brand">OneBrain</strong> ships 26 slash commands and 5 background agents — vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/doctor</strong> audits your graph.
           </p>
         </header>
 
@@ -60,21 +71,38 @@ const commands = [
         </a>
       </div>
 
-      <!-- RIGHT: 3×3 square card grid. No forced role=list — the
-           native <button> semantics carry the trigger meaning, and
-           role=listitem on a <button> is invalid ARIA (AT either drops
-           items or double-reads them). -->
+      <!-- RIGHT: 3-col card grid with a featured wide row 4 for
+           /search (RETRIEVE). The first 9 cards lay out as a 3×3
+           control panel; the 10th card has `.cmd-card-featured`
+           which spans all 3 columns and uses a horizontal layout
+           (name + desc on one line) to signal "this is the new /
+           highlighted command" without breaking the grid rhythm.
+           No forced role=list — the native <button> semantics carry
+           the trigger meaning, and role=listitem on a <button> is
+           invalid ARIA. -->
       <div class="cmd-grid-cards">
         {commands.map((c) => (
           <button
             type="button"
-            class="cyber-card cmd-card skill-trigger"
+            class:list={[
+              'cyber-card cmd-card skill-trigger',
+              c.featured && 'cmd-card-featured',
+            ]}
             aria-haspopup="dialog"
             aria-controls="skill-modal"
             data-cmd={c.cmd}
             data-desc={c.desc}
             data-usecase={c.usecase}
           >
+            {c.featured && (
+              /* aria-hidden — the visible "NEW" badge is decorative.
+                 Without it, SR users hear "NEW /search ..." which
+                 front-loads marketing chrome before the command name.
+                 Hiding from AT lets the button announce as just the
+                 command + description; sighted users still get the
+                 NEW signal visually. */
+              <span class="cmd-featured-tag" aria-hidden="true">NEW</span>
+            )}
             <div class="cmd-row">
               <span class="cmd-prompt">»</span>
               <code class="cmd-name">{c.cmd}</code>
@@ -300,8 +328,44 @@ const commands = [
     line-height: 1.5;
   }
 
+  /* Featured wide card — spans all 3 columns on row 4 to highlight
+     /search as the RETRIEVE verb. Drops the 1:1 aspect ratio so the
+     card stays short (single-row height instead of stacking under a
+     normal grid cell), uses a horizontal layout (name + desc inline),
+     and gets a NEW tag in the top-right. */
+  .cmd-card-featured {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    padding: 1rem 1.1rem;
+    position: relative;
+    background: color-mix(in srgb, var(--section-accent) 8%, rgba(8, 8, 14, 0.6));
+    border-color: color-mix(in srgb, var(--section-accent) 45%, transparent);
+  }
+  .cmd-card-featured .cmd-row { gap: 8px; }
+  .cmd-card-featured .cmd-name { font-size: 14px; }
+  .cmd-card-featured .cmd-desc {
+    margin-top: 6px;
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+  .cmd-featured-tag {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    padding: 2px 6px;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--section-accent);
+    background: color-mix(in srgb, var(--section-accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--section-accent) 45%, transparent);
+  }
+
   /* Mobile / tablet — drop the 50:50 split and the aspect-ratio. The
-     cards revert to the original 2/3-col rows-of-rectangles flow. */
+     cards revert to the original 2/3-col rows-of-rectangles flow.
+     The featured card still spans the full row width via the
+     `grid-column: 1 / -1` rule above, which works at any column count. */
   @media (max-width: 1023px) {
     .cmd-grid-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .cmd-card { aspect-ratio: auto; padding: 0.85rem 1rem 0.95rem; }
@@ -309,6 +373,15 @@ const commands = [
   }
   @media (max-width: 540px) {
     .cmd-grid-cards { grid-template-columns: 1fr; }
+    /* On single-column mobile every card is full-width, so the row-
+       spanning behavior alone no longer differentiates the featured
+       card from the other 9. Add a left accent stripe + bump the NEW
+       tag font size so the row reads as featured at a glance. */
+    .cmd-card-featured {
+      border-left: 3px solid var(--section-accent);
+      padding-left: 0.85rem;
+    }
+    .cmd-featured-tag { font-size: 10px; padding: 3px 7px; }
   }
 
   /* ── Skill Modal ───────────────────────── */
