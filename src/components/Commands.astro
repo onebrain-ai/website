@@ -1,12 +1,17 @@
 ---
-// 10 signature skills, ordered as a capture → organise → compound →
-// retrieve journey. /search is the newest, promoted as a featured
-// wide row (row 4 spans all 3 columns) because retrieval — answering
-// "what" and "why" questions across MEMORY.md + memory/ + session
-// logs + plan files + vault notes — is the verb most directly tied
-// to "AI thinking partner" framing.
+// 11 signature skills, ordered as a capture → organise → compound →
+// retrieve → automate journey. The 3×3 grid carries the first three
+// verbs; the bottom two featured wide rows (each spanning all 3
+// columns) carry the newest verbs that don't fit a 3-card rhythm —
+// /search for retrieval and /schedule-add for local automation.
 //
-// Full lineup is 26 user-facing skills (see repo); this grid is the
+// Mini cards in the 3×3 can also carry a NEW badge — `isNew: true`
+// renders a smaller top-right tag mirroring the featured-row style.
+// Used to flag /pause as freshly shipped without spending a wide row
+// on a single command from a pair (its sibling /resume lives in
+// "See full list ↗").
+//
+// Full lineup is 30+ user-facing skills (see repo); this grid is the
 // curated subset that maps best to a first-time visitor's mental
 // model. Anything more would be a docs page, not marketing.
 const commands = [
@@ -27,14 +32,21 @@ const commands = [
   // Row 3 — COMPOUND
   { cmd: '/learn',         desc: 'Teach the agent a fact or preference; persists to memory.',
     usecase: "Tell the agent: '/learn I prefer my research reports in bullet points.' It will follow this for all future /research tasks." },
-  { cmd: '/weekly',        desc: 'Weekly reflection over what you captured, decided, and shipped.',
-    usecase: 'Every Sunday, run /weekly. The agent reviews your progress, surfaces patterns in your thinking, and helps you set intentions for next week.' },
+  { cmd: '/pause',         desc: 'Snapshot a long task; resume across sessions without re-orienting.',
+    usecase: "Halfway through a 3-day research thread? Run /pause before logging off. Tomorrow's session opens with /resume, and OneBrain replays exactly where you left off — open files, decisions, next step intact.",
+    isNew: true },
   { cmd: '/doctor',        desc: 'Vault health check: broken links, orphans, stale memory.',
     usecase: 'Run /doctor to spot broken wikilinks, orphan notes, and stale memory files. Add --fix to auto-repair them.' },
   // Row 4 — RETRIEVE (featured wide row, spans all columns)
   { cmd: '/search',        desc: 'Ask "what" and "why" — qmd-powered retrieval across vault + memory + session logs.',
     usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes — qmd hybrid (lex + vec + hyde) under the hood, grep fallback if qmd isn't indexed.",
-    featured: true },
+    featured: true,
+    isNew: true },
+  // Row 5 — AUTOMATE (featured wide row, spans all columns)
+  { cmd: '/schedule-add',  desc: 'Cron-schedule any skill on your machine — /daily brief, /weekly review, /doctor audit.',
+    usecase: "Want a 9am daily briefing every morning? Run /schedule-add, pick /daily, set the time. OneBrain writes a launchd job locally — runs on your machine, no cloud, no subscription, output lands back in your vault automatically.",
+    featured: true,
+    isNew: true },
 ];
 ---
 
@@ -53,11 +65,11 @@ const commands = [
             <span>ONEBRAIN // COMMANDS</span>
           </div>
           <h2 class="cyber-h2">
-            26 Commands<br/>
+            30+ Commands<br/>
             <span class="cyber-h2-stroke">That Think.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> ships 26 slash commands and 5 background agents — vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/doctor</strong> audits your graph.
+            <strong class="brand">OneBrain</strong> ships 30+ slash commands and 5 background agents — vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/schedule-add</strong> automates them on a cron.
           </p>
         </header>
 
@@ -71,12 +83,14 @@ const commands = [
         </a>
       </div>
 
-      <!-- RIGHT: 3-col card grid with a featured wide row 4 for
-           /search (RETRIEVE). The first 9 cards lay out as a 3×3
-           control panel; the 10th card has `.cmd-card-featured`
-           which spans all 3 columns and uses a horizontal layout
-           (name + desc on one line) to signal "this is the new /
-           highlighted command" without breaking the grid rhythm.
+      <!-- RIGHT: 3-col card grid with two featured wide rows (4 +
+           5) for /search (RETRIEVE) and /schedule-add (AUTOMATE).
+           The first 9 cards lay out as a 3×3 control panel; the
+           featured cards add `.cmd-card-featured` which spans all
+           3 columns and uses a horizontal layout (name + desc on
+           one line). Mini cards in the 3×3 can also carry a NEW
+           badge via `isNew: true` (currently /pause) — same tag
+           element, scaled down by `.cmd-featured-tag-mini`.
            No forced role=list — the native <button> semantics carry
            the trigger meaning, and role=listitem on a <button> is
            invalid ARIA. -->
@@ -87,6 +101,7 @@ const commands = [
             class:list={[
               'cyber-card cmd-card skill-trigger',
               c.featured && 'cmd-card-featured',
+              c.isNew && !c.featured && 'cmd-card-new',
             ]}
             aria-haspopup="dialog"
             aria-controls="skill-modal"
@@ -94,14 +109,20 @@ const commands = [
             data-desc={c.desc}
             data-usecase={c.usecase}
           >
-            {c.featured && (
+            {c.isNew && (
               /* aria-hidden — the visible "NEW" badge is decorative.
                  Without it, SR users hear "NEW /search ..." which
                  front-loads marketing chrome before the command name.
                  Hiding from AT lets the button announce as just the
                  command + description; sighted users still get the
                  NEW signal visually. */
-              <span class="cmd-featured-tag" aria-hidden="true">NEW</span>
+              <span
+                class:list={[
+                  'cmd-featured-tag',
+                  !c.featured && 'cmd-featured-tag-mini',
+                ]}
+                aria-hidden="true"
+              >NEW</span>
             )}
             <div class="cmd-row">
               <span class="cmd-prompt">»</span>
@@ -360,6 +381,22 @@ const commands = [
     color: var(--section-accent);
     background: color-mix(in srgb, var(--section-accent) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--section-accent) 45%, transparent);
+  }
+
+  /* NEW badge on mini cards in the 3×3. Anchored by .cmd-card-new
+     (sets position: relative). Smaller padding + slightly smaller
+     glyphs to sit inside the 1:1 square without crowding the cmd
+     name; padding shrinks the badge enough that an extra-long name
+     (like /schedule-remove) still leaves a clean gap. */
+  .cmd-card-new {
+    position: relative;
+  }
+  .cmd-featured-tag-mini {
+    top: 6px;
+    right: 6px;
+    padding: 1px 5px;
+    font-size: 7.5px;
+    letter-spacing: 0.18em;
   }
 
   /* Mobile / tablet — drop the 50:50 split and the aspect-ratio. The
