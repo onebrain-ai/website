@@ -1,6 +1,18 @@
 ---
 import { getGitHubStars, formatStars } from '../lib/gh-stars';
 
+// Cloudflare Turnstile sitekey — public (safe to commit). Override at
+// build time with `PUBLIC_TURNSTILE_SITEKEY` env var (`.env.production`
+// or Cloudflare Workers Builds environment). The placeholder below is
+// the always-pass test sitekey from Cloudflare docs — fine for local
+// dev, but in production it accepts every submission without
+// challenging, which silently defeats the bot protection. The PR that
+// adds this code MUST be paired with setting the real sitekey + the
+// matching `TURNSTILE_SECRET` (via `wrangler versions secret put`)
+// before the next deploy lands.
+const TURNSTILE_SITEKEY =
+  import.meta.env.PUBLIC_TURNSTILE_SITEKEY || '1x00000000000000000000AA';
+
 // Discriminated union: `live` tiers carry the link + tagline that the
 // card uses to render the active state; `soon` tiers don't. Coupling
 // these fields by tag prevents a future edit from adding `href`
@@ -150,11 +162,39 @@ const showStars = stars > 0;
             </label>
           </div>
 
+          {/* Cloudflare Turnstile — `appearance="interaction-only"` is
+              the current "invisible" mode (Cloudflare removed
+              `size="invisible"` in 2024). Widget auto-runs on page
+              load, generates a `cf-turnstile-response` token, and
+              hides itself unless the risk model decides to challenge
+              the visitor. Submit handler reads the token and sends it
+              to /api/waitlist; server verifies via siteverify endpoint.
+              The expired callback clears the cached token so a
+              long-lingering visitor's submit triggers a fresh
+              validation rather than sending a 5-minute-stale token. */}
+          <div
+            class="cf-turnstile"
+            data-sitekey={TURNSTILE_SITEKEY}
+            data-appearance="interaction-only"
+            data-theme="dark"
+            data-callback="onObTurnstileToken"
+            data-expired-callback="onObTurnstileExpired"
+          ></div>
+
           <button type="submit" class="waitlist-btn">
             <span>NOTIFY ME AT LAUNCH</span>
             <span class="waitlist-btn-arrow">→</span>
           </button>
         </form>
+        {/* Turnstile script — async/defer so it doesn't block hero LCP.
+            Loaded scoped to Cloud (below-the-fold) rather than the
+            global Layout; Turnstile is only needed for the waitlist
+            form on /, not on /privacy or /404. */}
+        <script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          async
+          defer
+        ></script>
 
         <div
           id="waitlist-banner"
@@ -214,6 +254,14 @@ const showStars = stars > 0;
     form.addEventListener('pointerdown', armOnInteraction, { passive: true });
     form.addEventListener('keydown', armOnInteraction, { passive: true });
 
+    // Turnstile callbacks (set on the global window so the widget's
+    // data-callback attributes can find them). Token cache avoids a
+    // race where invisible-mode validation hasn't completed when the
+    // user submits — submit handler reads the latest cached token.
+    let turnstileToken = '';
+    window.onObTurnstileToken = function (t) { turnstileToken = t || ''; };
+    window.onObTurnstileExpired = function () { turnstileToken = ''; };
+
     function showBanner(state, message) {
       banner.dataset.state = state;
       banner.textContent = message;
@@ -239,6 +287,20 @@ const showStars = stars > 0;
       const labelEl = button.querySelector('span');
       if (labelEl) labelEl.textContent = 'SENDING_';
 
+      // If the widget hasn't produced a token yet (script still
+      // loading on a slow network, OR the widget is mid-validation),
+      // give it a short window before submitting. Unconditional —
+      // gating on `window.turnstile` would skip this wait for users
+      // whose script load is just slow, leaving them with an empty
+      // token and a server-side silent-reject. 800ms is enough for
+      // most slow connections to finish loading + validating; users
+      // who never get a token (Turnstile blocked by ad-blocker,
+      // upstream down) fall through to server-side reject which is
+      // still the same silent-success UX.
+      if (!turnstileToken) {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+      }
+
       try {
         const res = await fetch('/api/waitlist', {
           method: 'POST',
@@ -247,10 +309,12 @@ const showStars = stars > 0;
             email,
             // Anti-spam signals. Honeypot value is normally '' for
             // humans; t is ms elapsed from form render to submit.
-            // Server treats both as silent-accept on tamper — we don't
-            // surface the rejection to the bot.
+            // Server treats all three (company / t / cf-turnstile-response)
+            // as silent-accept-on-tamper — we don't surface the
+            // rejection signal to the bot.
             company: honeypot ? honeypot.value : '',
             t: Date.now() - renderedAt,
+            'cf-turnstile-response': turnstileToken,
           }),
         });
         let data;

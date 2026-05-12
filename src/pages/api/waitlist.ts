@@ -38,6 +38,15 @@ const ALLOWED_ORIGIN = 'https://onebrain.run';
 // blocks slow-loris isolate pinning + accidental large payloads.
 const MAX_BODY_BYTES = 10 * 1024;
 
+// Cloudflare Turnstile siteverify endpoint. Public, no auth required
+// (the secret is sent as a form field). 4s timeout: Turnstile usually
+// responds in <200ms; if the upstream is slow we'd rather log + accept
+// the signup than block on the gate. A bot can't exploit this because
+// the dev/missing-secret path also accepts (defense-in-depth via
+// honeypot + timing + disposable + Origin still applies).
+const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+const TURNSTILE_TIMEOUT_MS = 4000;
+
 // Trim caught exceptions to just the message for Cloudflare Workers
 // Logs. Raw Error objects can include D1 schema fragments, stack
 // frames pointing at internal modules, or pieces of the failing SQL —
@@ -178,6 +187,55 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const candidateDomain = parts.length >= 2 ? parts[parts.length - 1] : '';
   if (candidateDomain && DISPOSABLE_DOMAINS.has(candidateDomain)) {
     return json({ ok: true }, 200);
+  }
+
+  // 4) Cloudflare Turnstile verification — invisible CAPTCHA that
+  //    blocks ~95% of headless bots including those with stealth
+  //    plugins. Skipped only when no TURNSTILE_SECRET is bound (dev
+  //    + dashboard misconfig); production MUST set it via
+  //    `wrangler versions secret put TURNSTILE_SECRET`. When the
+  //    secret is present:
+  //      - missing/empty token  → silent-accept (bot signal)
+  //      - upstream verify fail → silent-accept (bot signal)
+  //      - verify upstream slow → log + allow through (better than
+  //        breaking submits on a third-party blip; the upstream
+  //        downtime is rare and other P0 signals still catch the
+  //        bulk of bot traffic)
+  const turnstileSecret = (env as { TURNSTILE_SECRET?: string }).TURNSTILE_SECRET;
+  if (turnstileSecret) {
+    const turnstileToken = asString(fields['cf-turnstile-response']);
+    if (!turnstileToken) {
+      return json({ ok: true }, 200);
+    }
+    const verifyBody = new URLSearchParams();
+    verifyBody.append('secret', turnstileSecret);
+    verifyBody.append('response', turnstileToken);
+    if (clientAddress) verifyBody.append('remoteip', clientAddress);
+    let verifyOk = false;
+    try {
+      const verifyRes = await fetch(TURNSTILE_VERIFY_URL, {
+        method: 'POST',
+        body: verifyBody,
+        signal: AbortSignal.timeout(TURNSTILE_TIMEOUT_MS),
+      });
+      const verifyData = (await verifyRes.json()) as { success?: boolean };
+      verifyOk = verifyData.success === true;
+    } catch (e) {
+      // Upstream timeout / network error — log and let through. The
+      // alternative (block on every Turnstile blip) would lose real
+      // signups for an outage we can't fix from our side. Distinguish
+      // the failure shape so a future Workers Analytics counter can
+      // bucket them and we can post-mortem "slow CF" vs "down CF".
+      const kind =
+        e instanceof DOMException && e.name === 'TimeoutError'
+          ? 'timeout'
+          : 'network';
+      console.warn(`[waitlist] turnstile verify ${kind}; allowing through:`, safeErr(e));
+      verifyOk = true;
+    }
+    if (!verifyOk) {
+      return json({ ok: true }, 200);
+    }
   }
 
   // clientAddress absent in local dev (no incoming Cloudflare ip header) — skip rate limit.
