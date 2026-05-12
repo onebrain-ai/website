@@ -202,9 +202,21 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   //        downtime is rare and other P0 signals still catch the
   //        bulk of bot traffic)
   const turnstileSecret = (env as { TURNSTILE_SECRET?: string }).TURNSTILE_SECRET;
+  // TEMP DEBUG (revert in follow-up): log presence/length of the
+  // resolved secret to confirm whether env binding is producing the
+  // value at runtime. Reverts after we confirm the root cause of
+  // bots landing in D1 despite TURNSTILE_SECRET appearing in
+  // `wrangler versions secret list`.
+  console.log(
+    '[waitlist debug] TURNSTILE_SECRET:',
+    typeof turnstileSecret,
+    'len=' + (turnstileSecret?.length ?? 0),
+    'token-present=' + !!asString(fields['cf-turnstile-response']),
+  );
   if (turnstileSecret) {
     const turnstileToken = asString(fields['cf-turnstile-response']);
     if (!turnstileToken) {
+      console.warn('[waitlist] turnstile token missing — silent reject');
       return json({ ok: true }, 200);
     }
     const verifyBody = new URLSearchParams();
@@ -218,8 +230,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         body: verifyBody,
         signal: AbortSignal.timeout(TURNSTILE_TIMEOUT_MS),
       });
-      const verifyData = (await verifyRes.json()) as { success?: boolean };
+      const verifyData = (await verifyRes.json()) as { success?: boolean; 'error-codes'?: string[] };
       verifyOk = verifyData.success === true;
+      console.log(
+        '[waitlist debug] turnstile siteverify:',
+        'success=' + verifyData.success,
+        'errors=' + JSON.stringify(verifyData['error-codes'] || []),
+      );
     } catch (e) {
       // Upstream timeout / network error — log and let through. The
       // alternative (block on every Turnstile blip) would lose real
