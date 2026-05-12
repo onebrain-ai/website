@@ -947,6 +947,16 @@ section[data-vis="off"]::after {
 section[data-vis="off"] .how-loop-svg {
   display: none;
 }
+/* Release the 100px gaussian blur on the per-section accent orb when
+   the section is offscreen. animation-name:none keeps the orb static
+   but the compositor still keeps the blurred surface in GPU memory
+   across every section simultaneously. Dropping to filter:none frees
+   the surface; it re-allocates on the next data-vis="on" without a
+   visible pop because the section is offscreen during the transition. */
+section[data-vis="off"] .cyber-section-orb {
+  filter: none !important;
+  opacity: 0 !important;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

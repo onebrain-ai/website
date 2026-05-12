@@ -60,13 +60,17 @@ const commands = [
         </a>
       </div>
 
-      <!-- RIGHT: 3×3 square card grid -->
-      <div class="cmd-grid-cards" role="list">
+      <!-- RIGHT: 3×3 square card grid. No forced role=list — the
+           native <button> semantics carry the trigger meaning, and
+           role=listitem on a <button> is invalid ARIA (AT either drops
+           items or double-reads them). -->
+      <div class="cmd-grid-cards">
         {commands.map((c) => (
           <button
             type="button"
             class="cyber-card cmd-card skill-trigger"
-            role="listitem"
+            aria-haspopup="dialog"
+            aria-controls="skill-modal"
             data-cmd={c.cmd}
             data-desc={c.desc}
             data-usecase={c.usecase}
@@ -84,21 +88,29 @@ const commands = [
   </div>
 
   <!-- Command detail modal -->
-  <div id="skill-modal" class="skill-modal" aria-hidden="true">
+  <div
+    id="skill-modal"
+    class="skill-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-cmd"
+    aria-describedby="modal-desc"
+    aria-hidden="true"
+  >
     <div class="skill-modal-overlay" id="modal-overlay"></div>
     <div class="skill-modal-card" id="modal-content">
-      <div class="skill-modal-frame skill-modal-frame-tl"></div>
-      <div class="skill-modal-frame skill-modal-frame-tr"></div>
-      <div class="skill-modal-frame skill-modal-frame-bl"></div>
-      <div class="skill-modal-frame skill-modal-frame-br"></div>
+      <div class="skill-modal-frame skill-modal-frame-tl" aria-hidden="true"></div>
+      <div class="skill-modal-frame skill-modal-frame-tr" aria-hidden="true"></div>
+      <div class="skill-modal-frame skill-modal-frame-bl" aria-hidden="true"></div>
+      <div class="skill-modal-frame skill-modal-frame-br" aria-hidden="true"></div>
 
       <div class="skill-modal-head">
         <div>
           <span class="skill-modal-eyebrow">COMMAND_DETAIL</span>
           <h3 id="modal-cmd" class="skill-modal-cmd">Command detail</h3>
         </div>
-        <button id="close-modal" type="button" class="skill-modal-close" aria-label="Close">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <button id="close-modal" type="button" class="skill-modal-close" aria-label="Close command detail">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
 
@@ -118,29 +130,113 @@ const commands = [
 <script is:inline>
   (function () {
     const modal = document.getElementById('skill-modal');
-    const card = document.getElementById('modal-content');
     const triggers = document.querySelectorAll('.skill-trigger');
     const closeBtn = document.getElementById('close-modal');
     const overlay = document.getElementById('modal-overlay');
     const mCmd = document.getElementById('modal-cmd');
     const mDesc = document.getElementById('modal-desc');
     const mUsecase = document.getElementById('modal-usecase');
+    if (!modal) return;
+
+    // Background-inert scope: walk from <body> down through each
+    // ancestor that contains the modal, inerting every sibling that
+    // doesn't. The modal lives inside #commands inside <main> inside
+    // <body>, so the chain is body → main → #commands → modal. Direct
+    // children of <body> that aren't <main> (page-spine, warp overlays,
+    // footer) get inert'd at the top level; main's other section
+    // children (Hero, Cloud, Synergy…) get inert'd one level down. A
+    // single-level body.children walk would skip <main> entirely
+    // (because main contains the modal) and leave every section
+    // reachable to AT and pointer events.
+    function inertScope() {
+      const out = [];
+      function descend(parent) {
+        for (const el of parent.children) {
+          if (el === modal) continue;
+          if (el.contains(modal)) {
+            descend(el);
+          } else {
+            out.push(el);
+          }
+        }
+      }
+      descend(document.body);
+      return out;
+    }
+    // Tab cycle: every focusable inside the dialog. Re-queried per Tab
+    // because content (close button vs trigger) is static but cheap.
+    function focusables() {
+      return Array.from(
+        modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+    }
+
+    let _lastTrigger = null;
+    let _inerted = [];
     function open(t) {
+      _lastTrigger = t;
       mCmd.textContent = t.getAttribute('data-cmd');
       mDesc.textContent = t.getAttribute('data-desc');
       mUsecase.textContent = t.getAttribute('data-usecase');
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      _inerted = inertScope();
+      _inerted.forEach((el) => el.setAttribute('inert', ''));
+      // Wait one frame so the dialog has applied .open + opacity 1
+      // before focus lands; otherwise Safari paints the focus ring
+      // briefly on the still-invisible close button.
+      requestAnimationFrame(() => {
+        if (closeBtn) closeBtn.focus();
+      });
     }
     function close() {
+      if (modal.getAttribute('aria-hidden') === 'true') return;
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      _inerted.forEach((el) => el.removeAttribute('inert'));
+      _inerted = [];
+      if (_lastTrigger) {
+        _lastTrigger.focus();
+        _lastTrigger = null;
+      }
     }
     triggers.forEach((t) => t.addEventListener('click', () => open(t)));
     [closeBtn, overlay].forEach((el) => el && el.addEventListener('click', close));
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', (e) => {
+      if (modal.getAttribute('aria-hidden') === 'true') return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const list = focusables();
+        if (list.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        const first = list[0];
+        const last = list[list.length - 1];
+        // If focus left the dialog (overlay click, etc.), pull it back
+        // in instead of letting Tab escape to the inerted background.
+        if (!modal.contains(document.activeElement)) {
+          e.preventDefault();
+          first.focus();
+          return;
+        }
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
   })();
 </script>
 

@@ -61,6 +61,7 @@ const navLinks = [
         aria-label="Open navigation"
         aria-controls="nav-mobile"
         aria-expanded="false"
+        aria-haspopup="dialog"
       >
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
@@ -112,12 +113,39 @@ const navLinks = [
 
     const toggle = document.getElementById('nav-toggle');
     const drawer = document.getElementById('nav-mobile');
-    const main = document.querySelector('main');
     if (!toggle || !drawer) return;
+
+    // Background-inert scope: walk from <body> down each ancestor that
+    // contains the drawer OR the toggle, inerting every sibling that
+    // contains neither. The drawer and the toggle are siblings inside
+    // <header>; both subtrees must stay interactive (drawer for its
+    // own content, toggle so the user can close the drawer with the
+    // same hamburger they opened it from). Sibling subtrees inside
+    // <header> — brain-home link, desktop nav, Repo badge — get
+    // inerted, as do every <body> child outside <header> (page spine,
+    // neural canvas, warp overlays, <main>, <footer>). A single-level
+    // body.children walk would skip <header> entirely (it contains
+    // both kept subtrees) and leave brain-home + Repo tabbable.
+    function siblingsToInert() {
+      const out = [];
+      function descend(parent) {
+        for (const el of parent.children) {
+          if (el === drawer || el === toggle) continue;
+          if (el.contains(drawer) || el.contains(toggle)) {
+            descend(el);
+          } else {
+            out.push(el);
+          }
+        }
+      }
+      descend(document.body);
+      return out;
+    }
 
     const focusables = () =>
       Array.from(drawer.querySelectorAll('[data-nav-link]'));
 
+    let _inerted = [];
     function setOpen(open) {
       drawer.dataset.open = open ? 'true' : 'false';
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
@@ -125,14 +153,26 @@ const navLinks = [
       toggle.classList.toggle('is-open', open);
       document.body.style.overflow = open ? 'hidden' : '';
       // Hide background page from AT and disable its tab order while open.
-      if (main) {
-        if (open) main.setAttribute('inert', '');
-        else main.removeAttribute('inert');
+      if (open) {
+        _inerted = siblingsToInert();
+        _inerted.forEach((el) => el.setAttribute('inert', ''));
+      } else {
+        _inerted.forEach((el) => el.removeAttribute('inert'));
+        _inerted = [];
       }
       if (open) {
-        // Move focus into the drawer so keyboard users land where they expect.
-        const first = focusables()[0];
-        if (first) first.focus();
+        // Defer focus past the next paint so the browser has flipped
+        // the drawer to pointer-events:auto + opacity:1 before the
+        // focus ring lands. Without this, Safari can paint the focus
+        // ring on the link one frame before the drawer's transform
+        // finishes, briefly showing the ring behind the still-sliding
+        // panel. Double-rAF gives the dataset change time to take
+        // effect; full transitionend isn't needed — once the drawer is
+        // visible, focus is correct even mid-transition.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          const first = focusables()[0];
+          if (first) first.focus();
+        }));
       } else {
         toggle.focus();
       }
