@@ -159,7 +159,7 @@
   justify-content: center;
   cursor: pointer;
 }
-.page-spine-dots li > span {
+.page-spine-dots li span {
   display: block;
   width: 6px;
   height: 6px;
@@ -170,12 +170,12 @@
   border: 1px solid rgba(180, 180, 195, 0.18);
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.page-spine-dots li:hover > span {
+.page-spine-dots li:hover span {
   background: var(--dot-accent);
   border-color: var(--dot-accent);
   box-shadow: 0 0 12px var(--dot-accent);
 }
-.page-spine-dots li.active > span {
+.page-spine-dots li.active span {
   width: 9px;
   height: 9px;
   background: var(--dot-accent);
@@ -946,6 +946,16 @@ section[data-vis="off"]::after {
    from t=0 when data-vis flips back to "on". */
 section[data-vis="off"] .how-loop-svg {
   display: none;
+}
+/* Release the 100px gaussian blur on the per-section accent orb when
+   the section is offscreen. animation-name:none keeps the orb static
+   but the compositor still keeps the blurred surface in GPU memory
+   across every section simultaneously. Dropping to filter:none frees
+   the surface; it re-allocates on the next data-vis="on" without a
+   visible pop because the section is offscreen during the transition. */
+section[data-vis="off"] .cyber-section-orb {
+  filter: none !important;
+  opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

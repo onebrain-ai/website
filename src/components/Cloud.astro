@@ -127,6 +127,7 @@ const showStars = stars > 0;
               placeholder="hello@onebrain.run"
               class="waitlist-input"
               autocomplete="email"
+              aria-describedby="waitlist-banner"
             />
           </label>
 
@@ -162,6 +163,15 @@ const showStars = stars > 0;
       banner.dataset.state = state;
       banner.textContent = message;
       banner.classList.add('show');
+      // Pair the input with the banner for AT: success clears the
+      // invalid state, any non-success state marks the field invalid
+      // so SR users hear "invalid entry" on the field itself instead
+      // of needing to navigate to the banner separately.
+      if (state === 'success') {
+        input.removeAttribute('aria-invalid');
+      } else {
+        input.setAttribute('aria-invalid', 'true');
+      }
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -171,7 +181,6 @@ const showStars = stars > 0;
       if (!email) return;
 
       button.disabled = true;
-      const originalLabel = button.textContent;
       const labelEl = button.querySelector('span');
       if (labelEl) labelEl.textContent = 'SENDING_';
 
@@ -195,6 +204,8 @@ const showStars = stars > 0;
           showBanner('error', '✗ That email looks off. Try again.');
         } else if (data.error === 'rate_limited' || res.status === 429) {
           showBanner('error', '✗ Too many attempts. Wait a few minutes and try again.');
+        } else if (data.error === 'server_misconfigured' || res.status === 503) {
+          showBanner('error', '✗ Waitlist is temporarily offline. Please try again later.');
         } else {
           console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');
@@ -205,7 +216,6 @@ const showStars = stars > 0;
       } finally {
         button.disabled = false;
         if (labelEl) labelEl.textContent = 'NOTIFY ME AT LAUNCH';
-        else button.textContent = originalLabel;
       }
     });
   })();
@@ -544,6 +554,10 @@ const showStars = stars > 0;
     line-height: 1.6;
     color: color-mix(in srgb, var(--section-accent) 70%, white);
     letter-spacing: 0.04em;
+    /* scroll-into-view + sticky 64px nav would otherwise tuck the
+       banner under the header on mobile when the submit fires near
+       the bottom of the viewport. */
+    scroll-margin-top: 80px;
   }
   .waitlist-banner.show { display: block; }
   .waitlist-banner[data-state="success"] {

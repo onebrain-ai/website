@@ -535,6 +535,13 @@ const isHome = Astro.url.pathname === '/';
         // blackout fades — sweep-down + content-rise read as one beat.
         setTimeout(() => {
           jumpTo(t, targetSel);
+          // Force visibility ON before .active. The data-vis observer
+          // uses rootMargin:200px so a deep-link warp from scroll=0 can
+          // land before the target ever crossed the threshold — leaving
+          // data-vis="off" with the global animation-name:none override
+          // active. Without this the target section paints blank until
+          // the next scroll event re-arms the observer.
+          if (t.dataset && 'vis' in t.dataset) t.dataset.vis = 'on';
           // Always replay the boot scanline on arrival — strip + reflow
           // + add. Hero gets .active here too (it never had .active
           // applied otherwise, since hero relies on its own intro
@@ -577,14 +584,22 @@ const isHome = Astro.url.pathname === '/';
       // gating before the handler is allowed to do anything else.
       // Navigation is suppressed by the click handler below where it
       // actually matters; warpInFlight absorbs the click re-fire.
+      // Modifier-aware: cmd/ctrl/shift/alt-click must fall through to
+      // the browser so "open in new tab / new window / save link" still
+      // works. Only intercept plain left-clicks. Same check in both
+      // handlers below.
+      function _isPlainLeftClick(e) {
+        return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+      }
       document.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
+        if (!_isPlainLeftClick(e)) return;
         // parentElement walk is faster than closest() with a CSS
         // selector — header is shallow (4–5 levels max), and we only
         // accept exact <a> hits that are pre-registered in the map.
-        let n = e.target;
-        while (n && n.tagName !== 'A') n = n.parentElement;
-        if (!n) return;
+        // Depth-bounded so a future DOM tweak can't blow up the walk.
+        let n = e.target, depth = 0;
+        while (n && n.tagName !== 'A' && depth++ < 8) n = n.parentElement;
+        if (!n || n.tagName !== 'A') return;
         const href = _headerLinks.get(n);
         if (!href) return;
         warpTo(href);
@@ -595,9 +610,10 @@ const isHome = Astro.url.pathname === '/';
       // (Enter/Space on a focused link) lands here too — keyboard
       // users get warpTo from this path.
       document.addEventListener('click', (e) => {
-        let n = e.target;
-        while (n && n.tagName !== 'A') n = n.parentElement;
-        if (!n) return;
+        if (!_isPlainLeftClick(e)) return;
+        let n = e.target, depth = 0;
+        while (n && n.tagName !== 'A' && depth++ < 8) n = n.parentElement;
+        if (!n || n.tagName !== 'A') return;
         const href = _headerLinks.get(n);
         if (!href) return;
         e.preventDefault();

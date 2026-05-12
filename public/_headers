@@ -21,6 +21,14 @@
 # `'self'`). No subdomain wildcards are added — there are no current
 # `*.onebrain.run` subdomains and `static.cloudflareinsights.com` is the
 # only beacon host in use.
+#
+# `img-src` is `'self' data:` only — every image on the site is locally
+# hosted (`og.jpg`, `brain.svg`, `apple-touch-icon.png`, diagrams), so
+# allowing arbitrary `https:` hosts only widens the XSS exfil surface.
+# `frame-src 'none'`, `worker-src 'self'`, `manifest-src 'self'`, and
+# `media-src 'none'` are explicit defense-in-depth — `default-src 'self'`
+# already covers their fallbacks, but explicit directives prevent a
+# future `default-src` relaxation from silently re-opening them.
 
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains
@@ -29,7 +37,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://onebrain.run https://cloudflareinsights.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://onebrain.run https://cloudflareinsights.com; frame-src 'none'; worker-src 'self'; manifest-src 'self'; media-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

@@ -265,7 +265,18 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         document.querySelectorAll('[data-scramble]').forEach((el) => {
           const t = el.dataset.scramble;
           function loop() {
-            if (heroVisible) scramble(el, t, 600);
+            // Skip when an AT user has the scramble element focused —
+            // rewriting textContent under a focused h1 makes screen
+            // readers announce the rolling cipher characters. Also
+            // skip when the document itself isn't focused (tab in
+            // background) so the loop doesn't queue paint work.
+            if (
+              heroVisible &&
+              document.hasFocus() &&
+              document.activeElement !== el
+            ) {
+              scramble(el, t, 600);
+            }
             setTimeout(loop, 12000 + Math.random() * 8000);
           }
           setTimeout(loop, 12000 + Math.random() * 6000);
