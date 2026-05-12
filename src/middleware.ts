@@ -30,7 +30,12 @@ export const onRequest = defineMiddleware(async (_context, next) => {
   try {
     response = await next();
   } catch (err) {
-    console.error('[middleware] downstream threw:', err);
+    // Trim to message only — Workers Logs can be Logpush'd or shared
+    // via dashboard link, and downstream throws can carry stack frames
+    // or D1 schema fragments. Raw Error objects belong nowhere logs
+    // get aggregated.
+    const msg = err instanceof Error ? err.message.slice(0, 200) : String(err).slice(0, 200);
+    console.error('[middleware] downstream threw:', msg);
     response = new Response(
       JSON.stringify({ ok: false, error: 'server_error' }),
       { status: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' } },

@@ -174,6 +174,24 @@ const isHome = Astro.url.pathname === '/';
     <slot />
 
     <script is:inline>
+      // Hash → element id resolver shared by every IIFE in this script
+      // block. warpTo's input ranges from author-controlled (header
+      // link href, spine dot data-target) to user-controlled
+      // (location.hash, __obPendingHash). Treat everything as untrusted:
+      // only accept the literal "#" + DOM id token shape and resolve
+      // via getElementById. A bare querySelector here would accept
+      // arbitrary CSS selectors crafted in the URL fragment, so an
+      // attacker could force-scroll/.active any element on the page
+      // (forced-clickjack of CTAs, focus traps, etc.). With unsafe-
+      // inline still in script-src this is the path most likely to be
+      // chained into an XSS later. Hoisted to the top of the <script>
+      // so both the spine init (line ~430) and the warp transition
+      // (line ~530) can use the same allowlist.
+      const _OB_ID_RE = /^#[A-Za-z][\w-]*$/;
+      function resolveHash(targetSel) {
+        if (typeof targetSel !== 'string' || !_OB_ID_RE.test(targetSel)) return null;
+        return document.getElementById(targetSel.slice(1));
+      }
       // Site-wide neural canvas. Tuned for Safari: pauses when tab hidden,
       // pauses when canvas is offscreen, throttles mousemove, and skips frames
       // on slow devices. Nothing else on this canvas — keep it cheap.
@@ -432,7 +450,7 @@ const isHome = Astro.url.pathname === '/';
         const spine = document.getElementById('page-spine');
         if (!spine) return;
         const dotSectionPairs = Array.from(spine.querySelectorAll('.page-spine-dots li'))
-          .map((d) => ({ dot: d, section: document.querySelector(d.dataset.target) }))
+          .map((d) => ({ dot: d, section: resolveHash(d.dataset.target) }))
           .filter((p) => p.section);
         if (!dotSectionPairs.length) return;
         const dots = dotSectionPairs.map((p) => p.dot);
@@ -520,7 +538,7 @@ const isHome = Astro.url.pathname === '/';
       const _reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       function warpTo(targetSel) {
         if (warpInFlight) return;
-        const t = document.querySelector(targetSel);
+        const t = resolveHash(targetSel);
         if (!t) return;
         if (_reducedMotion.matches) {
           jumpTo(t, targetSel);
@@ -574,7 +592,10 @@ const isHome = Astro.url.pathname === '/';
       document.querySelectorAll('header a[href^="#"]').forEach((a) => {
         const href = a.getAttribute('href');
         if (!href || href === '#') return;
-        if (!document.querySelector(href)) return;
+        // resolveHash both validates the shape AND verifies the target
+        // exists. Skips broken-link entries from the WeakMap so warpTo
+        // never tries to walk an absent target.
+        if (!resolveHash(href)) return;
         _headerLinks.set(a, href);
       });
       // Document-level mousedown at the capture phase — fires before
@@ -658,7 +679,11 @@ const isHome = Astro.url.pathname === '/';
       // doesn't update location.hash, so it never reaches this listener.
       (function () {
         const pending = window.__obPendingHash;
-        if (pending && pending !== '#main-content' && document.querySelector(pending)) {
+        // `#main-content` matches the resolveHash id-token shape, so
+        // we still need an explicit guard here — the skip-link target
+        // must let the browser handle focus + scroll natively (WCAG
+        // 2.4.1). warpTo's 1.2s animation would defeat the bypass.
+        if (pending && pending !== '#main-content' && resolveHash(pending)) {
           // Hero is the natural starting frame for the warp-in.
           window.scrollTo(0, 0);
           requestAnimationFrame(() => warpTo(pending));
@@ -667,7 +692,7 @@ const isHome = Astro.url.pathname === '/';
           // Skip-link target — let the browser handle focus/scroll natively. The warp
           // animation would defeat the bypass-block purpose (WCAG 2.4.1).
           if (location.hash === '#main-content') return;
-          if (location.hash && document.querySelector(location.hash)) {
+          if (location.hash && resolveHash(location.hash)) {
             warpTo(location.hash);
           }
         });

@@ -22,6 +22,26 @@ const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT = 5;
 const hits = new Map<string, number[]>();
 
+// Hardcoded — the only allowed Origin for cross-origin POST. Worker
+// also serves the static site at this origin, so same-origin form
+// submits send `Origin: https://onebrain.run`. Anything else is a
+// third-party page POSTing on the user's behalf (CSRF surface).
+const ALLOWED_ORIGIN = 'https://onebrain.run';
+// Cap request body before parsing JSON — Workers buffer up to 100 MB
+// by default. A waitlist signup is <300 bytes; 10 KB is generous and
+// blocks slow-loris isolate pinning + accidental large payloads.
+const MAX_BODY_BYTES = 10 * 1024;
+
+// Trim caught exceptions to just the message for Cloudflare Workers
+// Logs. Raw Error objects can include D1 schema fragments, stack
+// frames pointing at internal modules, or pieces of the failing SQL —
+// none of which we want in operational logs that may be Logpush'd
+// or shared via dashboard links later.
+function safeErr(e: unknown): string {
+  if (e instanceof Error) return e.message.slice(0, 200);
+  return String(e).slice(0, 200);
+}
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -46,6 +66,34 @@ async function hashIp(ip: string): Promise<string> {
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  // CSRF surface: browsers send a CORS preflight for `application/json`
+  // and the endpoint replies with no Access-Control-Allow-Origin, so
+  // third-party JSON POSTs are blocked. But `text/plain` is a "simple
+  // request" — no preflight, body delivers. An attacker page can post
+  // a JSON-shaped string with `text/plain` and the endpoint will parse
+  // it via request.json(). Reject anything that isn't application/json.
+  const ct = (request.headers.get('content-type') || '').toLowerCase();
+  if (!ct.startsWith('application/json')) {
+    return json({ ok: false, error: 'invalid_content_type' }, 415);
+  }
+  // Origin header: present on every browser cross-origin POST. Same-
+  // origin fetches from onebrain.run send `Origin: https://onebrain.run`.
+  // null/missing Origin is fine (some user agents and non-browser
+  // clients omit it on same-origin); only reject when a foreign Origin
+  // is explicitly present.
+  const origin = request.headers.get('origin');
+  if (origin && origin !== ALLOWED_ORIGIN) {
+    return json({ ok: false, error: 'forbidden_origin' }, 403);
+  }
+  // Body-size guard before parse. Content-Length is advisory but every
+  // legitimate fetch() from the form sets it. Missing Content-Length
+  // is allowed (chunked), but in that case the JSON parser still bounds
+  // memory by the field-extraction path below.
+  const cl = request.headers.get('content-length');
+  if (cl !== null && Number(cl) > MAX_BODY_BYTES) {
+    return json({ ok: false, error: 'payload_too_large' }, 413);
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -123,7 +171,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     try {
       ipHash = await hashIp(clientAddress);
     } catch (e) {
-      console.warn('[waitlist] hashIp failed; proceeding with ip_hash=null:', e);
+      console.warn('[waitlist] hashIp failed; proceeding with ip_hash=null:', safeErr(e));
     }
   }
 
@@ -137,7 +185,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     return json({ ok: true }, 200);
   } catch (e) {
-    console.error('[waitlist] insert failed:', e);
+    console.error('[waitlist] insert failed:', safeErr(e));
     return json({ ok: false, error: 'server_error' }, 500);
   }
 };
