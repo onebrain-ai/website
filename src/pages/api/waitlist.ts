@@ -1,11 +1,17 @@
 import type { APIRoute } from 'astro';
 // Astro v6 + @astrojs/cloudflare exposes env via cloudflare:workers (was Astro.locals.runtime.env).
 import { env } from 'cloudflare:workers';
+import { DISPOSABLE_DOMAINS } from '../../lib/disposable-domains';
 
 // Run as Cloudflare Worker, not prerendered.
 export const prerender = false;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Minimum render-to-submit time. Humans need at least this long to
+// focus the input + type a real address. Bots fire under 300ms. The
+// form is server-rendered, so the timer starts on script-init at the
+// page load — generous floor for anyone with a slow connection.
+const MIN_SUBMIT_MS = 1500;
 
 // Hand-rolled D1 surface — minimum we need from @cloudflare/workers-types.
 // Kept local so the file doesn't pull a transitive types dep into the
@@ -108,6 +114,59 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const emailRaw = asString(fields.email);
   if (emailRaw === undefined) {
     return json({ ok: false, error: 'invalid_email' }, 400);
+  }
+
+  // ── Anti-spam silent rejects ─────────────────────────────────────
+  // These three checks all return 200 OK without writing to D1 — the
+  // bot can't distinguish "blocked" from "accepted", which is the
+  // point. A noisy 4xx response would tell the attacker which signal
+  // tripped, so they could tune around it.
+
+  // 1) Honeypot: hidden `company` field. Human form has it offscreen,
+  //    aria-hidden, tabindex=-1, autocomplete=off. Bots that fill
+  //    every <input> trip it.
+  const honeypot = asString(fields.company);
+  if (honeypot && honeypot.length > 0) {
+    return json({ ok: true }, 200);
+  }
+
+  // 2) Submission timing: client sends ms elapsed from form render to
+  //    submit. Real humans take >1500ms (focus + type + click);
+  //    most bots fire under 300ms.
+  //
+  //    Missing `t` entirely → treat as legacy client (older cached
+  //    HTML before this version shipped) and let the request continue
+  //    to the normal validation path. Silent-rejecting on missing-t
+  //    would cause every stale browser cache to "succeed" with no
+  //    D1 row forever. The honeypot still catches the simple-bot
+  //    case where t is omitted.
+  //
+  //    Present-but-too-fast → silent-accept (bot signal).
+  //    Accept stringified `t` too — some clients/SDKs may JSON-encode
+  //    numerics as strings.
+  const tRaw = fields.t;
+  if (tRaw !== undefined) {
+    const elapsedNum =
+      typeof tRaw === 'number'
+        ? tRaw
+        : typeof tRaw === 'string'
+          ? Number(tRaw)
+          : NaN;
+    if (Number.isFinite(elapsedNum) && elapsedNum < MIN_SUBMIT_MS) {
+      return json({ ok: true }, 200);
+    }
+  }
+
+  // 3) Disposable-domain blocklist. Throwaway addresses bounce when
+  //    we email the list at launch and tank sender reputation.
+  //    `.pop()` on the @-split takes the trailing component, defending
+  //    against malformed inputs like `a@b@mailinator.com` — even if
+  //    a future EMAIL_RE relaxation admits them, the disposable check
+  //    still resolves to the real trailing domain.
+  const parts = emailRaw.trim().toLowerCase().split('@');
+  const candidateDomain = parts.length >= 2 ? parts[parts.length - 1] : '';
+  if (candidateDomain && DISPOSABLE_DOMAINS.has(candidateDomain)) {
+    return json({ ok: true }, 200);
   }
 
   // clientAddress absent in local dev (no incoming Cloudflare ip header) — skip rate limit.
