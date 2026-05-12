@@ -903,6 +903,17 @@ body.suppress-hover .nav-glass a:not(.is-active) > span {
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.55);
 }
+/* Inline <code> inside a cyber-card-desc — the outer prose is already
+   mono, so just font-family does nothing; lift the code with the
+   shared cyan accent + a faint tinted background so literal paths
+   like `memory/` read as "this is real, not metaphor". */
+.cyber-card-desc code {
+  color: #00f3ff;
+  background: rgba(0, 243, 255, 0.08);
+  padding: 0 4px;
+  border-radius: 2px;
+  font-size: 0.95em;
+}
 
 /* Off-screen unload — every <section> gets data-vis="off" via the
    IntersectionObserver in Layout.astro while it sits outside the

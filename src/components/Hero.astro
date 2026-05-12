@@ -73,8 +73,8 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
         <div class="cta-row reveal" style="transition-delay: 550ms;">
           <a href="https://github.com/onebrain-ai/onebrain#installation" target="_blank" rel="noopener noreferrer" class="btn-cyber btn-cyber-primary">
-            <span>INITIALIZE_</span>
-            <span class="btn-cyber-arrow">→</span>
+            <span>GET_STARTED_</span>
+            <span class="btn-cyber-arrow">↗</span>
           </a>
           <a href="#commands" class="btn-cyber btn-cyber-ghost">
             <span>BROWSE_26_COMMANDS</span>
@@ -107,15 +107,15 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
           <div class="op-status">
             <div class="op-stat"><span>MEM</span><strong>warm</strong></div>
-            <div class="op-stat"><span>INBOX</span><strong>7</strong></div>
-            <div class="op-stat"><span>TASKS</span><strong>2 due</strong></div>
-            <div class="op-stat"><span>VAULT</span><strong>369 docs</strong></div>
+            <div class="op-stat"><span>INBOX</span><strong data-rand="inbox">7</strong></div>
+            <div class="op-stat"><span>TASKS</span><strong data-rand="tasks">2 due</strong></div>
+            <div class="op-stat"><span>VAULT</span><strong data-rand="vault">369 docs</strong></div>
           </div>
         </div>
 
         <div class="op-caption">
           <span>// LIVE_FEED</span>
-          <span class="op-caption-dim">agent telemetry · sync 4s</span>
+          <span class="op-caption-dim">agent telemetry · <span data-rand="sync">sync 4s</span></span>
         </div>
       </div>
 
@@ -123,6 +123,12 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   </div>
 
   <script is:inline>
+    // HUD `data-rand` randomization is now hoisted to Layout.astro's
+    // body inline script (runs after <slot/> parse, before any user-
+    // visible paint of the dynamic stats). All `[data-rand="inbox"]` /
+    // `[data-rand="tasks"]` / `[data-rand="vault"]` / `[data-rand="sync"]`
+    // elements get seeded from a centralized range map — see Layout.
+
     // Defer the entire hero JS init (particle canvas, scramble loop,
     // op-console scenarios, copy button, HUD telemetry) until the
     // browser is idle. Hero h1 + sub + CTAs render with CSS only —
@@ -546,7 +552,12 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         const lat = document.getElementById('hud-lat');
         const tx = document.getElementById('hud-tx');
         if (!uptime && !lat && !tx) return;
-        const start = Date.now();
+        // Seed UPTIME from a random elapsed offset (0–90 minutes) so
+        // returning visitors don't see `00:00:00` every load — the
+        // ticker then continues forward from there. Without this seed,
+        // the HUD reads as freshly booted on every reload, which
+        // contradicts the "long-running agent" framing.
+        const start = Date.now() - Math.floor(Math.random() * 5400) * 1000;
         function tick() {
           if (uptime) {
             const s = Math.floor((Date.now() - start) / 1000);
@@ -1020,7 +1031,11 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     background: rgba(0, 243, 255, 0.05);
   }
   .btn-cyber-arrow { transition: transform 0.3s ease; }
-  .btn-cyber:hover .btn-cyber-arrow { transform: translateX(5px); }
+  /* Primary CTA uses ↗ (northeast, external link) — animate diagonally
+     so the arrow slides in the direction it points. Ghost CTA uses
+     an inline <svg> ↓ (no .btn-cyber-arrow class), so it's unaffected
+     and keeps its own behavior. */
+  .btn-cyber-primary:hover .btn-cyber-arrow { transform: translate(4px, -4px); }
 
   /* ── OPERATOR CONSOLE (RIGHT) ─────────────── */
 

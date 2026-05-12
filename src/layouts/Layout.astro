@@ -192,6 +192,34 @@ const isHome = Astro.url.pathname === '/';
         if (typeof targetSel !== 'string' || !_OB_ID_RE.test(targetSel)) return null;
         return document.getElementById(targetSel.slice(1));
       }
+
+      // Per-load randomizer for HUD-style chrome. Sections declare a
+      // `data-rand="key"` attribute on any element they want seeded;
+      // the map below provides a ranged formatter per key. Runs
+      // SYNCHRONOUSLY here (Layout body script parses after <slot/>
+      // so every section's markup is already in the DOM) — users
+      // never see the SSR defaults pop to random.
+      //
+      // Add a new randomizable slot in 3 lines: drop a `data-rand="..."`
+      // span in any section, register a key → fn entry below, done.
+      // SSR default inside the span is the no-JS fallback (still reads
+      // as plausible HUD chrome, just frozen).
+      (function () {
+        const rand = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+        const hex4 = () => rand(0, 0xFFFF).toString(16).padStart(4, '0').toUpperCase();
+        const RAND = {
+          inbox: () => String(rand(3, 12)),
+          tasks: () => String(rand(0, 5)) + ' due',
+          vault: () => String(rand(200, 450)) + ' docs',
+          sync: () => 'sync ' + rand(2, 6) + 's',
+          build_id: hex4,
+        };
+        document.querySelectorAll('[data-rand]').forEach((el) => {
+          const fn = RAND[el.dataset.rand];
+          if (fn) el.textContent = fn();
+        });
+      })();
+
       // Site-wide neural canvas. Tuned for Safari: pauses when tab hidden,
       // pauses when canvas is offscreen, throttles mousemove, and skips frames
       // on slow devices. Nothing else on this canvas — keep it cheap.
