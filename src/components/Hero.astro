@@ -73,8 +73,8 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
         <div class="cta-row reveal" style="transition-delay: 550ms;">
           <a href="https://github.com/onebrain-ai/onebrain#installation" target="_blank" rel="noopener noreferrer" class="btn-cyber btn-cyber-primary">
-            <span>INITIALIZE_</span>
-            <span class="btn-cyber-arrow">→</span>
+            <span>GET_STARTED_</span>
+            <span class="btn-cyber-arrow">↗</span>
           </a>
           <a href="#commands" class="btn-cyber btn-cyber-ghost">
             <span>BROWSE_26_COMMANDS</span>
@@ -107,9 +107,9 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
           <div class="op-status">
             <div class="op-stat"><span>MEM</span><strong>warm</strong></div>
-            <div class="op-stat"><span>INBOX</span><strong>7</strong></div>
-            <div class="op-stat"><span>TASKS</span><strong>2 due</strong></div>
-            <div class="op-stat"><span>VAULT</span><strong>369 docs</strong></div>
+            <div class="op-stat"><span>INBOX</span><strong data-rand="inbox">7</strong></div>
+            <div class="op-stat"><span>TASKS</span><strong data-rand="tasks">2 due</strong></div>
+            <div class="op-stat"><span>VAULT</span><strong data-rand="vault">369 docs</strong></div>
           </div>
         </div>
 
@@ -123,6 +123,23 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   </div>
 
   <script is:inline>
+    // Randomize HUD stats SYNCHRONOUSLY before paint — server-rendered
+    // defaults (7 / 2 due / 369 docs) are the no-JS fallback, but if
+    // they're left in until requestIdleCallback fires, the user sees a
+    // visible pop from defaults → random which actively breaks the
+    // "live agent" framing. ~6 lines of pure DOM writes, runs in <1ms,
+    // doesn't move TBT or LCP because the HUD is rendered later in the
+    // hero (h1 + CTAs are above it on the page flow).
+    (function () {
+      const inbox = document.querySelector('[data-rand="inbox"]');
+      const tasks = document.querySelector('[data-rand="tasks"]');
+      const vault = document.querySelector('[data-rand="vault"]');
+      const rand = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+      if (inbox) inbox.textContent = String(rand(3, 12));
+      if (tasks) tasks.textContent = String(rand(0, 5)) + ' due';
+      if (vault) vault.textContent = String(rand(200, 450)) + ' docs';
+    })();
+
     // Defer the entire hero JS init (particle canvas, scramble loop,
     // op-console scenarios, copy button, HUD telemetry) until the
     // browser is idle. Hero h1 + sub + CTAs render with CSS only —
@@ -1020,7 +1037,11 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     background: rgba(0, 243, 255, 0.05);
   }
   .btn-cyber-arrow { transition: transform 0.3s ease; }
-  .btn-cyber:hover .btn-cyber-arrow { transform: translateX(5px); }
+  /* Primary CTA uses ↗ (northeast, external link) — animate diagonally
+     so the arrow slides in the direction it points. Ghost CTA uses
+     an inline <svg> ↓ (no .btn-cyber-arrow class), so it's unaffected
+     and keeps its own behavior. */
+  .btn-cyber-primary:hover .btn-cyber-arrow { transform: translate(4px, -4px); }
 
   /* ── OPERATOR CONSOLE (RIGHT) ─────────────── */
 
