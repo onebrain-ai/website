@@ -12,9 +12,11 @@ import { defineMiddleware } from 'astro:middleware';
  * (irrelevant to JSON), no Permissions-Policy (no UI surface to scope).
  */
 const API_SECURITY_HEADERS: Record<string, string> = {
-  // Match public/_headers exactly — no `preload` until onebrain.run is
-  // submitted to hstspreload.org (one-way commitment).
-  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
+  // Match public/_headers exactly. `preload` is a one-way commitment:
+  // HTTPS-only on apex + all subdomains for the duration of max-age
+  // (2 years). To remove safely, drop the directive here, ship for the
+  // full max-age window, then request removal at hstspreload.org/removal.
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'X-Frame-Options': 'DENY',
