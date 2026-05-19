@@ -37,9 +37,16 @@
 # server-side so connect-src is technically belt-and-braces for
 # client-side preflight), and renders inside an iframe — hence the
 # `frame-src` switch from `'none'` to that single host.
+#
+# HSTS `preload` (added 2026-05-19) is a one-way commitment: once
+# submitted to hstspreload.org, onebrain.run + every `*.onebrain.run`
+# subdomain is locked to HTTPS in browsers for ~max-age (2y). Rollback =
+# drop the directive here, ship the update for max-age duration, then
+# request removal at hstspreload.org/removal. Any future subdomain
+# (e.g. Cloud's `app.onebrain.run`) MUST launch HTTPS-only from day 1.
 
 /*
-  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
