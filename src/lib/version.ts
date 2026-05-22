@@ -39,6 +39,10 @@ export function getCliVersion(): Promise<string> {
       return tag.replace(/^v/, '');
     } catch (e) {
       console.warn('[version] releases API fetch failed, using FALLBACK:', e);
+      // Reset the cache so a future caller can retry; otherwise an
+      // unexpected throw inside try{} would permanently serve a rejected
+      // promise to every subsequent caller (Reviewer A round-1, PR #32).
+      cachedPromise = null;
       return FALLBACK;
     }
   })();
