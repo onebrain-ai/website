@@ -58,7 +58,12 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
 
         <div class="cmd-box reveal" style="transition-delay: 400ms;">
           <span class="cmd-prompt">$</span>
-          <code class="cmd-text" id="cmd-text">npm install -g @onebrain-ai/cli</code>
+          <code
+            class="cmd-text"
+            id="cmd-text"
+            data-cmd-mac="brew install onebrain-ai/onebrain/onebrain"
+            data-cmd-npm="npm install -g @onebrain-ai/cli"
+          >brew install onebrain-ai/onebrain/onebrain</code>
           <button class="cmd-copy" id="cmd-copy" type="button" aria-label="Copy install command">
             <svg class="cmd-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
               <rect x="9" y="9" width="13" height="13" rx="1"/>
@@ -497,6 +502,23 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         document.addEventListener('visibilitychange', () => {
           document.hidden ? stopOp() : startOp();
         });
+      })();
+
+      // 4a. Platform-aware install command. Default render is macOS (brew —
+      // dominant developer platform). Detect non-macOS UAs once at boot and
+      // swap to the npm wrapper (`@onebrain-ai/cli@3.0.0+`). The data-cmd-mac
+      // / data-cmd-npm attributes are the source of truth so we don't have
+      // to keep the strings in sync between markup + script.
+      (function () {
+        const text = document.getElementById('cmd-text');
+        if (!text) return;
+        const ua = navigator.userAgent || '';
+        const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+        const isMac = /Mac|iPhone|iPad|iPod/i.test(platform) || /Macintosh|Mac OS X/i.test(ua);
+        if (!isMac) {
+          const npmCmd = text.getAttribute('data-cmd-npm');
+          if (npmCmd) text.textContent = npmCmd;
+        }
       })();
 
       // 4. Clipboard copy. Modern API first; falls back to a hidden textarea
