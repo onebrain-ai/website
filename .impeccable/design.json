@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-01T00:00:00Z",
+  "title": "Design System: OneBrain",
+  "extensions": {
+    "colorMeta": {
+      "magenta-pulse": { "role": "primary", "displayName": "Magenta Pulse", "canonical": "#ff2d92", "tonalRamp": ["#2a0a18", "#4d0e28", "#730a3c", "#99124f", "#cc1a6b", "#ff2d92", "#ff66ab", "#ffb0d4"] },
+      "cyan-signal": { "role": "secondary", "displayName": "Cyan Signal", "canonical": "#00f3ff", "tonalRamp": ["#042026", "#06343d", "#084b57", "#0a6675", "#0c8499", "#0fb3cf", "#00f3ff", "#7df8ff"] },
+      "violet-arc": { "role": "tertiary", "displayName": "Violet Arc", "canonical": "#bc13fe", "tonalRamp": ["#1f0530", "#340a4d", "#4d0d73", "#6a1199", "#8a14c4", "#bc13fe", "#cf66ff", "#e2b0ff"] },
+      "amber-warn": { "role": "tertiary", "displayName": "Amber Warn", "canonical": "#ffb000", "tonalRamp": ["#2e1f00", "#4d3400", "#735000", "#996b00", "#c08a00", "#e6a300", "#ffb000", "#ffd166"] },
+      "void-black": { "role": "neutral", "displayName": "Void Black", "canonical": "#050507", "tonalRamp": ["#050507", "#0c0c12", "#16161f", "#24242f", "#3a3a47", "#5c5c6a", "#8a8a98", "#c4c4cf"] },
+      "console-surface": { "role": "neutral", "displayName": "Console Surface", "canonical": "#0a0a12", "tonalRamp": ["#07070c", "#0a0a12", "#14141f", "#22222e", "#383846", "#5a5a69", "#888897", "#c2c2ce"] },
+      "signal-white": { "role": "neutral", "displayName": "Signal White", "canonical": "#f0f0f2", "tonalRamp": ["#2a2a2e", "#3c3c40", "#54545a", "#6e6e74", "#8e8e94", "#b0b0b6", "#d4d4d8", "#f0f0f2"] },
+      "muted-steel": { "role": "neutral", "displayName": "Muted Steel", "canonical": "#a1a1aa", "tonalRamp": ["#2c2c30", "#3e3e44", "#54545b", "#6c6c74", "#84848d", "#a1a1aa", "#c0c0c7", "#dedee2"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only, one per page. Chakra Petch italic uppercase." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles (cyber-h2), often stroke-only with a left-to-right color drain on boot." },
+      "title": { "displayName": "Title", "purpose": "Card titles and small headers." },
+      "body": { "displayName": "Body", "purpose": "All reading copy, set in JetBrains Mono. Measure capped ~60-70ch." },
+      "label": { "displayName": "Label", "purpose": "Eyebrow pills, HUD readouts, status lines, nav links. The machine print." }
+    },
+    "shadows": [
+      { "name": "cta-glow", "value": "0 0 40px rgba(255,45,146,0.35)", "purpose": "Primary button resting magenta halo; intensifies to 0 0 70px / 0.6 alpha on hover." },
+      { "name": "focus-glow", "value": "0 0 10px var(--accent), 0 0 22px var(--accent)", "purpose": "Spine dots, pill dots, and focus states glow in their own accent." },
+      { "name": "text-glow", "value": "0 0 50px var(--accent)", "purpose": "Headline stroke and stylized type emit a soft accent bloom (text-shadow)." },
+      { "name": "orb-wash", "value": "filter: blur(100px) on a 9%-accent ellipse", "purpose": "Ambient per-section atmosphere behind content; sits behind, never under surfaces." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Reveal fades and button state transitions; the system's default exponential ease-out." },
+      { "name": "ease-section-entrance", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Section boot choreography: pill rise, h2 slide, sub lift, card stagger." },
+      { "name": "ease-drain", "value": "cubic-bezier(0.55, 0, 0.45, 1)", "purpose": "Headline color-drain sweep on section boot." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The conversion CTA: angular bevels, solid magenta fill on dark text, resting neon glow, white-flip on hover.",
+      "html": "<a class=\"ds-btn-primary\"><span>GET_STARTED_</span><span class=\"ds-btn-arrow\">↗</span></a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 12px; padding: 18px 30px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; text-decoration: none; cursor: pointer; background: #ff2d92; color: #050507; border: 1px solid #ff2d92; box-shadow: 0 0 40px rgba(255,45,146,0.35); clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%); transition: color 0.3s cubic-bezier(0.16,1,0.3,1), background 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: #ffffff; color: #ff2d92; box-shadow: 0 0 70px rgba(255,45,146,0.6); } .ds-btn-primary .ds-btn-arrow { transition: transform 0.3s ease; } .ds-btn-primary:hover .ds-btn-arrow { transform: translate(4px, -4px); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: barely-there fill, faint border, cyan reveal on hover.",
+      "html": "<a class=\"ds-btn-ghost\"><span>BROWSE_30_COMMANDS</span></a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 12px; padding: 18px 30px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; text-decoration: none; cursor: pointer; background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.22); clip-path: polygon(8% 0, 100% 0, 100% 75%, 92% 100%, 0 100%, 0 25%); transition: color 0.3s cubic-bezier(0.16,1,0.3,1), background 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s cubic-bezier(0.16,1,0.3,1); } .ds-btn-ghost:hover { color: #00f3ff; border-color: #00f3ff; background: rgba(0,243,255,0.05); }"
+    },
+    {
+      "name": "Eyebrow Pill",
+      "kind": "chip",
+      "refersTo": "pill-eyebrow",
+      "description": "The branded section kicker: mono caps in the section accent, hand-drawn corner brackets, pulsing dot.",
+      "html": "<span class=\"ds-pill\"><span class=\"ds-pill-dot\"></span><span>SYSTEM // OPERATIONAL</span></span>",
+      "css": ".ds-pill { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 9px 16px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: #00f3ff; background: rgba(0,243,255,0.04); border: 1px solid rgba(0,243,255,0.3); } .ds-pill::before, .ds-pill::after { content: ''; position: absolute; width: 8px; height: 8px; border: 1px solid currentColor; } .ds-pill::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; } .ds-pill::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; } .ds-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; animation: ds-pulse 1.5s ease-in-out infinite; } @keyframes ds-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } } @media (prefers-reduced-motion: reduce) { .ds-pill-dot { animation: none; } }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Sharp, translucent console panel. Flat at rest; hover tints the border and reveals a left accent bar plus a corner meta-label.",
+      "html": "<div class=\"ds-card\"><span class=\"ds-card-meta\">01</span><h3 class=\"ds-card-title\">PERSISTENT MEMORY</h3><p class=\"ds-card-desc\">The agent remembers across sessions, writing to <code>memory/</code> in your own vault.</p></div>",
+      "css": ".ds-card { position: relative; background: rgba(8,8,14,0.78); border: 1px solid rgba(255,255,255,0.06); padding: 1.4rem 1.5rem; transition: border-color 0.25s ease, background 0.25s ease; } .ds-card:hover { border-color: rgba(0,243,255,0.35); background: rgba(8,8,14,0.7); } .ds-card::before { content: ''; position: absolute; top: -1px; bottom: -1px; left: -1px; width: 2px; background: #00f3ff; opacity: 0; transition: opacity 0.25s ease; } .ds-card:hover::before { opacity: 0.8; } .ds-card-meta { position: absolute; top: 12px; right: 14px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.18); transition: color 0.25s ease; } .ds-card:hover .ds-card-meta { color: #00f3ff; } .ds-card-title { margin: 0; font-family: 'Chakra Petch', sans-serif; font-style: italic; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; } .ds-card-desc { margin: 10px 0 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.65; color: rgba(255,255,255,0.55); } .ds-card-desc code { color: #00f3ff; background: rgba(0,243,255,0.08); padding: 0 4px; border-radius: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "The waitlist email field: black translucent fill, hairline border, sharp corners, accent focus ring.",
+      "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"you@domain.com\" />",
+      "css": ".ds-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 14px 16px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #fff; letter-spacing: 0.02em; transition: border-color 0.25s ease; } .ds-input::placeholder { color: rgba(255,255,255,0.5); } .ds-input:focus-visible { outline: 2px solid #00f3ff; outline-offset: 2px; border-color: #00f3ff; } .ds-input:focus:not(:focus-visible) { outline: none; border-color: #00f3ff; }"
+    },
+    {
+      "name": "Command Box",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "The install-command surface, the most conversion-critical element. Magenta prompt, mono command, gradient left bar, cyan-confirm copy button.",
+      "html": "<div class=\"ds-cmd\"><span class=\"ds-cmd-prompt\">$</span><code class=\"ds-cmd-text\">brew install onebrain-ai/onebrain/onebrain</code><button class=\"ds-cmd-copy\" type=\"button\">COPY</button></div>",
+      "css": ".ds-cmd { position: relative; display: flex; align-items: center; gap: 14px; padding: 14px 14px 14px 22px; max-width: 520px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.1); font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.25s ease; } .ds-cmd:hover { border-color: rgba(0,243,255,0.4); } .ds-cmd::before { content: ''; position: absolute; top: -1px; bottom: -1px; left: -1px; width: 3px; background: linear-gradient(180deg, #ff2d92, #00f3ff); } .ds-cmd-prompt { color: #ff2d92; font-size: 14px; font-weight: 700; } .ds-cmd-text { flex: 1; font-size: 13px; color: rgba(255,255,255,0.92); letter-spacing: 0.02em; } .ds-cmd-copy { padding: 7px 12px; background: transparent; border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.65); font-family: inherit; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; cursor: pointer; transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease; } .ds-cmd-copy:hover { color: #00f3ff; border-color: #00f3ff; background: rgba(0,243,255,0.05); }"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "pill-eyebrow",
+      "description": "Header navigation link: mono caps, muted at rest, white with bracket reveal on hover/active.",
+      "html": "<a class=\"ds-nav-link\"><span class=\"ds-nav-bracket\">[</span>WORKFLOW<span class=\"ds-nav-bracket\">]</span></a>",
+      "css": ".ds-nav-link { display: inline-flex; align-items: center; gap: 2px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #a1a1aa; text-decoration: none; cursor: pointer; transition: color 0.25s ease; } .ds-nav-bracket { opacity: 0; transition: opacity 0.25s ease; pointer-events: none; } .ds-nav-link:hover, .ds-nav-link.is-active { color: #fff; } .ds-nav-link:hover .ds-nav-bracket, .ds-nav-link.is-active .ds-nav-bracket { opacity: 1; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Operator Console",
+    "overview": "OneBrain's surface is a live mission-control console for a thinking machine. You don't read this site so much as sit at its controls: HUD readouts pin the four corners, a scroll-progress spine tracks your position on the right edge, telemetry ticks in a live agent feed, and each section boots with a one-shot scanline sweep before it reveals itself. The aesthetic is operator-grade and unmistakably alive, rendered in light-on-void: near-black panels, monospace status lines, and a neon signal palette that glows rather than shines. This is a developer-facing instrument, not a marketing brochure: high, deliberate density, every readout concrete (real commands, real vault paths, real-feeling telemetry) so a skeptical engineer can see the machine work instead of reading adjectives about it. The treatment is a strong hypothesis, not a cage: hold the register (operator-grade, living, candid) fixed; the neon-and-scanline execution is open to revision if a sharper direction better earns the install and the star.",
+    "keyCharacteristics": [
+      "Light-on-void: near-black (#050507) surfaces, neon signal accents that glow.",
+      "Angular, never rounded: rectangular surfaces have zero radius; bevels come from clip-path cuts.",
+      "Monospace as the speaking voice: reading copy is JetBrains Mono, not the sans.",
+      "Living HUD: corner readouts, scroll-spine, scanline boots, live telemetry, warp transitions.",
+      "Italic uppercase display type (Chakra Petch) for every headline.",
+      "Per-section accent rotation across a four-color neon family."
+    ],
+    "rules": [
+      { "name": "The Glow-Not-Fill Rule", "body": "Accents earn their saturation by glowing (neon stroke, blurred orb, box-shadow halo), never by flooding a large surface. A neon color filling more than a button-sized area is a bug; the void is what makes the signal read.", "section": "colors" },
+      { "name": "The Per-Section Accent Rule", "body": "Each section owns one accent via the --section-accent custom property, rotating through the four-color family. Within a section that one accent is law; do not mix two signal colors except where the system already pairs them.", "section": "colors" },
+      { "name": "The Living-Floor Rule", "body": "Reading copy never goes lighter than rgba(255,255,255,0.62) on void; that is the muted floor, not a starting point. Push toward Signal White for anything a user must read. The input placeholder at rgba(255,255,255,0.22) is the known weak spot to fix, not a pattern to copy.", "section": "colors" },
+      { "name": "The Monospace Voice Rule", "body": "Reading copy is JetBrains Mono, not the sans. The terminal voice is the brand; do not swap body prose to Inter for readability, widen line-height instead.", "section": "typography" },
+      { "name": "The Stencil Rule", "body": "Headlines are Chakra Petch, italic, uppercase, every time. Never set a headline in body mono or in roman/non-italic Chakra Petch; the italic stencil is the brand's headline signature.", "section": "typography" },
+      { "name": "The No-Lift Rule", "body": "No surface casts a gray drop shadow. The only box-shadow in the system is a colored glow on active/accent elements. If a card looks like it's floating on a 2014 app shadow, delete the shadow and let tonal layering carry the depth.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every rectangular surface sharp (border-radius: 0); express angularity through clip-path bevels, never rounded corners.",
+      "Do set headlines in Chakra Petch, italic, uppercase, and reading copy in JetBrains Mono. Honor the Monospace Voice and Stencil rules.",
+      "Do give each section exactly one accent via --section-accent and let accents glow rather than fill.",
+      "Do hold body text to >=4.5:1 (AA floor) and push toward AAA where the palette allows; treat rgba(255,255,255,0.62) as the muted floor and fix the input placeholder up to it.",
+      "Do show the machine, real commands, real vault paths, live telemetry, over adjectives. Make the hero earn the install in one screen.",
+      "Do ship a prefers-reduced-motion path for every animation and keep effects from gating content visibility."
+    ],
+    "donts": [
+      "Don't use generic-SaaS scaffolding: rounded-card grids, soft purple gradients, Inter-on-white, the big-number hero-metric template, or mascot illustrations.",
+      "Don't let it read like a rival note tool (Notion, Mem, Reflect, or Obsidian's own marketing). The wedge is the agent that learns you, not prettier notes.",
+      "Don't drift corporate/enterprise: no navy-and-gray, no stock photography, no buzzword sales copy, no trust-badge soup.",
+      "Don't add gray drop shadows for depth; the only shadow is a neon glow on accents.",
+      "Don't nest cards inside cards, or flood a neon accent across a large surface.",
+      "Don't set headlines in body mono or roman Chakra Petch, and don't swap reading copy to a sans for readability.",
+      "Don't turn the eyebrow pill into a generic per-section all-caps kicker; it is one branded system element, used consistently."
+    ]
+  }
+}
