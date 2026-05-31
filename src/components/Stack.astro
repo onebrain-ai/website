@@ -11,9 +11,9 @@
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center stack-grid">
 
-      <!-- LEFT: Headline + manifesto -->
+      <!-- Diagram sits LEFT at md+ (see stack-grid order flip); text follows -->
       <header>
         <div class="cyber-pill">
           <span class="cyber-pill-dot"></span>
@@ -24,21 +24,21 @@
           <span class="cyber-h2-stroke">Orchestration.</span>
         </h2>
         <p class="cyber-sub">
-          <strong class="brand">OneBrain</strong> doesn't build harnesses — it orchestrates them. Bring Claude Code, Gemini CLI, Codex, Qwen — or a raw API key — and switch any time. Your vault stays the constant; the harness is the variable.
+          <strong class="brand">OneBrain</strong> orchestrates the harness you already use. Bring Claude Code, Gemini CLI, Codex, Qwen, or a raw API key, and switch any time. Your vault stays the constant; the harness is the variable.
         </p>
 
         <div class="manifesto">
           <div class="manifesto-row">
             <span class="manifesto-tag">PICK_BY</span>
-            <span class="manifesto-text"><strong>familiarity</strong> — use the harness you already love</span>
+            <span class="manifesto-text"><strong>familiarity</strong>: use the harness you already love</span>
           </div>
           <div class="manifesto-row">
             <span class="manifesto-tag">PICK_BY</span>
-            <span class="manifesto-text"><strong>task</strong> — research with one, code with another</span>
+            <span class="manifesto-text"><strong>task</strong>: research with one, code with another</span>
           </div>
           <div class="manifesto-row">
             <span class="manifesto-tag">PICK_BY</span>
-            <span class="manifesto-text"><strong>cost</strong> — local LLM for routine, premium API for the hard problems</span>
+            <span class="manifesto-text"><strong>cost</strong>: local LLM for routine, premium API for the hard problems</span>
           </div>
           <div class="manifesto-row manifesto-row-emph">
             <span class="manifesto-tag manifesto-tag-emph">RESULT</span>
@@ -62,7 +62,7 @@
 
         <img
           src="/diagrams/harness-os-stack.svg"
-          alt="OneBrain Harness OS — four stacked layers from top to bottom: OneBrain plugin and CLI (OS layer), Harness runtime, LLM intelligence source, and Obsidian Vault as the foundation."
+          alt="OneBrain Harness OS, four stacked layers from top to bottom: OneBrain plugin and CLI (OS layer), Harness runtime, LLM intelligence source, and Obsidian Vault as the foundation."
           class="hs-svg"
           width="790"
           height="585"
@@ -83,6 +83,15 @@
   /* Section-scoped sizing — match the 4rem cap used by other diagram
      sections so headlines render at a consistent maximum across cyber-h2. */
   #stack .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
+
+  /* Zigzag rhythm: at md+ the architecture diagram sits on the LEFT and
+     the text on the right, so the section run stops reading as
+     "text-left every time" (it alternates with Session). Gated to the
+     2-col breakpoint; below md the column stacks text-first so the
+     reader gets the pitch before the diagram. */
+  @media (min-width: 768px) {
+    .stack-grid > header { order: 2; }
+  }
 
   /* Manifesto rows (left column) */
   .manifesto {

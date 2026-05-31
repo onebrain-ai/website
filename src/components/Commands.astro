@@ -26,14 +26,14 @@ const commands = [
   { cmd: '/distill',       desc: 'Aggregate sessions on a topic into a structured digest.',
     usecase: "After 5 days of research on a project, /distill synthesizes all session logs into a single 'Source of Truth' knowledge note." },
   // Row 3 — OPERATE (all newly shipped)
-  { cmd: '/search',        desc: 'Ask "what" and "why" — qmd-powered retrieval across vault + memory + session logs.',
-    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes — qmd hybrid (lex + vec + hyde) under the hood, grep fallback if qmd isn't indexed.",
+  { cmd: '/search',        desc: 'Ask "what" and "why": qmd-powered retrieval across vault + memory + session logs.',
+    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes, using qmd hybrid (lex + vec + hyde) under the hood, with a grep fallback if qmd isn't indexed.",
     isNew: true },
   { cmd: '/pause',         desc: 'Snapshot a long task; resume across sessions without re-orienting.',
-    usecase: "Halfway through a 3-day research thread? Run /pause before logging off. Tomorrow's session opens with /resume, and OneBrain replays exactly where you left off — open files, decisions, next step intact.",
+    usecase: "Halfway through a 3-day research thread? Run /pause before logging off. Tomorrow's session opens with /resume, and OneBrain replays exactly where you left off: open files, decisions, and next step intact.",
     isNew: true },
-  { cmd: '/schedule-add',  desc: 'Cron-schedule any skill on your machine — /daily brief, /weekly review.',
-    usecase: "Want a 9am daily briefing every morning? Run /schedule-add, pick /daily, set the time. OneBrain writes a launchd job locally — runs on your machine, no cloud, no subscription, output lands back in your vault automatically.",
+  { cmd: '/schedule-add',  desc: 'Cron-schedule any skill on your machine: /daily brief, /weekly review.',
+    usecase: "Want a 9am daily briefing every morning? Run /schedule-add, pick /daily, set the time. OneBrain writes a launchd job locally: it runs on your machine, no cloud, no subscription, and output lands back in your vault automatically.",
     isNew: true },
 ];
 ---
@@ -57,7 +57,7 @@ const commands = [
             <span class="cyber-h2-stroke">That Think.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> ships 30+ slash commands and 5 background agents — vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/schedule-add</strong> automates them on a cron.
+            <strong class="brand">OneBrain</strong> ships 30+ slash commands and 5 background agents: vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/schedule-add</strong> automates them on a cron.
           </p>
         </header>
 
@@ -264,6 +264,11 @@ const commands = [
 </script>
 
 <style>
+  /* Headline kept compact (4rem) like the other "how it works" middles;
+     the larger scale is reserved for the Synergy thesis and the Cloud
+     close, so the section run reads as an intentional arc rather than
+     eight headlines shouting at the same size. */
+  #commands .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
   /* Section-scoped tightening so the 9-card grid + signpost row fits
      a single viewport on laptop heights, mirroring the Features/
      Workflow pattern. */
