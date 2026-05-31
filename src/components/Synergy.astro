@@ -20,7 +20,7 @@
             <span class="cyber-h2-stroke">Second Brain.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> doesn't ask you to query an AI — it co-evolves with you. Every preference you teach sharpens the agent, every link it surfaces sharpens you.
+            <strong class="brand">OneBrain</strong> co-evolves with you. Every preference you teach sharpens the agent, and every link it surfaces sharpens you.
           </p>
         </header>
 
@@ -29,13 +29,13 @@
             <span class="cyber-card-meta">01</span>
             <div class="synergy-icon" aria-hidden="true">🧠</div>
             <h3 class="cyber-card-title">HUMAN → AGENT</h3>
-            <p class="cyber-card-desc">Every correction saves to <code>memory/</code>. The agent remembers it next session — not next week.</p>
+            <p class="cyber-card-desc">Every correction saves to <code>memory/</code>. The agent remembers it next session, not next week.</p>
           </div>
           <div class="cyber-card synergy-card">
             <span class="cyber-card-meta">02</span>
             <div class="synergy-icon" aria-hidden="true">⚡</div>
             <h3 class="cyber-card-title">AGENT → HUMAN</h3>
-            <p class="cyber-card-desc">Captures and links your raw thoughts, articles, and meeting notes — automatically. You stay on what only you can do.</p>
+            <p class="cyber-card-desc">Captures and links your raw thoughts, articles, and meeting notes automatically. You stay on what only you can do.</p>
           </div>
         </div>
       </div>
@@ -402,7 +402,10 @@
   /* Section-scoped sizing — keep left column compact so the square
      nebula frame on the right can vertically center against it
      without leaving large empty bands above/below. */
-  #synergy .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
+  /* Thesis anchor: larger than the compact middles (Stack/Workflow/
+     Session/Commands at 4rem), pairing with the Cloud close as the two
+     scale peaks of the page. */
+  #synergy .cyber-h2 { font-size: clamp(2.3rem, 5.2vw, 4.75rem); }
   #synergy .cyber-sub { margin-top: 0.5rem; }
   .synergy-cards .cyber-card { padding: 14px 16px; }
   .synergy-cards .cyber-card-desc { font-size: 11.5px; line-height: 1.5; }

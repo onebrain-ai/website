@@ -47,13 +47,17 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         </div>
 
         <h1 class="hero-h1 reveal" style="transition-delay: 100ms;">
-          <span class="sr-only">OneBrain — AI thinking partner for Obsidian. </span>
+          <span class="sr-only">OneBrain: the AI thinking partner for Obsidian. </span>
           <span class="hero-word" data-scramble="UNIFIED">UNIFIED</span>
           <span class="hero-word hero-word-stroke stroke-text" data-text="INTELLIGENCE">INTELLIGENCE</span>
         </h1>
 
-        <p class="hero-sub reveal" style="transition-delay: 250ms;">
-          <strong class="brand">OneBrain</strong> isn't another second brain — it's a living intelligence layer where you teach the agent and the agent extends you, both evolving inside your Obsidian vault.
+        <p class="hero-lead reveal" style="transition-delay: 200ms;">
+          <strong class="brand">OneBrain</strong> is the open-source AI thinking partner that lives inside your Obsidian vault.
+        </p>
+
+        <p class="hero-sub reveal" style="transition-delay: 300ms;">
+          You teach the agent, the agent extends you, and both get sharper every session.
         </p>
 
         <div class="cmd-box reveal" style="transition-delay: 400ms;">
@@ -316,7 +320,7 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         const scenarios = [
           {
             prompt: '$', cmd: '/braindump',
-            arg: '"cyberpunk redesign — magenta accent, big visual..."',
+            arg: '"cyberpunk redesign, magenta accent, big visual..."',
             results: [
               'captured 6 thoughts · extracted 3 tasks',
               'linked → [[Website Redesign]] [[Design Refs]]',
@@ -924,8 +928,19 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     }
   }
 
+  .hero-lead {
+    margin-top: 28px;
+    max-width: 560px;
+    font-family: var(--font-mono);
+    font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
   .hero-sub {
-    margin-top: 32px;
+    margin-top: 14px;
     max-width: 540px;
     font-family: var(--font-mono);
     font-size: 0.95rem;
@@ -993,6 +1008,13 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
     color: #00f3ff;
     border-color: #00f3ff;
     background: rgba(0, 243, 255, 0.05);
+  }
+  /* Touch: expand the copy button's tap area to ~46px on coarse pointers
+     without enlarging the visual chip, so the compact cmd-box look holds
+     while the hit target clears 44px on phones. */
+  @media (pointer: coarse) {
+    .cmd-copy { position: relative; }
+    .cmd-copy::after { content: ''; position: absolute; inset: -8px; }
   }
   .cmd-copy-check { display: none; }
   .cmd-copy.copied {

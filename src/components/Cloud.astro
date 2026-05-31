@@ -36,10 +36,12 @@ const tiers: Tier[] = [
 
 const stars = await getGitHubStars();
 const starsLabel = formatStars(stars);
-// Hide the badge entirely if the build-time fetch fell back to 0 —
-// rendering "0 stars on GitHub" as social proof is worse than rendering
-// nothing.
-const showStars = stars > 0;
+// A star count only reads as social proof once it's non-trivial. A low
+// number (or the 0 fallback when the build-time fetch fails) undercuts
+// trust more than it helps, so hide the badge below a floor. Raise or
+// lower STARS_PROOF_FLOOR as the repo grows.
+const STARS_PROOF_FLOOR = 50;
+const showStars = stars >= STARS_PROOF_FLOOR;
 ---
 
 <section id="cloud" class="cyber-section reveal" style="--section-accent: #00bfff;">
@@ -325,7 +327,7 @@ const showStars = stars > 0;
           data = {};
         }
         if (res.ok && data.ok) {
-          showBanner('success', '✓ Got it. You\'re on the list — we\'ll ping you at launch.');
+          showBanner('success', '✓ Got it. You\'re on the list. We\'ll ping you at launch.');
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
@@ -645,7 +647,7 @@ const showStars = stars > 0;
     outline: none;
     border-color: var(--section-accent);
   }
-  .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.22); }
+  .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
   /* Matches Hero's btn-cyber-primary so the waitlist CTA reads as the
      same button family — clip-path bevels, mono caps, accent fill on

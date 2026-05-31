@@ -879,7 +879,10 @@ body.suppress-hover .nav-glass a:not(.is-active) > span {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.18);
+  /* Decorative HUD code (e.g. "01", "MEM_LAYER"). Bumped 0.18 → 0.4 so it
+     isn't near-invisible; it stays deliberately subdued as metadata, and
+     hover lifts it to the section accent. */
+  color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
   transition: color 0.25s ease;
 }
@@ -901,7 +904,9 @@ body.suppress-hover .nav-glass a:not(.is-active) > span {
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.55);
+  /* 0.62 (≈7.8:1 on the void bg) clears WCAG AAA for body text and meets
+     the DESIGN.md Living-Floor; 0.55 sat below the floor and missed AAA. */
+  color: rgba(255, 255, 255, 0.62);
 }
 /* Inline <code> inside a cyber-card-desc — the outer prose is already
    mono, so just font-family does nothing; lift the code with the

@@ -44,7 +44,7 @@ const steps = [
             <span class="cyber-h2-stroke">Sharpens Both.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> runs as a tight 3-step loop. Each cycle feeds the next — the agent gets smarter, the vault gets richer, every round.
+            <strong class="brand">OneBrain</strong> runs as a tight 3-step loop. Each cycle feeds the next: the agent gets smarter and the vault gets richer, every round.
           </p>
         </header>
 
@@ -217,6 +217,13 @@ const steps = [
 
   /* Section-scoped sizing — keep "Sharpens Both." on a single line at md+ */
   #session .cyber-h2 { font-size: clamp(2rem, 4.4vw, 4rem); }
+
+  /* Zigzag rhythm: at md+ the loop diagram sits on the LEFT, text on the
+     right, alternating with Stack so the section run isn't all text-left.
+     Below md the column stacks step-list-first. */
+  @media (min-width: 768px) {
+    .how-grid > .how-left { order: 2; }
+  }
 
   /* ── Responsive ───────────────────────────────────────── */
   @media (min-width: 1024px) {
