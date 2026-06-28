@@ -13,25 +13,29 @@ import { getGitHubStars, formatStars } from '../lib/gh-stars';
 const TURNSTILE_SITEKEY =
   import.meta.env.PUBLIC_TURNSTILE_SITEKEY || '1x00000000000000000000AA';
 
-// Discriminated union: `live` tiers carry the link + tagline that the
-// card uses to render the active state; `soon` tiers don't. Coupling
-// these fields by tag prevents a future edit from adding `href`
-// without `tagline` (or vice versa) and rendering a half-broken card.
-type Tier =
+// Discriminated union: `live` ways-to-run carry the link + tagline that
+// the card uses to render the active state; `soon` ones don't. Coupling
+// these fields by tag prevents a future edit from adding `href` without
+// `tagline` (or vice versa) and rendering a half-broken card.
+type Way =
   | { kind: 'live'; name: string; desc: string; status: string; tagline: string; href: string }
   | { kind: 'soon'; name: string; desc: string; status: string };
 
-const tiers: Tier[] = [
+const ways: Way[] = [
   {
     kind: 'live',
-    name: 'FREE',
-    tagline: 'Always free & open source',
-    desc: 'Local vault · OSS skills · BYOK',
+    name: 'SELF-HOSTED',
+    tagline: 'Terminal + built-in web UI',
+    desc: 'Obsidian optional · brew / npm',
     status: 'AVAILABLE_NOW',
     href: 'https://github.com/onebrain-ai/onebrain#installation',
   },
-  { kind: 'soon', name: 'PRO',  desc: 'Sync · mobile · hosted runtime',  status: '~$10/MO · Q3 2026' },
-  { kind: 'soon', name: 'TEAM', desc: 'Shared intelligence · team mesh', status: '~$25/MO · Q3 2026' },
+  {
+    kind: 'soon',
+    name: 'DESKTOP',
+    desc: 'Native app · vault viewer · chat · terminal',
+    status: 'COMING_SOON',
+  },
 ];
 
 const stars = await getGitHubStars();
@@ -44,46 +48,46 @@ const STARS_PROOF_FLOOR = 50;
 const showStars = stars >= STARS_PROOF_FLOOR;
 ---
 
-<section id="cloud" class="cyber-section reveal" style="--section-accent: #00bfff;">
+<section id="open" class="cyber-section reveal" style="--section-accent: #00f3ff;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
   <div class="cyber-section-shell">
-    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-stretch cloud-grid">
+    <div class="grid lg:grid-cols-[7fr_3fr] gap-10 lg:gap-12 items-stretch">
 
-      <!-- LEFT: heading + tiers -->
+      <!-- LEFT: heading + ways to run -->
       <div>
         <header class="cyber-section-head">
           <div class="cyber-pill">
             <span class="cyber-pill-dot"></span>
-            <span>ONEBRAIN // CLOUD</span>
+            <span>ONEBRAIN // OPEN</span>
           </div>
           <h2 class="cyber-h2">
-            OneBrain<br/>
-            <span class="cyber-h2-stroke">Cloud.</span>
+            Self-Hosted.<br/>
+            <span class="cyber-h2-stroke">Open &amp; Yours.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> Cloud hosts your vault + agent runtime so the <em>same</em> memory, skills, and notes follow you from Mac to iPhone to wherever you write next.
+            <strong class="brand">OneBrain</strong> runs entirely on your machine. No cloud, no account, no lock-in. Drive it from your terminal with a <em>built-in web UI</em>, or inside Obsidian — your data is plain Markdown you own forever. Free and open under <strong class="brand">MIT / Apache-2.0</strong>.
           </p>
         </header>
 
-        <div class="tiers">
-          {tiers.map((t, i) => {
+        <div class="ways">
+          {ways.map((t, i) => {
             const isLive = t.kind === 'live';
             const Tag = isLive ? 'a' : 'div';
             const props = isLive
               ? { href: t.href, target: '_blank', rel: 'noopener noreferrer' }
-              : { 'aria-disabled': 'true' };
+              : { role: 'group', 'aria-label': 'Desktop — coming soon' };
             return (
-              <Tag class={`cyber-card tier-card ${isLive ? 'tier-card-live' : 'tier-card-soon'}`} {...props}>
+              <Tag class={`cyber-card way-card ${isLive ? 'way-card-live' : 'way-card-soon'}`} {...props}>
                 <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
-                <h3 class="cyber-card-title tier-name">{t.name}</h3>
-                {isLive && <span class="tier-tagline">// {t.tagline}</span>}
+                <h3 class="cyber-card-title way-name">{t.name}</h3>
+                {isLive && <span class="way-tagline">// {t.tagline}</span>}
                 <p class="cyber-card-desc">{t.desc}</p>
-                <span class="tier-status">
-                  {isLive && <span class="tier-status-dot" aria-hidden="true"></span>}
+                <span class="way-status">
+                  {isLive && <span class="way-status-dot" aria-hidden="true"></span>}
                   [ {t.status} ]
-                  {isLive && <span class="tier-arrow" aria-hidden="true">→</span>}
+                  {isLive && <span class="way-arrow" aria-hidden="true">→</span>}
                 </span>
               </Tag>
             );
@@ -91,7 +95,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
         </div>
       </div>
 
-      <!-- RIGHT: signup console -->
+      <!-- RIGHT: desktop notify console -->
       <div class="waitlist-shell">
         <div class="waitlist-frame waitlist-frame-tl"></div>
         <div class="waitlist-frame waitlist-frame-tr"></div>
@@ -100,7 +104,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
 
         <div class="waitlist-head">
           <span class="waitlist-rec-dot"></span>
-          <span>CLOUD WAITLIST :: OPEN</span>
+          <span>DESKTOP // NOTIFY_ME</span>
         </div>
 
         <div class="waitlist-proof" aria-label="Social proof">
@@ -128,7 +132,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           </span>
         </div>
 
-        <h3 class="waitlist-title">Early signups get <strong>priority access + founder pricing</strong>.</h3>
+        <h3 class="waitlist-title">Be first to know when the <strong>Desktop app</strong> ships.</h3>
 
         <form id="waitlist-form" class="waitlist-form">
           <label class="waitlist-label" for="waitlist-email">
@@ -189,9 +193,9 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           </button>
         </form>
         {/* Turnstile script — async/defer so it doesn't block hero LCP.
-            Loaded scoped to Cloud (below-the-fold) rather than the
-            global Layout; Turnstile is only needed for the waitlist
-            form on /, not on /privacy or /404. */}
+            Loaded scoped to this section (below-the-fold) rather than the
+            global Layout; Turnstile is only needed for the notify form
+            on /, not on /privacy or /404. */}
         <script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js"
           async
@@ -205,7 +209,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           class="waitlist-banner"
         ></div>
 
-        <p class="waitlist-foot">// limited slots before PRO opens</p>
+        <p class="waitlist-foot">// no spam · one email when Desktop ships</p>
       </div>
 
     </div>
@@ -327,14 +331,14 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           data = {};
         }
         if (res.ok && data.ok) {
-          showBanner('success', '✓ Got it. You\'re on the list. We\'ll ping you at launch.');
+          showBanner('success', '✓ Got it. We\'ll ping you once when Desktop ships.');
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
         } else if (data.error === 'rate_limited' || res.status === 429) {
           showBanner('error', '✗ Too many attempts. Wait a few minutes and try again.');
         } else if (data.error === 'server_misconfigured' || res.status === 503) {
-          showBanner('error', '✗ Waitlist is temporarily offline. Please try again later.');
+          showBanner('error', '✗ Notify list is temporarily offline. Please try again later.');
         } else {
           console.error('[waitlist] submission failed:', res.status, data);
           showBanner('error', '✗ Something went wrong. Try again in a moment.');
@@ -351,19 +355,19 @@ const showStars = stars >= STARS_PROOF_FLOOR;
 </script>
 
 <style>
-  /* Vertical card style: 3 tiers laid out side-by-side, each card
+  /* Vertical card style: ways-to-run laid out side-by-side, each card
      orientates vertically (meta + name → desc → status). On mobile
      they stack to a single column. */
-  .tiers {
+  .ways {
     margin-top: 1.5rem;
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.75rem;
   }
   @media (min-width: 640px) {
-    .tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ways { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  .tier-card {
+  .way-card {
     padding: 1.25rem 1.25rem 1.1rem;
     display: flex;
     flex-direction: column;
@@ -373,21 +377,21 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     min-height: 170px;
     position: relative;
   }
-  .tier-card .cyber-card-meta {
+  .way-card .cyber-card-meta {
     position: absolute;
     top: 0.85rem;
     right: 1rem;
   }
-  .tier-card .cyber-card-desc { margin-top: 0; }
-  .tier-name {
+  .way-card .cyber-card-desc { margin-top: 0; }
+  .way-name {
     letter-spacing: 0.08em;
     font-size: 1.05rem;
     margin: 0;
   }
-  /* Small accent-tinted tagline that sits under the tier name —
+  /* Small accent-tinted tagline that sits under the way name —
      reserved for messaging that needs to land before the dense
-     desc line (e.g. FREE's "always free & open source" promise). */
-  .tier-tagline {
+     desc line (e.g. SELF-HOSTED's "terminal + built-in web UI"). */
+  .way-tagline {
     display: block;
     margin-top: -2px;
     font-family: var(--font-mono);
@@ -396,7 +400,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     text-transform: uppercase;
     color: var(--section-accent);
   }
-  .tier-status {
+  .way-status {
     margin-top: auto;
     font-family: var(--font-mono);
     font-size: 9px;
@@ -409,8 +413,8 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  /* ── FREE: live, clickable, brand-glow border ── */
-  a.tier-card.tier-card-live {
+  /* ── SELF-HOSTED: live, clickable, brand-glow border ── */
+  a.way-card.way-card-live {
     position: relative;
     cursor: pointer;
     border-color: color-mix(in srgb, var(--section-accent) 55%, transparent);
@@ -422,7 +426,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
        value so the transition doesn't repaint the whole card every frame. */
     transition: border-color 0.25s ease, transform 0.25s ease;
   }
-  a.tier-card.tier-card-live::before {
+  a.way-card.way-card-live::before {
     /* Left edge accent rail — same vocabulary as the hero cmd-box. */
     content: '';
     position: absolute;
@@ -433,17 +437,17 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     background: var(--section-accent);
     box-shadow: 0 0 12px var(--section-accent);
   }
-  a.tier-card.tier-card-live:hover {
+  a.way-card.way-card-live:hover {
     transform: translateY(-2px);
     border-color: var(--section-accent);
     box-shadow:
       0 0 0 1px var(--section-accent),
       0 0 50px -6px color-mix(in srgb, var(--section-accent) 75%, transparent);
   }
-  a.tier-card.tier-card-live .tier-name {
+  a.way-card.way-card-live .way-name {
     color: #fff;
   }
-  .tier-status-dot {
+  .way-status-dot {
     width: 6px;
     height: 6px;
     background: var(--section-accent);
@@ -451,43 +455,38 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     box-shadow: 0 0 8px var(--section-accent);
     animation: cyber-pulse 1.5s ease-in-out infinite;
   }
-  .tier-arrow {
+  .way-arrow {
     color: var(--section-accent);
     transition: transform 0.25s ease;
     margin-left: 4px;
   }
-  a.tier-card.tier-card-live:hover .tier-arrow { transform: translateX(4px); }
+  a.way-card.way-card-live:hover .way-arrow { transform: translateX(4px); }
 
-  /* ── PRO / TEAM: dimmed, "coming soon" ── */
-  .tier-card.tier-card-soon {
+  /* ── DESKTOP: dimmed, "coming soon" ── */
+  .way-card.way-card-soon {
     opacity: 0.55;
     cursor: default;
   }
-  .tier-card.tier-card-soon .tier-status {
+  .way-card.way-card-soon .way-status {
     color: var(--section-accent);
     letter-spacing: 0.32em;
-    animation: tier-soon-blink 2.4s ease-in-out infinite;
+    animation: way-soon-blink 2.4s ease-in-out infinite;
   }
-  .tier-card.tier-card-soon .cyber-card-desc {
+  .way-card.way-card-soon .cyber-card-desc {
     color: rgba(255, 255, 255, 0.32);
   }
-  /* Stagger TEAM relative to PRO so they pulse out of sync — feels like
-     two independent "incoming" signals rather than one synchronized banner. */
-  .tier-card.tier-card-soon:nth-of-type(3) .tier-status {
-    animation-delay: 1.2s;
-  }
-  @keyframes tier-soon-blink {
+  @keyframes way-soon-blink {
     0%, 100% { opacity: 1; }
     48%      { opacity: 0.25; }
     52%      { opacity: 0.25; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .tier-card.tier-card-soon .tier-status { animation: none; }
-    .tier-status-dot { animation: none; }
+    .way-card.way-card-soon .way-status { animation: none; }
+    .way-status-dot { animation: none; }
     .waitlist-rec-dot { animation: none; }
   }
 
-  /* Waitlist console */
+  /* Desktop-notify console */
   .waitlist-shell {
     position: relative;
     padding: 2rem 2rem 1.6rem;
@@ -495,10 +494,10 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
     /* drop heavy backdrop-filter — solid bg keeps the look, frees the compositor */
 
-    /* Bottom-align with the tier card row on the left column.
+    /* Bottom-align with the way-card row on the left column.
        The grid uses items-stretch so this column's track height matches
-       the headline + tier row; align-self: end pushes the card to the
-       bottom of that track so its lower edge lines up with the tier
+       the headline + way row; align-self: end pushes the card to the
+       bottom of that track so its lower edge lines up with the way
        cards instead of floating mid-column. */
     align-self: end;
   }
@@ -533,7 +532,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
     animation: cyber-pulse 1.5s ease-in-out infinite;
   }
 
-  /* Social proof — compact one-line strip between waitlist head and
+  /* Social proof — compact one-line strip between console head and
      title. GitHub star count + "built by" attribution. Same mono
      vocabulary as the rest of the console, dim by default so it
      doesn't compete with the H3. */
@@ -649,7 +648,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
   }
   .waitlist-input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
-  /* Matches Hero's btn-cyber-primary so the waitlist CTA reads as the
+  /* Matches Hero's btn-cyber-primary so the notify CTA reads as the
      same button family — clip-path bevels, mono caps, accent fill on
      dark text, white-flip on hover. align-self:flex-start drops the
      full-width stretch the form's column flex was forcing — auto-

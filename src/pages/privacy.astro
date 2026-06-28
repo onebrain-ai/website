@@ -8,7 +8,7 @@ const updated = '2026-05-06';
 
 <Layout
   title="Privacy — OneBrain"
-  description="OneBrain runs in your local Obsidian vault. Here's the short list of what we don't store, what we do, and how to reach us."
+  description="OneBrain runs locally on your machine. Here's the short list of what we don't store, what we do, and how to reach us."
 >
   <Nav />
   <main id="main-content" tabindex="-1">
@@ -25,11 +25,12 @@ const updated = '2026-05-06';
 
         <article class="legal-prose">
           <p>
-            <strong class="brand">OneBrain</strong> runs in your local Obsidian vault.
+            <strong class="brand">OneBrain</strong> runs locally on your machine —
+            self-hosted from your terminal, a built-in web UI, or inside Obsidian.
             Your notes, your agent's memory, your conversations — none of it leaves
-            your machine in the FREE tier. The CLI talks directly to your LLM
-            provider of choice; the plugin reads and writes files on your disk.
-            We don't have a server in that loop.
+            your machine. The CLI talks directly to your LLM provider of choice;
+            OneBrain reads and writes plain Markdown files on your disk. We don't
+            have a server in that loop.
           </p>
 
           <h2>What we don't store</h2>
@@ -41,18 +42,18 @@ const updated = '2026-05-06';
 
           <h2>What we do store</h2>
           <p>
-            The Cloud waitlist signup is the one place you hand us data. The
-            row holds: your email, the time you signed up, and a hash of your
-            IP (salted with a private string and truncated — the raw IP is
-            never written). That's it. No tracking pixels, no third-party
-            analytics, no embedded scripts shipped to the page from anywhere
-            except this domain.
+            The one place you hand us data is the email you give us to be
+            notified when the Desktop app ships. The row holds: your email,
+            the time you signed up, and a hash of your IP (salted with a
+            private string and truncated — the raw IP is never written).
+            That's it. No tracking pixels, no third-party analytics, no
+            embedded scripts shipped to the page from anywhere except this
+            domain.
           </p>
           <p>
-            When OneBrain Cloud (PRO + TEAM) ships, this page will be replaced
-            by a full data-handling notice covering sync payloads, encryption,
-            retention, and sub-processors. Until then, the only record we hold
-            is the waitlist row keyed by your email.
+            OneBrain is self-hosted and open source (MIT / Apache-2.0) — there's
+            no hosted service in the loop, so there's nothing else to collect.
+            The only record we hold is the notify-me row keyed by your email.
           </p>
 
           <h2>Contact</h2>

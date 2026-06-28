@@ -60,12 +60,12 @@ export const prerender = true;
 
         <h1 class="title">
           <Brain size={140} class="brain" ariaLabel="" />
-          <span class="title-text">OneBrain</span>
+          <span class="title-text"><span class="t-one">One</span><span class="t-brain">Brain</span></span>
         </h1>
 
         <p class="tagline">
-          Open-source AI thinking partner that lives in
-          your Obsidian vault.
+          Open-source, self-hosted AI thinking partner
+          for your notes and knowledge.
         </p>
 
         <div class="cta-row">
@@ -250,18 +250,26 @@ export const prerender = true;
         font-size: 132px;
         line-height: 1;
         letter-spacing: -0.02em;
-        text-transform: none;
+        /* Wordmark lockup all-caps per brand CI (ONEBRAIN). */
+        text-transform: uppercase;
       }
       .brain {
         flex: 0 0 auto;
         filter: drop-shadow(0 0 32px rgba(255, 45, 146, 0.45));
       }
       .title-text {
-        background: linear-gradient(180deg, #ffffff 0%, #ffffff 60%, rgba(0, 243, 255, 0.85) 100%);
+        text-shadow: 0 0 80px rgba(0, 243, 255, 0.25);
+      }
+      .title-text .t-one {
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+      }
+      .title-text .t-brain {
+        background: linear-gradient(135deg, #ff2d92 0%, #ff5aa3 55%, #00f3ff 100%);
         -webkit-background-clip: text;
                 background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 80px rgba(0, 243, 255, 0.25);
+        color: transparent;
       }
 
       .tagline {

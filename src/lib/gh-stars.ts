@@ -5,7 +5,7 @@
  * client-side fetch.
  *
  * Returns 0 on any failure (offline build, rate limit, schema break).
- * The Cloud component must hide the badge on 0 — rendering "0 stars"
+ * The Open component must hide the badge on 0 — rendering "0 stars"
  * as social proof is worse than rendering no proof at all.
  *
  * Unauthenticated `api.github.com` is 60 req/hr per IP; CI runners
