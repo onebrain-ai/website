@@ -9,8 +9,8 @@ interface Props {
 }
 
 const {
-  title = "OneBrain: AI Thinking Partner for Obsidian",
-  description = "Open-source AI thinking partner that lives in your Obsidian vault. You teach it once; it remembers across every session.",
+  title = "OneBrain: Self-Hosted AI Thinking Partner",
+  description = "Open-source, self-hosted AI thinking partner for your notes — runs from your terminal with a built-in web UI, or inside Obsidian. Local-first; you teach it once, it remembers across every session.",
   image = "/og.jpg",
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, "https://onebrain.run").href;
@@ -150,7 +150,7 @@ const isHome = Astro.url.pathname === '/';
           <li data-target="#workflow" style="--dot-accent: #7c3aed;"><button type="button" aria-label="Workflow section"><span></span></button></li>
           <li data-target="#session"  style="--dot-accent: #c8ff00;"><button type="button" aria-label="Session section"><span></span></button></li>
           <li data-target="#commands" style="--dot-accent: #ff5e3a;"><button type="button" aria-label="Commands section"><span></span></button></li>
-          <li data-target="#cloud"    style="--dot-accent: #00bfff;"><button type="button" aria-label="Cloud section"><span></span></button></li>
+          <li data-target="#open"     style="--dot-accent: #00f3ff;"><button type="button" aria-label="Open Source section"><span></span></button></li>
         </ol>
       </aside>
     )}

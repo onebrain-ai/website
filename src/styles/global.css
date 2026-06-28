@@ -20,7 +20,7 @@
 
 /* Visually hide content while keeping it readable to screen readers and
    search engines. Used inside the Hero h1 so Google indexes a keyword-
-   rich version (`OneBrain — AI thinking partner for Obsidian`) while
+   rich version (`OneBrain — self-hosted AI thinking partner`) while
    the visible h1 keeps the cinematic "UNIFIED INTELLIGENCE" phrase. */
 .sr-only {
   position: absolute;
@@ -344,6 +344,10 @@ main:focus {
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.92);
   margin-top: 0;
+  /* Wordmark lockup renders all-caps per brand CI (ONEBRAIN). DOM text
+     stays "OneBrain" for SR/SEO. Keeps the warp overlay consistent with
+     the nav/footer wordmark. */
+  text-transform: uppercase;
 }
 .warp-mark-status {
   display: inline-flex;

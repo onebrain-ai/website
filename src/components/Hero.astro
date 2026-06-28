@@ -47,17 +47,17 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
         </div>
 
         <h1 class="hero-h1 reveal" style="transition-delay: 100ms;">
-          <span class="sr-only">OneBrain: the AI thinking partner for Obsidian. </span>
+          <span class="sr-only">OneBrain: the open-source, self-hosted AI thinking partner for your notes. </span>
           <span class="hero-word" data-scramble="UNIFIED">UNIFIED</span>
           <span class="hero-word hero-word-stroke stroke-text" data-text="INTELLIGENCE">INTELLIGENCE</span>
         </h1>
 
         <p class="hero-lead reveal" style="transition-delay: 200ms;">
-          <strong class="brand">OneBrain</strong> is the open-source AI thinking partner that lives inside your Obsidian vault.
+          <strong class="brand">OneBrain</strong> is the open-source, <strong>self-hosted</strong> AI thinking partner for your notes and knowledge — local-first and yours forever.
         </p>
 
         <p class="hero-sub reveal" style="transition-delay: 300ms;">
-          You teach the agent, the agent extends you, and both get sharper every session.
+          Run it from your terminal with a <strong>built-in web UI</strong> — or right inside Obsidian. You teach the agent, the agent extends you, and both get sharper every session.
         </p>
 
         <div class="cmd-box reveal" style="transition-delay: 400ms;">
@@ -79,6 +79,10 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
             <span class="cmd-copy-label">COPY</span>
           </button>
         </div>
+
+        <p class="hero-microtag reveal" style="transition-delay: 480ms;">
+          // NO CLOUD · NO ACCOUNT · OBSIDIAN OPTIONAL · MIT / APACHE-2.0
+        </p>
 
         <div class="cta-row reveal" style="transition-delay: 550ms;">
           <a href="https://github.com/onebrain-ai/onebrain#installation" target="_blank" rel="noopener noreferrer" class="btn-cyber btn-cyber-primary">
@@ -1026,6 +1030,15 @@ const buildDate = `${String(now.getDate()).padStart(2, '0')}-${months[now.getMon
   .cmd-copy.copied .cmd-copy-check { display: block; }
 
   /* ── CTAs ─────────────────────────────────── */
+
+  .hero-microtag {
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
 
   .cta-row {
     display: flex;

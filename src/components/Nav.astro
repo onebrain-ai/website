@@ -16,7 +16,7 @@ const navLinks = [
   { href: `${linkBase}#workflow`, label: 'Workflow' },
   { href: `${linkBase}#session`,  label: 'Session'  },
   { href: `${linkBase}#commands`, label: 'Commands' },
-  { href: `${linkBase}#cloud`,    label: 'Cloud'    },
+  { href: `${linkBase}#open`,     label: 'Open Source' },
 ];
 ---
 
@@ -224,6 +224,9 @@ const navLinks = [
     font-size: 1.4rem;
     color: #fff;
     letter-spacing: -0.01em;
+    /* Wordmark lockup renders all-caps per brand CI (ONEBRAIN). Keep
+       the DOM text "OneBrain" so SR + SEO read the natural name. */
+    text-transform: uppercase;
   }
   .nav-tagline {
     margin-top: 4px;
