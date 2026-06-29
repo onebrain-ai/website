@@ -3,40 +3,20 @@
 # X-Content-Type-Options + Referrer-Policy + Permissions-Policy is the
 # set that lifts the score from 96 → 100 on incognito audits.
 #
-# CSP allows 'unsafe-inline' for scripts because Hero/Cloud/etc. ship
-# with `<script is:inline>` blocks (copy buttons, neural canvas,
-# waitlist submit). Tightening to nonces is a separate refactor.
+# Content-Security-Policy is NO LONGER set here. It moved to an
+# Astro-generated per-page `<meta http-equiv>` CSP (see astro.config.mjs
+# `security.csp`), which emits SHA-256 hashes for every inline
+# `<script>`/`<style>` Astro renders — including the Hero neural canvas,
+# copy buttons, and waitlist submit — so `'unsafe-inline'` is gone and
+# the XSS amplifier the old header CSP carried is closed. External hosts
+# (Cloudflare Web Analytics beacon + Turnstile, Google Fonts) and the
+# non-script/style directives (default-src, connect-src incl. the
+# explicit https://onebrain.run RUM token, img-src 'self' data:,
+# frame-src challenges.cloudflare.com, etc.) are configured there.
 #
-# Cloudflare Web Analytics beacon hosts (static.cloudflareinsights.com,
-# cloudflareinsights.com) are allowlisted in CSP because Cloudflare
-# auto-injects the beacon at the zone level — blocking it via CSP
-# would create a different console error without fixing the existing
-# ERR_CONNECTION_REFUSED (which is network-level, environmental).
-#
-# `connect-src` adds an explicit `https://onebrain.run` token alongside
-# `'self'` because Safari/WebKit logs CSP violations for the same-origin
-# `/cdn-cgi/rum` RUM endpoint despite `'self'` matching it per spec.
-# The explicit hostname suppresses the noise without widening the
-# policy meaningfully (it points to the same origin already covered by
-# `'self'`). No subdomain wildcards are added — there are no current
-# `*.onebrain.run` subdomains and `static.cloudflareinsights.com` is the
-# only beacon host in use.
-#
-# `img-src` is `'self' data:` only — every image on the site is locally
-# hosted (`og.jpg`, `brain.svg`, `apple-touch-icon.png`, diagrams), so
-# allowing arbitrary `https:` hosts only widens the XSS exfil surface.
-# `worker-src 'self'`, `manifest-src 'self'`, and `media-src 'none'`
-# are explicit defense-in-depth — `default-src 'self'` already covers
-# their fallbacks, but explicit directives prevent a future
-# `default-src` relaxation from silently re-opening them.
-#
-# `challenges.cloudflare.com` is allowlisted in `script-src`,
-# `connect-src`, and `frame-src` for Cloudflare Turnstile (anti-spam
-# widget on the waitlist form). It loads `/turnstile/v0/api.js`,
-# verifies tokens via `POST /turnstile/v0/siteverify` (the call is
-# server-side so connect-src is technically belt-and-braces for
-# client-side preflight), and renders inside an iframe — hence the
-# `frame-src` switch from `'none'` to that single host.
+# `frame-ancestors` is enforced via `X-Frame-Options: DENY` below, NOT
+# CSP: browsers ignore `frame-ancestors` in a <meta> CSP, so the header
+# is the clickjacking control of record.
 #
 # HSTS `preload` (added 2026-05-19) is a one-way commitment: once
 # submitted to hstspreload.org, onebrain.run + every `*.onebrain.run`
@@ -52,7 +32,6 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://onebrain.run https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; media-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

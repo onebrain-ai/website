@@ -982,3 +982,43 @@ section[data-vis="off"] .cyber-section-orb {
   html { scroll-behavior: auto; }
   .reveal { transition: opacity 0.4s ease; transform: none; }
 }
+
+/* ───────────────────────────────────────────────────────────────────
+   CSP refactor — accents & reveal delays hoisted out of inline style=""
+   ───────────────────────────────────────────────────────────────────
+   These were `style="--section-accent | --dot-accent | transition-delay"`
+   attributes. Inline style ATTRIBUTES can't be covered by the hash-based
+   CSP (only 'unsafe-inline'/'unsafe-hashes' allow them, and both are
+   ignored once hashes are present). Moving them into this stylesheet —
+   which Astro inlines into a hashed <style> — keeps them CSP-clean.
+   See astro.config.mjs `security.csp`. Values are unchanged.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Per-section accent (was inline on each <section class="cyber-section">) */
+#features { --section-accent: #00ff9d; }
+#synergy  { --section-accent: #ff2d92; }
+#stack    { --section-accent: #00f3ff; }
+#workflow { --section-accent: #7c3aed; }
+#session  { --section-accent: #c8ff00; }
+#commands { --section-accent: #ff5e3a; }
+#open     { --section-accent: #00f3ff; }
+
+/* Section-nav dot accent (was inline on each .page-spine-dots <li>) */
+.page-spine-dots li[data-target="#top"]      { --dot-accent: #ff2d92; }
+.page-spine-dots li[data-target="#features"] { --dot-accent: #00ff9d; }
+.page-spine-dots li[data-target="#synergy"]  { --dot-accent: #ff2d92; }
+.page-spine-dots li[data-target="#stack"]    { --dot-accent: #00f3ff; }
+.page-spine-dots li[data-target="#workflow"] { --dot-accent: #7c3aed; }
+.page-spine-dots li[data-target="#session"]  { --dot-accent: #c8ff00; }
+.page-spine-dots li[data-target="#commands"] { --dot-accent: #ff5e3a; }
+.page-spine-dots li[data-target="#open"]     { --dot-accent: #00f3ff; }
+
+/* Hero reveal stagger (was inline transition-delay per element).
+   `.x.reveal` (0,2,0) overrides the base `.reveal` rule (0,1,0). */
+.hero-h1.reveal       { transition-delay: 100ms; }
+.hero-lead.reveal     { transition-delay: 200ms; }
+.hero-sub.reveal      { transition-delay: 300ms; }
+.hero-right.reveal    { transition-delay: 350ms; }
+.cmd-box.reveal       { transition-delay: 400ms; }
+.hero-microtag.reveal { transition-delay: 480ms; }
+.cta-row.reveal       { transition-delay: 550ms; }

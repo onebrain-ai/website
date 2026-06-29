@@ -80,7 +80,7 @@ const navLinks = [
       </div>
       <ul class="nav-mobile-list">
         {navLinks.map((l, i) => (
-          <li style={`--ob-i: ${i}`}>
+          <li>
             <a href={l.href} data-nav-link>
               <span class="nav-mobile-num">{String(i + 1).padStart(2, '0')}</span>
               <span class="nav-mobile-label">{l.label}</span>
@@ -354,6 +354,17 @@ const navLinks = [
     transition: opacity 0.3s ease, transform 0.3s ease;
     transition-delay: calc(var(--ob-i, 0) * 35ms);
   }
+  /* --ob-i stagger index, moved off the inline `style` attribute so the
+     hash-based CSP (astro.config.mjs security.csp) covers it. nth-child
+     mirrors the map index; extra rules past the link count are harmless. */
+  .nav-mobile-list li:nth-child(1) { --ob-i: 0; }
+  .nav-mobile-list li:nth-child(2) { --ob-i: 1; }
+  .nav-mobile-list li:nth-child(3) { --ob-i: 2; }
+  .nav-mobile-list li:nth-child(4) { --ob-i: 3; }
+  .nav-mobile-list li:nth-child(5) { --ob-i: 4; }
+  .nav-mobile-list li:nth-child(6) { --ob-i: 5; }
+  .nav-mobile-list li:nth-child(7) { --ob-i: 6; }
+  .nav-mobile-list li:nth-child(8) { --ob-i: 7; }
   .nav-mobile[data-open='true'] .nav-mobile-list li {
     transform: translateX(0);
     opacity: 1;
