@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+    <img alt="OneBrain — Your AI Thinking Partner" src="assets/banner-light.svg" width="640">
+  </picture>
+</p>
+
 # onebrain-ai/website
 
 Marketing site for [OneBrain](https://github.com/onebrain-ai/onebrain) — deployed at [onebrain.run](https://onebrain.run).
