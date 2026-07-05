@@ -315,8 +315,13 @@ import Brain from "../components/Brain.astro";
   .nf-tagline {
     margin-top: 6px;
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.3em;
+    /* Tagline width-fitted to the ONEBRAIN wordmark per onebrain
+       DESIGN.md §8 — size + tracking tuned so the 24-char tagline
+       spans the same width as the wordmark above it. Monospaced, so
+       weight 700 does not change the width. */
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: var(--color-accent-2, #00f3ff);
     text-transform: uppercase;
     opacity: 0.8;

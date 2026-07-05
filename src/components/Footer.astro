@@ -169,10 +169,16 @@ const home = isHome ? '' : '/';
   .footer-logo-tag {
     margin-top: 4px;
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.4em;
+    /* Tagline width-fitted to the ONEBRAIN wordmark per onebrain
+       DESIGN.md §8 — size + tracking tuned so the 24-char tagline
+       spans the same width as the wordmark above it. Monospaced, so
+       weight 700 does not change the width. */
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: #00f3ff;
     text-transform: uppercase;
+    white-space: nowrap;
   }
   .footer-blurb {
     max-width: 320px;
