@@ -7,7 +7,7 @@
 // as a contemporary "use the brain you built" triad: recall,
 // persist across sessions, automate on a cron.
 //
-// Full lineup is 30+ user-facing skills (see repo); this grid is the
+// Full lineup is 30 user-facing skills (see repo); this grid is the
 // curated subset that maps best to a first-time visitor's mental
 // model. Anything more would be a docs page, not marketing.
 const commands = [
@@ -26,8 +26,8 @@ const commands = [
   { cmd: '/distill',       desc: 'Aggregate sessions on a topic into a structured digest.',
     usecase: "After 5 days of research on a project, /distill synthesizes all session logs into a single 'Source of Truth' knowledge note." },
   // Row 3 — OPERATE (all newly shipped)
-  { cmd: '/search',        desc: 'Ask "what" and "why": qmd-powered retrieval across vault + memory + session logs.',
-    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes, using qmd hybrid (lex + vec + hyde) under the hood, with a grep fallback if qmd isn't indexed.",
+  { cmd: '/search',        desc: 'Ask "what" and "why": native hybrid retrieval across vault + memory + session logs.',
+    usecase: "Need to recall a past decision? Run /search 'why did we pick D1 over KV'. OneBrain searches MEMORY.md, memory/, session logs, plan files, and vault notes, using native hybrid search (lex + vec + hyde) under the hood, with a grep fallback if the index isn't built.",
     isNew: true },
   { cmd: '/pause',         desc: 'Snapshot a long task; resume across sessions without re-orienting.',
     usecase: "Halfway through a 3-day research thread? Run /pause before logging off. Tomorrow's session opens with /resume, and OneBrain replays exactly where you left off: open files, decisions, and next step intact.",
@@ -53,11 +53,11 @@ const commands = [
             <span>ONEBRAIN // COMMANDS</span>
           </div>
           <h2 class="cyber-h2">
-            30+ Commands<br/>
+            30 Commands<br/>
             <span class="cyber-h2-stroke">That Think.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> ships 30+ slash commands and 5 background agents: vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/schedule-add</strong> automates them on a cron.
+            <strong class="brand">OneBrain</strong> ships 30 slash commands and 5 background agents: vault-aware verbs that wrap real workflows. <strong>/research</strong> builds reports, <strong>/distill</strong> synthesizes weeks of notes, <strong>/schedule-add</strong> automates them on a cron.
           </p>
         </header>
 
@@ -167,7 +167,7 @@ const commands = [
     // <body>, so the chain is body → main → #commands → modal. Direct
     // children of <body> that aren't <main> (page-spine, warp overlays,
     // footer) get inert'd at the top level; main's other section
-    // children (Hero, Cloud, Synergy…) get inert'd one level down. A
+    // children (Hero, Features, Synergy…) get inert'd one level down. A
     // single-level body.children walk would skip <main> entirely
     // (because main contains the modal) and leave every section
     // reachable to AT and pointer events.
