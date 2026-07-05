@@ -1,31 +1,40 @@
 ---
-// 3-step session loop: CAPTURE → EVOLVE → WRAPUP, then back to
-// CAPTURE. Each cycle the vault grows and the agent learns more
-// about you — both sides sharpen. (Install + /onboarding is a
-// one-time bootstrap and lives in the Hero install line, not here.)
+// 4-step session loop: INITIALIZE → CAPTURE → EVOLVE → WRAPUP, then
+// back to INITIALIZE. Each session opens by loading everything the
+// agent knows and closes by folding new lessons back into memory, so
+// the next loop starts smarter. Each cycle the vault grows and the
+// agent learns more about you — both sides sharpen. (Install +
+// /onboarding is a one-time bootstrap and lives in the Hero install
+// line, not here.)
 const steps = [
   {
     n: '01',
+    t: 'INITIALIZE',
+    d: 'Each session opens by loading your memory, active projects, preferences, and what’s due.',
+    code: '/daily · /resume',
+  },
+  {
+    n: '02',
     t: 'CAPTURE',
     d: 'Talk to the agent in natural language. It writes, classifies, and links your thoughts in real time.',
     code: '/braindump · /capture · /bookmark',
   },
   {
-    n: '02',
+    n: '03',
     t: 'EVOLVE',
-    d: '/research and /distill expand your knowledge. /learn deepens the agent. The loop tightens.',
+    d: '/research and /distill grow what you know. /learn teaches the agent how you work.',
     code: '/research · /distill · /learn',
   },
   {
-    n: '03',
+    n: '04',
     t: 'WRAPUP',
-    d: '/wrapup consolidates the session log. /recap promotes lessons to memory.',
+    d: '/wrapup consolidates the session; /recap promotes lessons to memory — so the next loop starts smarter.',
     code: '/wrapup · /recap',
   },
 ];
 ---
 
-<section id="session" class="cyber-section reveal" style="--section-accent: #c8ff00;">
+<section id="session" class="cyber-section reveal" style="--section-accent: #a8d000;">
   <div class="cyber-section-orb" aria-hidden="true"></div>
   <div class="cyber-section-grid" aria-hidden="true"></div>
 
@@ -44,7 +53,7 @@ const steps = [
             <span class="cyber-h2-stroke">Sharpens Both.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> runs as a tight 3-step loop. Each cycle feeds the next: the agent gets smarter and the vault gets richer, every round.
+            <strong class="brand">OneBrain</strong> runs as a tight 4-step loop: it opens by loading what it knows and closes by folding new lessons back into memory — sharper every round.
           </p>
         </header>
 
@@ -62,7 +71,7 @@ const steps = [
         </ol>
       </div>
 
-      <!-- RIGHT: triangle loop diagram (synced from README coevo-loop) -->
+      <!-- RIGHT: 4-node loop diagram (synced from README coevo-loop) -->
       <figure class="how-loop">
         <span class="how-loop-corner how-loop-corner-tl" aria-hidden="true"></span>
         <span class="how-loop-corner how-loop-corner-tr" aria-hidden="true"></span>
@@ -77,10 +86,10 @@ const steps = [
 
         <img
           src="/diagrams/coevo-loop.svg"
-          alt="Three-step session loop: 01 CAPTURE at top, 02 EVOLVE at bottom-right, 03 WRAPUP at bottom-left, with curved arrows flowing clockwise."
+          alt="Four-step session loop: 01 INITIALIZE at top, 02 CAPTURE at right, 03 EVOLVE at bottom, 04 WRAPUP at left, with arrows flowing clockwise."
           class="how-loop-svg"
-          width="450"
-          height="395"
+          width="460"
+          height="460"
           loading="lazy"
           decoding="async"
         />
@@ -96,7 +105,7 @@ const steps = [
 <style>
   /* Step list (left column) */
   .how-steps {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     list-style: none;
     padding: 0;
     display: flex;
@@ -107,11 +116,11 @@ const steps = [
     display: grid;
     grid-template-columns: 44px 1fr;
     gap: 12px;
-    padding: 9px 0;
+    padding: 7px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     align-items: flex-start;
   }
-  .how-step:first-child { border-top: 0; padding-top: 4px; }
+  .how-step:first-child { border-top: 0; padding-top: 2px; }
   .how-step-num {
     font-family: var(--font-display);
     font-style: italic;
@@ -129,13 +138,13 @@ const steps = [
     color: #fff;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin: 0 0 4px;
+    margin: 0 0 3px;
   }
   .how-step-desc {
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     font-family: var(--font-mono);
     font-size: 11px;
-    line-height: 1.5;
+    line-height: 1.45;
     color: rgba(255, 255, 255, 0.62);
   }
   .how-step-code {

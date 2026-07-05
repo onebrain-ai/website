@@ -1,9 +1,9 @@
 ---
-// 4-layer architecture diagram. Structure mirrors the README
-// harness-os-stack, but the website uses a Pantone-style monochrome
-// cyan palette tuned to the section accent (#00f3ff) — diverges from
-// the README's per-layer hue palette intentionally so the diagram
-// reads as part of the dark cyber theme, not a separate UI module.
+// 4-layer architecture diagram (harness-os-stack). Neutral-surface
+// layer cards keyed to the DS .cyber-card pattern: dark fill + hairline
+// border + a 2–3px harness-teal (#00cce0, the DS --color-harness domain
+// accent) bar on the left — accent as a stroke, never a large fill
+// (DESIGN.md §2). Lucide-style line icons, not emoji (§6).
 ---
 
 <section id="stack" class="cyber-section reveal" style="--section-accent: #00f3ff;">
@@ -64,8 +64,8 @@
           src="/diagrams/harness-os-stack.svg"
           alt="OneBrain Harness OS, four stacked layers from top to bottom: OneBrain plugin and CLI (OS layer), Harness runtime, LLM intelligence source, and your Markdown vault as the foundation."
           class="hs-svg"
-          width="790"
-          height="585"
+          width="760"
+          height="560"
           loading="lazy"
           decoding="async"
         />
@@ -125,7 +125,7 @@
   .manifesto-row-emph {
     margin-top: 4px;
     padding-top: 10px;
-    border-top: 1px solid rgba(0, 243, 255, 0.18);
+    border-top: 1px solid color-mix(in srgb, var(--section-accent) 18%, transparent);
   }
 
   /* Harness stack frame (right column) — corner brackets + band header

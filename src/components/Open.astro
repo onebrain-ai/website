@@ -32,9 +32,9 @@ const ways: Way[] = [
   },
   {
     kind: 'soon',
-    name: 'DESKTOP',
-    desc: 'Native app · vault viewer · chat · terminal',
-    status: 'COMING_SOON',
+    name: 'ONEBRAIN SYNC',
+    desc: 'Vault · memory · context synced across machines · agent stays local',
+    status: 'PLANNED',
   },
 ];
 
@@ -77,7 +77,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
             const Tag = isLive ? 'a' : 'div';
             const props = isLive
               ? { href: t.href, target: '_blank', rel: 'noopener noreferrer' }
-              : { role: 'group', 'aria-label': 'Desktop — coming soon' };
+              : { role: 'group', 'aria-label': 'OneBrain Sync — planned' };
             return (
               <Tag class={`cyber-card way-card ${isLive ? 'way-card-live' : 'way-card-soon'}`} {...props}>
                 <span class="cyber-card-meta">{String(i + 1).padStart(2, '0')}</span>
@@ -95,7 +95,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
         </div>
       </div>
 
-      <!-- RIGHT: desktop notify console -->
+      <!-- RIGHT: sync notify console -->
       <div class="waitlist-shell">
         <div class="waitlist-frame waitlist-frame-tl"></div>
         <div class="waitlist-frame waitlist-frame-tr"></div>
@@ -104,7 +104,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
 
         <div class="waitlist-head">
           <span class="waitlist-rec-dot"></span>
-          <span>DESKTOP // NOTIFY_ME</span>
+          <span>ONEBRAIN SYNC // NOTIFY_ME</span>
         </div>
 
         <div class="waitlist-proof" aria-label="Social proof">
@@ -132,7 +132,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           </span>
         </div>
 
-        <h3 class="waitlist-title">Be first to know when the <strong>Desktop app</strong> ships.</h3>
+        <h3 class="waitlist-title">Be first to know when <strong>OneBrain Sync</strong> ships.</h3>
 
         <form id="waitlist-form" class="waitlist-form">
           <label class="waitlist-label" for="waitlist-email">
@@ -209,7 +209,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           class="waitlist-banner"
         ></div>
 
-        <p class="waitlist-foot">// no spam · one email when Desktop ships</p>
+        <p class="waitlist-foot">// no spam · one email when Sync ships</p>
       </div>
 
     </div>
@@ -331,7 +331,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
           data = {};
         }
         if (res.ok && data.ok) {
-          showBanner('success', '✓ Got it. We\'ll ping you once when Desktop ships.');
+          showBanner('success', '✓ Got it. We\'ll ping you once when Sync ships.');
           form.reset();
         } else if (data.error === 'invalid_email') {
           showBanner('error', '✗ That email looks off. Try again.');
@@ -462,7 +462,7 @@ const showStars = stars >= STARS_PROOF_FLOOR;
   }
   a.way-card.way-card-live:hover .way-arrow { transform: translateX(4px); }
 
-  /* ── DESKTOP: dimmed, "coming soon" ── */
+  /* ── ONEBRAIN SYNC: dimmed, "planned" ── */
   .way-card.way-card-soon {
     opacity: 0.55;
     cursor: default;

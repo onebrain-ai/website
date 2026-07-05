@@ -169,17 +169,23 @@ const home = isHome ? '' : '/';
   .footer-logo-tag {
     margin-top: 4px;
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.4em;
+    /* Tagline width-fitted to the ONEBRAIN wordmark per onebrain
+       DESIGN.md §8 — size + tracking tuned so the 24-char tagline
+       spans the same width as the wordmark above it. Monospaced, so
+       weight 700 does not change the width. */
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: #00f3ff;
     text-transform: uppercase;
+    white-space: nowrap;
   }
   .footer-blurb {
     max-width: 320px;
     font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.62);
   }
   .footer-status {
     display: inline-flex;
@@ -250,7 +256,7 @@ const home = isHome ? '' : '/';
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.68);
     text-decoration: none;
     transition: color 0.2s ease;
   }
@@ -304,7 +310,7 @@ const home = isHome ? '' : '/';
     box-shadow: 0 0 8px #ff2d92;
     animation: cyber-pulse 1.2s ease-in-out infinite;
   }
-  .footer-hud-meta { color: rgba(255, 255, 255, 0.35); }
+  .footer-hud-meta { color: rgba(255, 255, 255, 0.5); }
   .footer-hud-meta:last-child { color: rgba(255, 255, 255, 0.5); }
   .footer-hud-author {
     color: rgba(255, 255, 255, 0.55);

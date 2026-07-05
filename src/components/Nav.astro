@@ -231,15 +231,20 @@ const navLinks = [
   .nav-tagline {
     margin-top: 4px;
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    /* Tagline width-fitted to the ONEBRAIN wordmark per onebrain
+       DESIGN.md §8 ("JetBrains Mono bold, wide-tracked, width-fitted
+       to the wordmark"). The 24-char tagline is far longer than the
+       8-char wordmark, so size + tracking are tuned so its glyph run
+       spans the same width as the wordmark above it. JetBrains Mono is
+       monospaced, so weight 700 does not change the width. */
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: var(--color-accent-2);
     text-transform: uppercase;
     opacity: 0.7;
-    /* Keep the full tagline on one line — at the previous gap-8 nav
-       spacing the second word would push "Thinking Partner" to a
-       second line under "Your AI". gap reduced to gap-5 (lg) /
-       gap-7 (xl) so this nowrap fits comfortably. */
+    /* Single line always — nowrap avoids a font-swap reflow breaking
+       "Thinking Partner" onto a second line under "Your AI". */
     white-space: nowrap;
   }
   .nav-tagline-pair {
