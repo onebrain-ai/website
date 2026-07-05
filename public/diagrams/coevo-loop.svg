@@ -1,26 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-225 -200 450 395" width="450" height="395" role="img" aria-labelledby="title desc" font-family="'Chakra Petch', 'Inter', ui-sans-serif, system-ui, sans-serif">
-  <title id="title">The Path to Co-Evolution — three-step loop</title>
-  <desc id="desc">Three nodes arranged in a triangle: 01 CAPTURE at top, 02 EVOLVE at bottom-right, 03 WRAPUP at bottom-left. Curved arrows flow clockwise between them, visualizing the recurring co-evolution loop.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-230 -230 460 460" width="460" height="460" role="img" aria-labelledby="title desc" font-family="'Chakra Petch', 'Inter', ui-sans-serif, system-ui, sans-serif">
+  <title id="title">Co-Evolution — four-step loop</title>
+  <desc id="desc">Four nodes arranged in a ring, flowing clockwise: 01 INITIALIZE at top, 02 CAPTURE at right, 03 EVOLVE at bottom, 04 WRAPUP at left. Straight arrows connect each node to the next, visualizing the recurring session loop that begins by loading memory and ends by folding new lessons back into it.</desc>
 
   <style>
-    .leg { animation: leg-pulse 4.5s linear infinite; }
-    .leg-2 { animation-delay: 1.5s; }
-    .leg-3 { animation-delay: 3s; }
+    .leg { animation: leg-pulse 5.6s linear infinite; }
+    .leg-2 { animation-delay: 1.4s; }
+    .leg-3 { animation-delay: 2.8s; }
+    .leg-4 { animation-delay: 4.2s; }
     @keyframes leg-pulse {
-      0%, 33%, 100% { opacity: 0.6; }
-      10%           { opacity: 1; }
+      0%, 25%, 100% { opacity: 0.5; }
+      6%            { opacity: 1; }
     }
 
     .core-1 { animation: core-breathe 6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
-    .core-2 { animation: core-breathe 6s ease-in-out infinite; animation-delay: 2s; transform-origin: center; transform-box: fill-box; }
-    .core-3 { animation: core-breathe 6s ease-in-out infinite; animation-delay: 4s; transform-origin: center; transform-box: fill-box; }
+    .core-2 { animation: core-breathe 6s ease-in-out infinite; animation-delay: 1.5s; transform-origin: center; transform-box: fill-box; }
+    .core-3 { animation: core-breathe 6s ease-in-out infinite; animation-delay: 3s; transform-origin: center; transform-box: fill-box; }
+    .core-4 { animation: core-breathe 6s ease-in-out infinite; animation-delay: 4.5s; transform-origin: center; transform-box: fill-box; }
     @keyframes core-breathe {
       0%, 100% { transform: scale(1); }
       50%      { transform: scale(1.04); }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .leg, .core-1, .core-2, .core-3 { animation: none; opacity: 1; }
+      .leg, .core-1, .core-2, .core-3, .core-4 { animation: none; opacity: 1; }
+      .motion-layer { display: none; }
     }
   </style>
 
@@ -34,85 +37,73 @@
     </radialGradient>
   </defs>
 
-
-  <!-- Legs: straight lines from edge to edge of each circle, pointing
-       directly at the destination's center so the arrow vector is radial. -->
-  <!-- 01→02 leg (top → bottom-right) -->
+  <!-- Legs: straight lines from edge to edge of adjacent circles, pointing
+       at the destination's center so the arrow vector is radial. Ring of
+       four nodes (top / right / bottom / left), arrows flow clockwise. -->
+  <!-- 01→02 leg (top → right) -->
   <g class="leg">
-    <path id="leg-1" d="M 27 -83.2 L 85.6 18.2" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
+    <path d="M 36.77 -93.23 L 93.23 -36.77" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
   </g>
-
-  <!-- 02→03 leg (bottom-right → bottom-left) -->
+  <!-- 02→03 leg (right → bottom) -->
   <g class="leg leg-2">
-    <path id="leg-2" d="M 58.6 65 L -58.6 65" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
+    <path d="M 93.23 36.77 L 36.77 93.23" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
   </g>
-
-  <!-- 03→01 leg (bottom-left → top) -->
+  <!-- 03→04 leg (bottom → left) -->
   <g class="leg leg-3">
-    <path id="leg-3" d="M -85.6 18.2 L -27 -83.2" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
+    <path d="M -36.77 93.23 L -93.23 36.77" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
+  </g>
+  <!-- 04→01 leg (left → top) -->
+  <g class="leg leg-4">
+    <path d="M -93.23 -36.77 L -36.77 -93.23" fill="none" stroke="#a8d000" stroke-width="1.6" marker-end="url(#ah-node)"/>
   </g>
 
-  <!-- Node 01 — CAPTURE (top) -->
+  <!-- Node 01 — INITIALIZE (top) -->
   <g transform="translate(0,-130)">
-    <circle class="core-1" cx="0" cy="0" r="54" fill="url(#g-node-fill)"/>
-    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">01</text>
-    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">CAPTURE</text>
-    <text x="0" y="22" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="0.28em" fill="rgba(10,15,0,0.85)">/braindump</text>
+    <circle class="core-1" cx="0" cy="0" r="52" fill="url(#g-node-fill)"/>
+    <text x="0" y="-9" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">01</text>
+    <text x="0" y="11" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="13" letter-spacing="0.04em" fill="#0a0f00">INITIALIZE</text>
   </g>
 
-  <!-- Node 02 — EVOLVE (bottom-right) -->
-  <g transform="translate(112.6,65)">
-    <circle class="core-2" cx="0" cy="0" r="54" fill="url(#g-node-fill)"/>
-    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">02</text>
-    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">EVOLVE</text>
-    <text x="0" y="68" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" letter-spacing="0.28em" fill="#a8d000">/distill · /learn</text>
+  <!-- Node 02 — CAPTURE (right) -->
+  <g transform="translate(130,0)">
+    <circle class="core-2" cx="0" cy="0" r="52" fill="url(#g-node-fill)"/>
+    <text x="0" y="-9" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">02</text>
+    <text x="0" y="11" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">CAPTURE</text>
   </g>
 
-  <!-- Node 03 — WRAPUP (bottom-left) -->
-  <g transform="translate(-112.6,65)">
-    <circle class="core-3" cx="0" cy="0" r="54" fill="url(#g-node-fill)"/>
-    <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">03</text>
-    <text x="0" y="6" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">WRAPUP</text>
-    <text x="0" y="68" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" letter-spacing="0.28em" fill="#a8d000">/wrapup · /recap</text>
+  <!-- Node 03 — EVOLVE (bottom) -->
+  <g transform="translate(0,130)">
+    <circle class="core-3" cx="0" cy="0" r="52" fill="url(#g-node-fill)"/>
+    <text x="0" y="-9" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">03</text>
+    <text x="0" y="11" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">EVOLVE</text>
   </g>
 
-  <!-- Motion layer: particles flow clockwise around the triangle.
-       Each particle's cycle = 5.4s, traversing its leg in the first 1.8s
-       (keyTimes 0→0.333) then resting (invisible). Begin offsets stagger
-       the legs by 1.8s so exactly one particle is in flight at a time.
-       Ring on the destination node bursts at the moment of arrival. -->
+  <!-- Node 04 — WRAPUP (left) -->
+  <g transform="translate(-130,0)">
+    <circle class="core-4" cx="0" cy="0" r="52" fill="url(#g-node-fill)"/>
+    <text x="0" y="-9" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="rgba(10,15,0,0.85)" letter-spacing="0.18em">04</text>
+    <text x="0" y="11" text-anchor="middle" font-family="'Chakra Petch', sans-serif" font-style="italic" font-weight="700" font-size="14" letter-spacing="0.05em" fill="#0a0f00">WRAPUP</text>
+  </g>
+
+  <!-- Motion layer: a single lime particle travels each leg, staggered so
+       exactly one is in flight at a time — the loop reads as always running
+       clockwise. Traversal = 1.4s of a 5.6s cycle; the rest is rest. -->
   <g class="motion-layer">
-    <!-- Leg 1: CAPTURE → EVOLVE -->
     <circle r="3.5" fill="#a8d000" opacity="0">
-      <animateMotion dur="5.4s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.333;1" repeatCount="indefinite" path="M 27 -83.2 L 85.6 18.2"/>
-      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.31;0.333;1" dur="5.4s" repeatCount="indefinite"/>
+      <animateMotion dur="5.6s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.25;1" repeatCount="indefinite" path="M 36.77 -93.23 L 93.23 -36.77"/>
+      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.23;0.25;1" dur="5.6s" repeatCount="indefinite"/>
     </circle>
-    <!-- Ring on EVOLVE — bursts at t=0.333 -->
-    <circle cx="112.6" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" opacity="0">
-      <animate attributeName="r" values="54;54;76;76" keyTimes="0;0.333;0.40;1" dur="5.4s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.333;0.36;0.40;1" dur="5.4s" repeatCount="indefinite"/>
-    </circle>
-
-    <!-- Leg 2: EVOLVE → WRAPUP -->
     <circle r="3.5" fill="#a8d000" opacity="0">
-      <animateMotion dur="5.4s" begin="1.8s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.333;1" repeatCount="indefinite" path="M 58.6 65 L -58.6 65"/>
-      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.31;0.333;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
+      <animateMotion dur="5.6s" begin="1.4s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.25;1" repeatCount="indefinite" path="M 93.23 36.77 L 36.77 93.23"/>
+      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.23;0.25;1" dur="5.6s" begin="1.4s" repeatCount="indefinite"/>
     </circle>
-    <!-- Ring on WRAPUP — bursts at t=0.333 of leg-2's cycle -->
-    <circle cx="-112.6" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" opacity="0">
-      <animate attributeName="r" values="54;54;76;76" keyTimes="0;0.333;0.40;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.333;0.36;0.40;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
-    </circle>
-
-    <!-- Leg 3: WRAPUP → CAPTURE -->
     <circle r="3.5" fill="#a8d000" opacity="0">
-      <animateMotion dur="5.4s" begin="3.6s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.333;1" repeatCount="indefinite" path="M -85.6 18.2 L -27 -83.2"/>
-      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.31;0.333;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
+      <animateMotion dur="5.6s" begin="2.8s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.25;1" repeatCount="indefinite" path="M -36.77 93.23 L -93.23 36.77"/>
+      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.23;0.25;1" dur="5.6s" begin="2.8s" repeatCount="indefinite"/>
     </circle>
-    <!-- Ring on CAPTURE — bursts at t=0.333 of leg-3's cycle -->
-    <circle cx="0" cy="-130" r="54" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" opacity="0">
-      <animate attributeName="r" values="54;54;76;76" keyTimes="0;0.333;0.40;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0;0;0.9;0;0" keyTimes="0;0.333;0.36;0.40;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
+    <circle r="3.5" fill="#a8d000" opacity="0">
+      <animateMotion dur="5.6s" begin="4.2s" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.25;1" repeatCount="indefinite" path="M -93.23 -36.77 L -36.77 -93.23"/>
+      <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.02;0.23;0.25;1" dur="5.6s" begin="4.2s" repeatCount="indefinite"/>
     </circle>
   </g>
 
