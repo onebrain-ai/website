@@ -10,7 +10,7 @@ const steps = [
   {
     n: '01',
     t: 'INITIALIZE',
-    d: 'Every session opens by loading what it knows: your memory, active projects, preferences, and what’s due.',
+    d: 'Each session opens by loading your memory, active projects, preferences, and what’s due.',
     code: '/daily · /resume',
   },
   {
@@ -28,7 +28,7 @@ const steps = [
   {
     n: '04',
     t: 'WRAPUP',
-    d: '/wrapup consolidates the session. /recap promotes lessons to memory — so the next Initialize starts smarter.',
+    d: '/wrapup consolidates the session; /recap promotes lessons to memory — so the next loop starts smarter.',
     code: '/wrapup · /recap',
   },
 ];
@@ -53,7 +53,7 @@ const steps = [
             <span class="cyber-h2-stroke">Sharpens Both.</span>
           </h2>
           <p class="cyber-sub">
-            <strong class="brand">OneBrain</strong> runs as a tight 4-step loop. It opens by loading everything it knows about you and closes by folding new lessons back into memory — so each round the agent gets smarter and the vault gets richer.
+            <strong class="brand">OneBrain</strong> runs as a tight 4-step loop: it opens by loading what it knows and closes by folding new lessons back into memory — sharper every round.
           </p>
         </header>
 
@@ -105,7 +105,7 @@ const steps = [
 <style>
   /* Step list (left column) */
   .how-steps {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     list-style: none;
     padding: 0;
     display: flex;
@@ -116,11 +116,11 @@ const steps = [
     display: grid;
     grid-template-columns: 44px 1fr;
     gap: 12px;
-    padding: 9px 0;
+    padding: 7px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     align-items: flex-start;
   }
-  .how-step:first-child { border-top: 0; padding-top: 4px; }
+  .how-step:first-child { border-top: 0; padding-top: 2px; }
   .how-step-num {
     font-family: var(--font-display);
     font-style: italic;
@@ -138,13 +138,13 @@ const steps = [
     color: #fff;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin: 0 0 4px;
+    margin: 0 0 3px;
   }
   .how-step-desc {
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     font-family: var(--font-mono);
     font-size: 11px;
-    line-height: 1.5;
+    line-height: 1.45;
     color: rgba(255, 255, 255, 0.62);
   }
   .how-step-code {
