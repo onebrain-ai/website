@@ -12,14 +12,14 @@ Context of use: evaluating the tool on a laptop, often arriving from a GitHub / 
 
 ## Product Purpose
 
-OneBrain is an open-source AI thinking partner that runs inside your Obsidian vault: a two-way intelligence layer where you teach the agent and the agent extends you, both evolving over time against your own notes, memory, and tasks. It ships as a CLI (`onebrain-ai/onebrain`) with ~30 commands, alongside a hosted Cloud product (currently waitlist).
+OneBrain is an open-source AI thinking partner that runs inside your Obsidian vault: a two-way intelligence layer where you teach the agent and the agent extends you, both evolving over time against your own notes, memory, and tasks. It ships as a CLI (`onebrain-ai/onebrain`) with ~30 commands and a built-in web UI, with a native Desktop app on the way.
 
 The marketing site exists to turn skeptical, technical visitors into users of the open-source tool. Success looks like:
 
 1. **CLI installs** — visitors run the `brew` / `npm` install command (the GET_STARTED path).
 2. **GitHub stars** — visitors trust the project enough to star the repo.
 
-Cloud-waitlist signups are a secondary outcome. A precondition for all of these is *comprehension*: the site has to make "you teach the agent, it extends you, all inside your vault" land fast, because the core idea is unusual and easily mistaken for yet another note app.
+Desktop-app notify signups are a secondary outcome. A precondition for all of these is *comprehension*: the site has to make "you teach the agent, it extends you, all inside your vault" land fast, because the core idea is unusual and easily mistaken for yet another note app.
 
 ## Brand Personality
 
